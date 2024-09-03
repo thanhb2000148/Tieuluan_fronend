@@ -52,7 +52,7 @@
                     @change="filterProductsByPrice($event.target.value)"
                   >
                     <option value="all">Tất Cả</option>
-                    <option value="lowToHigh">Giá Tăng Dần</option>
+                    <option value="lowToHigh">Giá Tăng Dần hơn</option>
                     <option value="highToLow">Giá Thấp Dần</option>
                   </select>
                 </div>
@@ -571,7 +571,8 @@ export default {
 }
 .p{
   margin-top: 10px;
-  font-family: cursive;
+  /*font-family: cursive;*/
+  /*font-family: x-large;*/
   font-size: large;
 }
 /*eyes*/

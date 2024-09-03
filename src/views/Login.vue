@@ -8,49 +8,39 @@
         <div class="card-body">
           <h5 class="card-title text-center mb-4">Đăng nhập</h5>
           <form @submit.prevent="login" class="px-md-2">
+          <div data-mdb-input-init class="form-outline mb-4">
+            <input
+              v-model="user_name"
+              type="text"
+              id="form2Example1"
+              class="form-control"
+              required
+              placeholder="Tên Đăng Nhập"
+              aria-describedby="username-error"
+            />
+            <small
+              v-if="!isUserNameValid && user_name.length > 0"
+              id="username-error"
+              class="form-text text-danger"
+            >
+              Tên đăng nhập phải có ít nhất 5 ký tự.
+            </small>
+        </div>
             <div data-mdb-input-init class="form-outline mb-4">
-              <input
-                v-model="user_name"
-                type="text"
-                id="form2Example1"
-                class="form-control text-center"
-                required
-                aria-describedby="username-error"
-              />
-              <label
-                class="form-label text-center text-muted"
-                for="form2Example1"
-                >Tên người dùng</label
-              >
-              <small
-                v-if="!isUserNameValid && user_name.length > 0"
-                id="username-error"
-                class="form-text text-danger"
-              >
-                Tên đăng nhập phải có ít nhất 5 ký tự.
-              </small>
-            </div>
-            <div data-mdb-input-init class="form-outline mb-4">
-              <div class="password-container">
+               <div class="password-container">
                 <input
                   v-model="password"
                   :type="showPassword ? 'text' : 'password'"
                   id="form2Example2"
-                  class="form-control text-center"
+                  class="form-control"
                   required
                   aria-describedby="password-error"
+                  placeholder="Mật khẩu"
                 />
-                <span class="toggle-password" @click="togglePasswordVisibility">
-                  <i
-                    :class="showPassword ? 'fas fa-eye' : 'fas fa-eye-slash'"
-                  ></i>
+                <span class="toggle-password" @click="togglePasswordVisibility" style="cursor: pointer;">
+                  <i :class="showPassword ? 'fas fa-eye' : 'fas fa-eye-slash'"></i>
                 </span>
               </div>
-              <label
-                class="form-label text-center text-muted"
-                for="form2Example2"
-                >Mật khẩu</label
-              >
               <small
                 v-if="!isPasswordValid && password.length > 0"
                 id="password-error"
@@ -63,13 +53,30 @@
               <button type="submit" class="btn-custom-green">Đăng nhập</button>
             </div>
           </form>
+        <div
+         class="sigup-or"><span>Hoặc</span>  
+        </div>
+          <!-- Google Login Button -->
+        <div class="text-center social">
+          <button class="signup-google">
+            <i class="fab fa-google signup-google-icon"></i>
+            <span class="signup-google-text">Google</span>
+          </button>
+          <button class="signup-facebook">
+            <i class="fab fa-facebook signup-facebook-icon"></i>
+            <span class="signup-facebook-text">Facebook</span>
+          </button>
+        </div>
+          <div v-if="errorMessage" class="alert alert-danger" role="alert">
+            {{ errorMessage }}
+          </div>
           <div class="text-center mb-4">
-            <p class="text-muted">Trở thành thành viên của chúng tôi</p>
-            <p>
-              <strong class="register-link" @click="redirectToRegister"
-                >Đăng ký ngay</strong
-              >
-            </p>
+              <p class="text-muted d-inline">
+                  Bạn Chưa Có Tài Khoản?
+                  <strong class="register-link" @click="redirectToRegister" style="cursor: pointer;">
+                    Đăng ký ngay
+                  </strong>
+              </p>
           </div>
           <div v-if="errorMessage" class="alert alert-danger" role="alert">
             {{ errorMessage }}
@@ -157,11 +164,15 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
-}
+  padding: 57px;
+  background-image: url("https://res.cloudinary.com/dgfwiff6k/image/upload/v1725354192/test_folder/e3orn19tfo9nkanqvzjv.jpg");
+  background-size: cover; /* Đảm bảo hình ảnh phủ toàn bộ phần tử */
+  background-position: center; /* Căn giữa hình ảnh */
+  background-repeat: no-repeat; /* Không lặp lại hình ảnh */}
 
 .login-card {
   max-width: 400px;
+  bottom: -20px;
   width: 100%;
   border: 1px solid #e0e0e0;
   border-radius: 10px;
@@ -173,10 +184,9 @@ export default {
   font-size: 1.5rem;
   font-weight: bold;
   text-align: center;
-  text-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
 }
 
-.form-outline .form-control {
+.form-outline  {
   border-radius: 10px;
   box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
   text-align: center;
@@ -236,4 +246,95 @@ export default {
 .toggle-password i:hover {
   color: #333;
 }
+/*mat khau*/
+.form-control {
+  text-align: left; /* Căn chỉnh văn bản bên trái */
+}
+
+.password-container {
+  position: relative;
+}
+
+.password-container .form-control {
+  text-align: left; /* Căn chỉnh văn bản bên trái */
+}
+
+.password-container .toggle-password {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+
+.text-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px; /* Khoảng cách giữa hai nút */
+}
+
+.signup-google, .signup-facebook {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #ddd; /* Đường viền nút */
+  border-radius: 5px;
+  padding: 10px 42px;
+  background-color: rgb(255, 255, 255); /* Màu nền nút */
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.signup-google-text, .signup-facebook-text {
+  margin-left: 8px; 
+}
+.signup-google-icon {
+  color: red; 
+  font-size: 24px; 
+}
+
+.signup-facebook-icon {
+  color: blue ; 
+  font-size: 24px; 
+}
+
+.signup-google-text {
+  color: red; 
+}
+
+.signup-facebook-text {
+  color: blue; 
+}
+
+
+.sigup-or{
+  text-align: center;
+  font-size: 19px;
+  color: #999;
+  margin: 10px auto;
+  position: relative;
+}
+.sigup-or:after {
+  content: "";
+  width: 100%;
+  height: 1px;
+  background-color: #999;
+  top: 50%;
+  position: absolute;
+  left: 0;
+  transform: translateY(-50%);
+}
+.sigup-or span{
+  display: inline-block;
+  padding: 10px  30px;
+  background-color: #fff;
+  position: relative;
+  z-index: 2;
+
+}
+.d-inline{
+  margin-top: 5%;
+}
+
 </style>
