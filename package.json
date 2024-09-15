@@ -24,6 +24,7 @@
     "vee-validate": "^4.13.1",
     "vue": "^3.2.13",
     "vue-cookies": "^1.8.4",
+    "vue-google-oauth2": "^1.5.10",
     "vue-jwt-decode": "^0.1.0",
     "vue-router": "^4.0.3",
     "vue-select": "file:3/dist/vue-select.css",

@@ -1,7 +1,7 @@
 <template>
   <div>
     <NavBar />
-    <section class="h-100 h-custom" style="background-color: #ffffff">
+    <section class="h-100 h-custom image-teme" >
       <div class="container py-5 h-100">
         <div class="row d-flex justify-content-center align-items-center h-100">
           <div class="col-lg-15 col-xl-9">
@@ -13,30 +13,8 @@
                 <form class="px-md-2" @submit.prevent="register">
                   <div class="row">
                     <div class="col-md-6 mb-4">
-                      <div class="form-group">
-                        <label for="firstName">Tên</label>
-                        <input
-                          type="text"
-                          id="firstName"
-                          class="form-control"
-                          v-model="formData.first_name"
-                          placeholder="Nhập tên của bạn"
-                          required
-                          pattern="[a-zA-ZÀ-ỹ ]+"
-                          title="Chỉ chấp nhận ký tự chữ cái và dấu"
-                        />
-                        <small
-                          v-if="!isFirstNameValid"
-                          class="invalid-feedback"
-                        >
-                          Tên chỉ chấp nhận chữ cái và dấu
-                        </small>
-                      </div>
-                    </div>
-
-                    <div class="col-md-6 mb-4">
-                      <div class="form-group">
-                        <label for="lastName">Họ</label>
+                       <div class="form-group">
+                        <label for="lastName">Họ và tên</label>
                         <input
                           type="text"
                           id="lastName"
@@ -52,33 +30,29 @@
                         </small>
                       </div>
                     </div>
+
+                    <div class="col-md-6 mb-4">
+                      <div class="form-group">
+                        <label for="userName">Tên đăng nhập</label>
+                        <input
+                          type="text"
+                          id="userName"
+                          class="form-control"
+                          v-model="formData.user_name"
+                          placeholder="Tên đăng nhập"
+                          required
+                        />
+                        <small v-if="!isUserNameValid" class="invalid-feedback">
+                          Tên đăng nhập phải có ít nhất 5 ký tự.
+                        </small>
+                      </div>
+                     
+                    </div>
                   </div>
 
                   <div class="row">
                     <div class="col-md-6 mb-4">
-                      <div class="form-group">
-                        <label for="middleName">Tên đệm</label>
-                        <input
-                          type="text"
-                          id="middleName"
-                          class="form-control"
-                          v-model="formData.middle_name"
-                          placeholder="Nhập tên đệm của bạn"
-                          required
-                          pattern="[a-zA-ZÀ-ỹ ]+"
-                          title="Chỉ chấp nhận ký tự chữ cái và dấu"
-                        />
-                        <small
-                          v-if="!isMiddleNameValid"
-                          class="invalid-feedback"
-                        >
-                          Tên đệm chỉ chấp nhận chữ cái và dấu
-                        </small>
-                      </div>
-                    </div>
-
-                    <div class="col-md-6 mb-4">
-                      <div class="form-group">
+                       <div class="form-group">
                         <label for="phoneNumber">Số điện thoại</label>
                         <input
                           type="tel"
@@ -99,28 +73,9 @@
                         </small>
                       </div>
                     </div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-md-6 mb-4">
-                      <div class="form-group">
-                        <label for="userName">Tên đăng nhập</label>
-                        <input
-                          type="text"
-                          id="userName"
-                          class="form-control"
-                          v-model="formData.user_name"
-                          placeholder="Tên đăng nhập"
-                          required
-                        />
-                        <small v-if="!isUserNameValid" class="invalid-feedback">
-                          Tên đăng nhập phải có ít nhất 5 ký tự.
-                        </small>
-                      </div>
-                    </div>
 
                     <div class="col-md-6 mb-4">
-                      <div class="form-group">
+                     <div class="form-group">
                         <label for="emailAddress">Địa chỉ Email</label>
                         <input
                           type="email"
@@ -136,7 +91,6 @@
                       </div>
                     </div>
                   </div>
-
                   <div class="row">
                     <div class="col-md-6 mb-4">
                       <div class="form-group">
@@ -199,10 +153,56 @@
                           Mật khẩu không khớp.
                         </small>
                       </div>
+                      <div class="row">
+                    <!-- <div class="col-md-6 mb-4">
+                      
+                      <div class="form-group">
+                        <label for="middleName">Tên đệm</label>
+                        <input
+                          type="text"
+                          id="middleName"
+                          class="form-control"
+                          v-model="formData.middle_name"
+                          placeholder="Nhập tên đệm của bạn"
+                          required
+                          pattern="[a-zA-ZÀ-ỹ ]+"
+                          title="Chỉ chấp nhận ký tự chữ cái và dấu"
+                        />
+                        <small
+                          v-if="!isMiddleNameValid"
+                          class="invalid-feedback"
+                        >
+                          Tên đệm chỉ chấp nhận chữ cái và dấu
+                        </small>
+                      </div>
+                    </div>
+
+                    <div class="col-md-6 mb-4">
+                      <div class="form-group">
+                        <label for="firstName">Họ và Tên</label>
+                        <input
+                          type="text"
+                          id="firstName"
+                          class="form-control"
+                          v-model="formData.first_name"
+                          placeholder="Nhập tên của bạn"
+                          required
+                          pattern="[a-zA-ZÀ-ỹ ]+"
+                          title="Chỉ chấp nhận ký tự chữ cái và dấu"
+                        />
+                        <small
+                          v-if="!isFirstNameValid"
+                          class="invalid-feedback"
+                        >
+                          Tên chỉ chấp nhận chữ cái và dấu
+                        </small>
+                      </div>
+                    </div> -->
+                  </div>
                     </div>
                   </div>
 
-                  <div class="row">
+                  <!-- <div class="row">
                     <div class="col-md-6 mb-4">
                       <div class="form-group">
                         <label for="gender">Giới tính</label>
@@ -226,7 +226,7 @@
                         </small>
                       </div>
                     </div>
-                  </div>
+                  </div> -->
 
                   <div class="text-center">
                     <button
@@ -264,21 +264,21 @@ export default {
   data() {
     return {
       formData: {
-        first_name: "",
-        middle_name: "",
+        // first_name: "",
+        // middle_name: "",
         last_name: "",
         user_name: "",
         email_user: "",
         phone_number: "",
         password: "",
-        gender_user: "",
+        // gender_user: "",
       },
       confirmPassword: "",
       message: "",
       alertClass: "",
-      isFirstNameValid: true,
+      // isFirstNameValid: true,
       isLastNameValid: true,
-      isMiddleNameValid: true,
+      // isMiddleNameValid: true,
       isPhoneNumberValid: true,
       isUserNameValid: true,
       isPasswordValid: true,
@@ -287,7 +287,7 @@ export default {
         password: false,
         confirmPassword: false,
       },
-      genderSelected: false,
+      // genderSelected: false,
     };
   },
   methods: {
@@ -296,14 +296,14 @@ export default {
       this.isPasswordValid = this.formData.password.length >= 3;
 
       if (
-        !this.isFirstNameValid ||
+        // !this.isFirstNameValid ||
         !this.isLastNameValid ||
-        !this.isMiddleNameValid ||
+        // !this.isMiddleNameValid ||
         !this.isPhoneNumberValid ||
         !this.isUserNameValid ||
         !this.isPasswordValid ||
-        !this.isPasswordMatch ||
-        !this.formData.gender_user
+        !this.isPasswordMatch 
+        // !this.formData.gender_user
       ) {
         return;
       }
@@ -314,6 +314,7 @@ export default {
           return;
         }
 
+        // eslint-disable-next-line no-unused-vars
         const response = await AuthService.register(this.formData);
         this.message = "Đăng ký thành công!";
         this.alertClass = "alert-success";
@@ -335,15 +336,15 @@ export default {
     },
   },
   watch: {
-    "formData.first_name"(newVal) {
-      this.isFirstNameValid = /^[a-zA-ZÀ-ỹ ]+$/.test(newVal.trim());
-    },
+    // "formData.first_name"(newVal) {
+    //   this.isFirstNameValid = /^[a-zA-ZÀ-ỹ ]+$/.test(newVal.trim());
+    // },
     "formData.last_name"(newVal) {
       this.isLastNameValid = /^[a-zA-ZÀ-ỹ ]+$/.test(newVal.trim());
     },
-    "formData.middle_name"(newVal) {
-      this.isMiddleNameValid = /^[a-zA-ZÀ-ỹ ]+$/.test(newVal.trim());
-    },
+    // "formData.middle_name"(newVal) {
+    //   this.isMiddleNameValid = /^[a-zA-ZÀ-ỹ ]+$/.test(newVal.trim());
+    // },
     "formData.phone_number"(newVal) {
       this.isPhoneNumberValid = /^\d{10}$/.test(newVal.trim());
     },
@@ -364,6 +365,12 @@ export default {
 </script>
 
 <style scoped>
+.image-teme{
+  background-image: url("https://res.cloudinary.com/dgfwiff6k/image/upload/v1725354192/test_folder/e3orn19tfo9nkanqvzjv.jpg");
+  background-size: cover; /* Đảm bảo hình ảnh phủ toàn bộ phần tử */
+  background-position: center; /* Căn giữa hình ảnh */
+  background-repeat: no-repeat; /* Không lặp lại hình ảnh */
+}
 body {
   font-family: Arial, sans-serif;
   background-color: #f7f7f7;

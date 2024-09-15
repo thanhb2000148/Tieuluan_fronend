@@ -68,7 +68,7 @@
               <hr class="border-light m-0" />
               <div class="card-body">
                 <div class="form-group">
-                  <label for="lastName" class="form-label">Họ</label>
+                  <label for="lastName" class="form-label">Họ và Tên</label>
                   <input
                     id="lastName"
                     type="text"
@@ -77,7 +77,7 @@
                     readonly
                   />
                 </div>
-                <div class="form-group">
+                <!-- <div class="form-group">
                   <label for="middleName" class="form-label">Tên đệm</label>
                   <input
                     id="middleName"
@@ -86,8 +86,8 @@
                     v-model="userById.MIDDLE_NAME"
                     readonly
                   />
-                </div>
-                <div class="form-group">
+                </div> -->
+                <!-- <div class="form-group">
                   <label for="firstName" class="form-label">Tên</label>
                   <input
                     id="firstName"
@@ -96,7 +96,7 @@
                     v-model="userById.FIRST_NAME"
                     readonly
                   />
-                </div>
+                </div> -->
                 <div class="form-group">
                   <label for="phone" class="form-label">Số điện thoại</label>
                   <input
@@ -117,16 +117,16 @@
                     readonly
                   />
                 </div>
-                <div class="form-group">
+                <!-- <div class="form-group">
                   <label for="email" class="form-label">Giới tính</label>
                   <input
-                    id="email"
-                    type="email"
+                    id="gender"
+                    type="text"
                     class="form-control"
                     v-model="userById.GENGER_USER"
                     readonly
                   />
-                </div>
+                </div> -->
               </div>
             </div>
             <!-- Tab Địa chỉ giao hàng -->
@@ -137,7 +137,7 @@
             >
               <div class="row">
                 <div class="col-md-12">
-                  <div class="text-center border py-5 my-5">
+                  <div class="text-center border py-3 my-4">
                     <div class="icon-plus">
                       <i class="bi bi-plus-circle-fill"></i>
                     </div>
@@ -307,7 +307,7 @@
               </div>
 
               <div
-                class="row border my-5"
+                class="row border my-4"
                 v-for="item in address"
                 :key="item._id"
               >
@@ -450,11 +450,11 @@ export default {
       },
       editedUser: {
         lastName: "",
-        middleName: "",
-        firstName: "",
+        // middleName: "",
+        // firstName: "",
         phone: "",
         email: "",
-        gender: "male",
+        // gender: "male",
         addresses: [],
       },
       selectedTab: "general",
@@ -464,7 +464,7 @@ export default {
   },
   async created() {
     await this.fetchUserLogin();
-    console.log(this.user);
+    console.log("lấy user login",this.user);
     await this.fetchUserById();
     console.log("lấy user theo ID", this.userById);
     await this.fetchOrderUser();
@@ -516,6 +516,7 @@ export default {
         const response = await userService.getUserLogin();
         if (response && response.data) {
           this.user = response.data;
+          console.log("User data:", this.user); // Thêm dòng này để kiểm tra
         } else {
           console.log("Không có dữ liệu người dùng đăng nhập.");
         }
@@ -595,8 +596,8 @@ export default {
     resetEditedUser() {
       this.editedUser = {
         lastName: "",
-        middleName: "",
-        firstName: "",
+        // middleName: "",
+        // firstName: "",
         phone: "",
         email: "",
         gender: "male",
