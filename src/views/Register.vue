@@ -236,6 +236,18 @@
                       Đăng ký
                     </button>
                   </div>
+                  <div class="text-center mb-2">
+                    <p class="text-muted d-inline">
+                      Bạn Đã Có Tài Khoản?
+                      <strong
+                        class="login-link"
+                        @click="loginrederic"
+                        style="cursor: pointer;"
+                      >
+                        Đăng nhập 
+                      </strong>
+                    </p>
+          </div>
                 </form>
                 <div v-if="message" class="mt-3 alert" :class="alertClass">
                   {{ message }}
@@ -334,6 +346,9 @@ export default {
     togglePasswordVisibility(field) {
       this.showPassword[field] = !this.showPassword[field];
     },
+     loginrederic() {
+      this.$router.push("/login");
+    },
   },
   watch: {
     // "formData.first_name"(newVal) {
@@ -360,7 +375,9 @@ export default {
     // "formData.email_user"(newVal) {
     //   this.isEmailValid = this.validateEmail(newVal);
     // },
+    
   },
+  
 };
 </script>
 
@@ -369,7 +386,8 @@ export default {
   background-image: url("https://res.cloudinary.com/dgfwiff6k/image/upload/v1725354192/test_folder/e3orn19tfo9nkanqvzjv.jpg");
   background-size: cover; /* Đảm bảo hình ảnh phủ toàn bộ phần tử */
   background-position: center; /* Căn giữa hình ảnh */
-  background-repeat: no-repeat; /* Không lặp lại hình ảnh */
+  background-repeat: no-repeat; /* Không lặp lại hình ả
+  nh */
 }
 body {
   font-family: Arial, sans-serif;
@@ -486,5 +504,24 @@ body {
 
 .toggle-password i:hover {
   color: #333;
+}
+.login-link {
+  cursor: pointer;
+  color: #007bff;
+  transition: color 0.3s;
+}
+
+.login-link:hover {
+  color: #0056b3;
+}
+.d-inline {
+  margin-top: 5%;
+}
+.text-center {
+  /* display: flex;*/
+  justify-content: center;
+  align-items: center;
+  gap: 20px; /* Khoảng cách giữa hai nút */
+  margin-top: 20px; /* Đảm bảo khoảng cách với thông báo lỗi */
 }
 </style>

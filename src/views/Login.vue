@@ -11,7 +11,7 @@
                 v-model="user_name"
                 @blur="checkUserName"
                 @input="clearError('userNameError')"
-                type="text"
+                type="text" 
                 id="form2Example1"
                 class="form-control"
                 placeholder="Tên Đăng Nhập"
@@ -62,10 +62,10 @@
             </div>
           </form>
 
-          <div class="sigup-or"><span>Hoặc</span></div>
+          <!-- <div class="sigup-or"><span>Hoặc</span></div>
 
           <div class="text-center social">
-            <button class="signup-google" @click="googleLogin">
+            <button class="signup-google" @click="initiateGoogleLogin">
               <i class="fab fa-google signup-google-icon"></i>
               <span class="signup-google-text">Google</span>
             </button>
@@ -73,7 +73,7 @@
               <i class="fab fa-facebook signup-facebook-icon"></i>
               <span class="signup-facebook-text">Facebook</span>
             </button>
-          </div>
+          </div> -->
 
           <div v-if="errorMessage" class="alert alert-danger" role="alert">
             {{ errorMessage }}
@@ -102,6 +102,7 @@
 import AppFooter from "@/components/User/layout/AppFooter.vue";
 import NavBar from "@/components/User/layout/NavBar.vue";
 import AuthService from "@/services/auth.service";
+// import UserService from "@/services/user.service";
 import Cookies from "js-cookie";
 
 export default {
@@ -120,6 +121,7 @@ export default {
       passwordError: "",
     };
   },
+  
   methods: {
     async login() {
       this.errorMessage = ""; // Clear any previous error message
@@ -150,9 +152,37 @@ export default {
         this.errorMessage = "Tên người dùng hoặc mật khẩu không đúng.";
       }
     },
-    googleLogin() {
-      window.location.href = "http://localhost:8000/v1/user/auth/google"; // phía backend Google OAuth
-    },
+    // async initiateGoogleLogin() {
+    //   try {
+    //     const response = await UserService.getGoogleAuthUrl();
+    //     window.location.href = response.authUrl; // Redirect to Google Auth URL
+    //   } catch (error) {
+    //     console.error("Lỗi khi lấy URL đăng nhập Google:", error);
+    //     this.errorMessage = "Không thể lấy URL đăng nhập Google.";
+    //   }
+    // },
+    // async handleGoogleLogin() {
+    //   const urlParams = new URLSearchParams(window.location.search);
+    //   const token = urlParams.get("token");
+
+    //   if (token) {
+    //     try {
+    //       const response = await UserService.googleLogin(token); // Nhận token từ BE
+    //       localStorage.setItem("access_token", response.data.accessToken);
+    //       // localStorage.setItem("refresh_token", response.data.refreshToken);
+    //       this.$router.push("/"); // Chuyển hướng đến trang chính
+    //     } catch (error) {
+    //       console.error("Lỗi khi xử lý đăng nhập Google:", error);
+    //       this.errorMessage = "Đăng nhập bằng Google thất bại.";
+    //     }
+    //   } else {
+    //     this.errorMessage = "Không có mã xác thực từ Google.";
+    //   }
+    // },
+    // Hàm để nhận và xử lý token sau khi Google trả 
+    // googleLogin() {
+    //   window.location.href = "http://localhost:8000/v1/user/auth/google"; // phía backend Google OAuth
+    // },
     redirectToRegister() {
       this.$router.push("/register");
     },
@@ -176,6 +206,15 @@ export default {
       this[field] = "";
     },
   },
+  // mounted() {
+  //   // Chỉ gọi handleGoogleLogin nếu có mã xác thực trong URL
+  //   const urlParams = new URLSearchParams(window.location.search);
+  //   const code = urlParams.get("code");
+
+  //   if (code) {
+  //     this.handleGoogleLogin(); // Gọi hàm xử lý nếu có mã xác thực
+  //   }
+  // },
 };
 </script>
 
@@ -339,7 +378,7 @@ export default {
   background-color: rgb(255, 255, 255); /* Màu nền nút */
   cursor: pointer;
   transition: background-color 0.3s ease;
-}
+} 
 
 .signup-google-text, .signup-facebook-text {
   margin-left: 8px;

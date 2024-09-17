@@ -27,5 +27,14 @@ class UserService {
       console.error(error);
     }
   }
+  // Thêm phương thức để lấy URL đăng nhập Google
+  // async getGoogleAuthUrl() {
+  //   try {
+  //     const response = await this.api.get("/auth/google");
+  //     return response.data;
+  //   } catch (error) {
+  //     console.error("Error fetching Google auth URL:", error);
+  //   }
+  // }
 }
 export default new UserService();
