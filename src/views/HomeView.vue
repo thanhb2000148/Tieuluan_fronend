@@ -9,7 +9,7 @@
         <div class="tab-class text-center">
           <div class="row g-4">
             <div class="col-lg-4 text-start">
-              <h1>Các sản phẩm của chúng tôi</h1>
+              <h1>Các Sản Phẩm</h1>
             </div>
             <div class="col-lg-8 text-end">
               <ul class="nav nav-pills d-inline-flex text-center mb-5">
@@ -155,6 +155,10 @@ export default {
         console.log("error", error);
       }
     },
+    addToCart(productId) {
+      // Xử lý logic thêm sản phẩm vào giỏ hàng
+      console.log("Thêm sản phẩm vào giỏ hàng:", productId);
+    }
   },
 };
 </script>

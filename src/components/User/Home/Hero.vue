@@ -1,11 +1,14 @@
 <template>
-  <div class="container-fluid py-5 mb-5 hero-header">
+   <div>
+    <img src="https://res.cloudinary.com/dgfwiff6k/image/upload/v1726904012/img_NEN_auqjyq.webp" alt="Mô tả hình ảnh" style="width: 100%; height: auto;" />
+  </div>
+  <!-- <div class="container-fluid py-5 mb-5 hero-header">
     <div class="container py-5">
       <div class="row g-5 align-items-center">
         <div class="col-md-12 col-lg-7">
-          <h4 class="mb-3 text-a">Mua hàng nhanh chóng, tiện lợi</h4>
+          <h4 class="mb-3 text-a">Welcome To</h4>
           <h1 class="mb-5 display-3 text-a">
-           Thương Mại Điện Tử
+           Welcome  BAD HABBITS STORE
           </h1>
           
         </div>
@@ -74,7 +77,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
 </template>
 
 <script>

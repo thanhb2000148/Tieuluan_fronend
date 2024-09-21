@@ -1,127 +1,77 @@
 <template>
-  <div class="container-fluid featurs py-5">
-    <div class="container py-5">
-      <div class="row g-4">
-        <div class="col-md-6 col-lg-3">
-          <div class="featurs-item text-center rounded bg-light p-4">
-            <div
-              class="featurs-icon btn-square rounded-circle bg-secondary mb-5 mx-auto"
-            >
-              <i class="fas fa-car-side fa-3x text-white"></i>
-            </div>
-            <div class="featurs-content text-center">
-              <h5>Miễn phí vận chuyển</h5>
-              <p class="mb-0">Miễn phí cho đơn hàng từ 300.000đ</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6 col-lg-3">
-          <div class="featurs-item text-center rounded bg-light p-4">
-            <div
-              class="featurs-icon btn-square rounded-circle bg-secondary mb-5 mx-auto"
-            >
-              <i class="fas fa-user-shield fa-3x text-white"></i>
-            </div>
-            <div class="featurs-content text-center">
-              <h5>Bảo mật thanh toán</h5>
-              <p class="mb-0">Bảo mật 100%</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6 col-lg-3">
-          <div class="featurs-item text-center rounded bg-light p-4">
-            <div
-              class="featurs-icon btn-square rounded-circle bg-secondary mb-5 mx-auto"
-            >
-              <i class="fas fa-exchange-alt fa-3x text-white"></i>
-            </div>
-            <div class="featurs-content text-center">
-              <h5>Hoàn trả trong 30 ngày</h5>
-              <p class="mb-0">Hoàn tiền trong 30 ngày</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6 col-lg-3">
-          <div class="featurs-item text-center rounded bg-light p-4">
-            <div
-              class="featurs-icon btn-square rounded-circle bg-secondary mb-5 mx-auto"
-            >
-              <i class="fa fa-phone-alt fa-3x text-white"></i>
-            </div>
-            <div class="featurs-content text-center">
-              <h5>Hỗ trợ 24/7</h5>
-              <p class="mb-0">Hỗ trợ nhanh chóng mọi lúc</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!--  -->
-      <div class="row g-4 justify-content-center mt-5">
-        <div class="col-md-6 col-lg-4">
-          <a href="#">
-            <div class="service-item bg-secondary rounded border border-secondary">
-              <img src="https://res.cloudinary.com/dgfwiff6k/image/upload/v1717646398/test_folder/gdwjvwku6u2oww8cnpic.webp" class="img-fluid rounded-top w-100" alt="Fresh Apples">
-              <div class="px-4 rounded-bottom text-b">
-                <div class="service-content bg-primary text-center p-4 rounded">
-                  <h5 class="text-white">iphone 15 Pro Max</h5>
-                  <h3 class="mb-0">Hàng mới 100%</h3>
-                </div>
-              </div>
-            </div>
-          </a>
-        </div>
-        <div class="col-md-6 col-lg-4">
-          <a href="#">
-            <div class="service-item bg-dark rounded border border-dark">
-              <img src="https://res.cloudinary.com/dgfwiff6k/image/upload/v1718022208/test_folder/nkbc69rdjva1ndmpjnll.png" class="img-fluid rounded-top w-100" alt="Tasty Fruits">
-              <div class="px-4 rounded-bottom text-b">
-                <div class="service-content bg-light text-center  rounded">
-                  <h5 class="text-c">Pizza New York Bò </h5>
-                  <h3 class="mb-0 text-c">Món ăn hấp dẫn </h3>
-                </div>
-              </div>
-            </div>
-          </a>
-        </div>
-        <div class="col-md-6 col-lg-4">
-          <a href="#">
-            <div class="service-item bg-primary rounded border border-primary">
-              <img src="https://res.cloudinary.com/dgfwiff6k/image/upload/v1718010799/test_folder/bchtr89pfqyahbiolzir.webp" class="img-fluid rounded-top w-100" alt="Exotic Vegetable">
-              <div class="px-4 rounded-bottom">
-                <div class="service-content bg-secondary text-center p-4 rounded">
-                  <h5 class="text-white">Áo Thun Nam BeTod</h5>
-                  <h3 class="mb-0">Mẫu mới 2024</h3>
-                </div>
-              </div>
-            </div>
-          </a>
-        </div>
-      </div>
-<!-- Banner Section Start -->
-      <div class="container-fluid banner bg-secondary my-5">
-        <div class="container py-5">
-          <div class="row g-4 align-items-center">
-            <div class="col-lg-6">
-              <div class="py-4">
-                <h1 class="display-3 text-white">Thiết kế thời trang</h1>
-                <p class="fw-normal display-3 text-dark mb-4">Độ bền ấn tượng</p>
-                <p class="mb-4 text-dark">Cạnh viền uốn cong nhẹ nhàng đi kèm với khung viền Titan giúp thiết bị toát lên được vẻ ngoài sang trọng đầy tính thời thượng</p>
-              </div>
-            </div>
-            <div class="col-lg-6">
-              <div class="position-relative">
-                <img src="img/15prm1.jpg" class="img-fluid w-100 rounded" alt="">
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- Banner Section End -->
-
+ <div class="wrapper-heading-home wrapper-heading-home-new">
+    <div class="wrapper-animation">
+      <span class="text-animation a">
+        <h2>
+          <router-link to="/shop">NEW ARRIVALS</router-link>
+        </h2>
+      </span>
+      <span class="text-animation a">
+        <h2>
+          <router-link to="/shop">NEW ARRIVALS</router-link>
+        </h2>
+      </span>
+      <span class="text-animation a">
+         <h2>
+          <router-link to="/shop">NEW ARRIVALS</router-link>
+        </h2>
+      </span>
+      <span class="text-animation a">
+         <h2>
+          <router-link to="/shop">NEW ARRIVALS</router-link>
+        </h2>
+      </span>
+      <span class="text-animation a">
+        <h2>
+          <router-link to="/shop">NEW ARRIVALS</router-link>
+        </h2>
+      </span>
     </div>
   </div>
+  <div>
+    <img src="https://res.cloudinary.com/dgfwiff6k/image/upload/v1726902403/slideshow_2_gsa5eu.webp" alt="Mô tả hình ảnh" style="width: 100%; height: auto;" />
+  </div><!--  -->
+ <div class="module three-up overlay-true">
+    <div class="module-interior">
+        <div class="block-module block--1">
+            <a class="link-banner" href="/shop">
+                <div class="ratiobox">
+                    <img class="responsive-img" src="//theme.hstatic.net/1000306633/1001194548/14/block_home_category1_new.png?v=231" alt="Tops">
+                    <div class="block-content block-overlay">
+                        <h3 class="title-b block-title"> </h3>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="block-module block--2">
+            <a class="link-banner" href="/shop">
+                <div class="ratiobox">
+                    <img class="responsive-img" src="//theme.hstatic.net/1000306633/1001194548/14/block_home_category2_new.png?v=231" alt="Bottoms">
+                    <div class="block-content block-overlay">
+                        <h3 class="title-b block-title"> </h3>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="block-module block--3">
+            <a class="link-banner" href="/shop">
+                <div class="ratiobox">
+                    <img class="responsive-img" src="//theme.hstatic.net/1000306633/1001194548/14/block_home_category3_new.png?v=231" alt="Outerwear">
+                    <div class="block-content block-overlay">
+                        <h3 class="title-b block-title"></h3>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+
+
+
+  
+
 </template>
+
 
 <script>
 export default {
@@ -131,24 +81,11 @@ export default {
 
 <style scoped>
 /* Các kiểu hiện có */
-
-/* Thêm các kiểu bổ sung cho phần mới */
-.service-item {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-.service-content {
-  flex-grow: 1;
-}
-
 .featurs-item {
   display: flex;
   flex-direction: column;
   height: 100%;
 }
-
 .featurs-content {
   flex-grow: 1;
 }
@@ -158,4 +95,65 @@ export default {
 .text-c{
   color: #282828
 }
+/* Thêm các kiểu bổ sung cho phần mới */
+.wrapper-heading-home {
+  overflow: hidden;
+  height: 50px; /* Chiều cao của khối bao quanh */
+  position: relative;
+  -webkit-text-fill-color: hsla(0, 0%, 100%, 0);
+  -webkit-text-stroke-width: 1px;
+  margin: 29px;
+}
+
+.wrapper-animation {
+  display: flex;
+  position: absolute;
+  white-space: nowrap; /* Để các chữ không xuống hàng */
+  animation: scrollTextHorizontal 30s linear infinite; /* Hiệu ứng di chuyển ngang */
+}
+
+.text-animation {
+  display: inline-block;
+  padding-right: 50px; /* Khoảng cách giữa các từ */
+  
+}
+.text-animation a{
+  color: black !important;
+}
+
+h2 {
+  font-size: 36px;
+  font-weight: bold;
+  margin: 0;
+}
+
+
+@keyframes scrollTextHorizontal {
+  0% {
+    transform: translateX(-100%); /* Bắt đầu từ bên ngoài bên phải */
+  }
+  100% {
+    transform: translateX(100%); /* Kết thúc bên ngoài bên trái */
+  }
+}
+
+
+.module-interior {
+    display: flex; /* Sử dụng flexbox để xếp hàng */
+    justify-content: space-around; /* Đặt khoảng cách đều giữa các khối */
+}
+
+.block-module {
+    flex: 0 0 30%; /* Mỗi khối chiếm khoảng 30% chiều rộng của hàng */
+    max-width: 30%; /* Giới hạn kích thước tối đa của mỗi khối */
+    margin: 0 5px; /* Thêm khoảng cách giữa các khối */
+}
+
+.responsive-img {
+    width: 100%; /* Ảnh sẽ tự động điều chỉnh theo chiều rộng của khối */
+    height: auto; /* Đảm bảo tỉ lệ khung hình được giữ nguyên */
+}
+
+
+
 </style>

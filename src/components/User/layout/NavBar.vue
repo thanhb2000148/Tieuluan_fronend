@@ -2,7 +2,7 @@
   <div class="container px-0">
     <nav class="navbar navbar-light bg-white navbar-expand-xl">
       <router-link to="/" class="navbar-brand">
-        <h1 class="text-primary display-6">Mua sắm trực tuyến</h1>
+        <h1 class="text-dark color1 display-6">BAD HABBITS STORE</h1>
       </router-link>
       <button
         class="navbar-toggler py-2 px-3"
@@ -82,4 +82,8 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+.color1{
+  color: black !important;
+}
+</style>
