@@ -138,7 +138,7 @@ const routes = [
 
   {
     path: "/admin/user",
-    name: "DashboardAddProduct",
+    name: "DashboardUsers",
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/DashBoardUser.vue"),
   },

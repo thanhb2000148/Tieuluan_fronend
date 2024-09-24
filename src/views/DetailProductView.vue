@@ -82,6 +82,21 @@
                   })
                 }}
               </h5>
+             
+
+              <div class="d-flex align-items-center mb-4">
+                <div class="d-flex">
+                  <span 
+                    v-for="n in 5" 
+                    :key="n" 
+                    class="fa fa-star" 
+                    :class="{ filled: n <= Math.round(averageRating) }">
+                  </span>
+                </div>
+                <span class="ms-2">{{ averageRating.toFixed(1) }}/5</span>
+              </div>
+
+              
               <p class="mb-4">
                 {{ products.SHORT_DESC }}
               </p>
@@ -183,6 +198,18 @@
                   >
                     Chi Tiết Sản Phẩm
                   </button>
+                  <!-- <button
+                    class="nav-link border-white border-bottom-0"
+                    type="button"
+                    role="tab"
+                    id="nav-reviews-tab"
+                    data-bs-toggle="tab"
+                    data-bs-target="#nav-reviews"
+                    aria-controls="nav-reviews"
+                    aria-selected="false"
+                  >
+                    Đánh Giá
+                  </button> -->
                 </div>
               </nav>
               <div class="tab-content mb-5">
@@ -196,11 +223,89 @@
                     {{ products.DESC_PRODUCT }}
                   </p>
                 </div>
+                <div
+                  class="tab-pane"
+                  id="nav-reviews"
+                  role="tabpanel"
+                  aria-labelledby="nav-reviews-tab"
+                >
+              </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+     <div class="review-container border rounded p-4">
+    <h1 class="fw-bold mb-0">Đánh Giá sản phẩm</h1>
+    <div class="d-flex align-items-center justify-content-between">
+        <div class="average-info d-flex align-items-center">
+            <h3 class="average-text me-2">
+                {{ averageRating.toFixed(1) }} / 5
+            </h3>
+            <div class="rating-stars d-flex">
+                <span v-for="n in 5" :key="n" class="TO fa fa-star me-1" :class="{ filled: n <= averageRating }"></span>
+            </div>
+        </div>
+
+        <div class="filter-rating">
+            <h3 class="rating-title">Xếp Hạng:</h3>
+            <select v-model="selectedRating" @change="filterReviews(selectedRating)" class="rating-dropdown">
+                <option value="">-- Chọn số sao --</option>
+                <option v-for="n in 5" :key="n" :value="n">{{ n }} Sao</option>
+                <option value="all">Tất cả</option>
+            </select>
+        </div>
+    </div>
+
+    <div v-if="reviews.length > 0">
+        <div v-for="review in reviews" :key="review._id" class="review-card">
+            <div class="review-header">
+                <img :src="review.user_id.avatar || 'default-avatar.png'" alt="Avatar" class="avatar">
+                <div class="user-info">
+                    <p class="user-name">{{ review.user_id.EMAIL_USER }}</p>
+                    <div class="rating-stars">
+                        <span v-for="n in 5" :key="n" class="fa fa-star" :class="{ filled: n <= review.rating }"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="review-body">
+                <p class="comment">{{ review.comment }}</p>
+            </div>
+            <div class="review-footer">
+                <p class="timestamp">{{ new Date(review.created_at).toLocaleString() }} | {{ review.device_info }}</p>
+            </div>
+        </div>
+    </div>
+    <div v-else class="no-reviews">
+        <p>Chưa có đánh giá nào cho sản phẩm này.</p>
+    </div>
+    <h5 class="mb-5 fw-bold">Gửi Đánh Giá</h5>
+    <form @submit.prevent="submitReview">
+        <div class="row g-2">
+            <div class="col-lg-12">
+                <div class="rating-selection border-bottom rounded">
+                    <label for="rating" class="form-label">Đánh giá:</label>
+                    <div class="rating-stars">
+                        <span v-for="n in 5" :key="n" class="star fa fa-star" :class="{ filled: n <= newReview.rating }" @click="setRating(n)"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="border-bottom rounded my-4">
+                    <label for="comment" class="form-label">Nhận xét:</label>
+                    <textarea v-model="newReview.comment" class="form-control border-0" required></textarea>
+                </div>
+            </div>
+
+            <div class="col-lg-12 text-end">
+                <button type="submit" class="btn border border-secondary text-primary rounded-pill px-3 py-2">Gửi Đánh Giá</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+
       <h1 class="fw-bold mb-0">Sản phẩm liên quan</h1>
       <div class="row g-4">
         <div
@@ -236,6 +341,7 @@
           </router-link>
         </div>
       </div>
+     
     </div>
   </div>
   <AppFooter />
@@ -253,6 +359,7 @@ import Swal from "sweetalert2";
 import getCookie from "@/utils/getCookie";
 import priceService from "@/services/price.service";
 import SinglePageHeaderVue from "../components/User/detail/SinglePageHeader.vue";
+import ReviewService from "../services/review.service";
 export default {
   name: "UserDetail",
   components: {
@@ -266,6 +373,7 @@ export default {
     return {
       products: [],
       price: [],
+      reviews: [],
       priceKV: [],
       cart: [],
       prices: {},
@@ -276,6 +384,12 @@ export default {
       is_loading: true, // chạy loading trước sao đó mới gọi api
       quantity: 1,
       image_url: "",
+      newReview: { // Thêm biến để chứa thông tin đánh giá mới
+        rating: null,
+        comment: "",
+      },
+      averageRating: 0,
+      selectedRating: "", 
     };
   },
   computed: {
@@ -289,20 +403,15 @@ export default {
       return 0; // hoặc giá trị mặc định nếu không có sản phẩm nào được chọn
     },
   },
-  //  beforeRouteUpdate(to, from, next) {
-  //   if (to.params.id !== from.params.id) {
-  //     window.location.reload();
-  //   } else {
-  //     next();
-  //   }
-  // },
+  
   watch: {
     "$route.params.id": {
       immediate: true, // Kích hoạt ngay lập tức khi component được tạo
       handler(newId, oldId) {
         if (newId !== oldId) {
           // Nếu id sản phẩm mới khác với id sản phẩm cũ
-          this.getProduct(); // Gọi lại phương thức getProduct để tải lại dữ liệu sản phẩm mới
+          this.getProduct();
+          this.getReviews();// Gọi lại phương thức getProduct để tải lại dữ liệu sản phẩm mới
         }
       },
     },
@@ -318,7 +427,9 @@ export default {
       await this.getProductCategory();
 
       await this.selectColor();
-
+     
+      await this.getReviews();
+       console.log(" các đánh giá ", this.reviews);
       await this.getPriceKV();
       console.log("sp theo cate", this.productCategory);
     } catch (error) {
@@ -344,6 +455,115 @@ export default {
         console.error(error);
       }
     },
+    setRating(value) {
+      this.newReview.rating = value; // Cập nhật số sao khi người dùng chọn
+    },
+    async submitReview() {
+      try {
+        const productId = this.$route.params.id;
+
+        // Kiểm tra dữ liệu đầu vào trước khi gửi
+        if (!this.newReview.rating || !this.newReview.comment) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Lỗi',
+            text: 'Bạn phải nhập đủ số sao và bình luận!',
+            confirmButtonText: 'OK',
+          });
+          return;
+        }
+
+        // Chuẩn bị dữ liệu review
+        const reviewData = {
+          rating: this.newReview.rating,
+          comment: this.newReview.comment,
+        };
+
+        // Gửi dữ liệu review đến server
+        const response = await ReviewService.createReview(productId, reviewData);
+
+        if (response && response.review) {
+          Swal.fire({
+            icon: "success",
+            title: "Đánh giá thành công!",
+            text: "Cảm ơn bạn đã gửi đánh giá.",
+            confirmButtonText: 'OK',
+          });
+
+          this.reviews.push(response.review);
+          this.newReview.rating = null;
+          this.newReview.comment = "";
+          await this.getReviews(); // Lấy lại danh sách đánh giá
+        } else {
+          console.error("Lỗi khi gửi đánh giá:", response);
+          Swal.fire({
+            icon: 'error',
+            title: 'Lỗi',
+            text: 'Đã xảy ra lỗi khi gửi đánh giá!',
+            confirmButtonText: 'OK',
+          });
+        }
+      } catch (error) {
+        console.error("Lỗi khi gửi đánh giá:", error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Lỗi',
+          text: 'Bạn Đã đánh giá Sản Phẩm Này!',
+          confirmButtonText: 'OK',
+        });
+      }
+    },
+
+    async getReviews() {
+      try {
+        const productId = this.$route.params.id;
+        const response = await ReviewService.getProductReviews(productId); // Gọi API để lấy đánh giá
+
+        // Log phản hồi từ server để kiểm tra cấu trúc
+        console.log("Phản hồi từ server:", response);
+
+        // Nếu response trả về một mảng trực tiếp, không cần kiểm tra response.data
+        if (response && Array.isArray(response)) {
+          this.reviews = response; // Lưu trực tiếp response vào biến reviews
+          this.calculateAverageRating();
+          await this.getReviewsByRating("");
+          console.log("Đánh giá sản phẩm:", this.reviews); // Log các đánh giá
+        } else {
+          this.reviews = response.review || []; // Cập nhật lại nếu server trả về cấu trúc khác
+          this.calculateAverageRating();
+        }
+      } catch (error) {
+        console.error("Lỗi khi lấy đánh giá:", error);
+      }
+    },
+    calculateAverageRating() {
+      if (this.reviews.length === 0) {
+        this.averageRating = 0; // Không có đánh giá
+        return;
+      }
+      const totalRating = this.reviews.reduce((sum, review) => sum + review.rating, 0);
+      this.averageRating = totalRating / this.reviews.length; // Tính trung bình
+    },
+    filterReviews(rating) {
+      if (rating === "all") {
+        this.getReviews(); // Nếu chọn "Tất cả", lấy tất cả đánh giá
+      } else {
+        // Gọi API để lọc đánh giá theo số sao
+        this.getReviewsByRating(rating);
+      }
+    },
+    async getReviewsByRating(rating) {
+      try {
+        const productId = this.$route.params.id; // Lấy ID sản phẩm từ route
+        const response = await ReviewService.getReviewsByRating(productId, rating);
+        if (response && response.review) {
+          this.reviews = response.review; // Cập nhật danh sách đánh giá
+        }
+      } catch (error) {
+        console.error("Lỗi khi lấy đánh giá:", error);
+      }
+    },
+
     async getPriceProduct() {
       try {
         const response = await PriceService.getDefaultPrice(
@@ -458,32 +678,7 @@ export default {
         console.log("error", error);
       }
     },
-    // async getProductCategory() {
-    //   try {
-    //     const categoryId = this.products.CATEGORY_ID; // Lấy CATEGORY_ID của sản phẩm hiện tại
-    //     const productPromises = this.nameCategory.map(async (category) => {
-    //       if (category._id === categoryId) {
-    //         const response = await productService.getProductByIdCategory(
-    //           category._id
-    //         );
-    //         if (response && response.data) {
-    //           const relatedProducts = response.data.filter(
-    //             (product) => product._id !== this.products._id
-    //           );
-    //           for (const product of relatedProducts) {
-    //             await this.getPriceProduct(product._id);
-    //           }
-    //           return relatedProducts;
-    //         }
-    //         return [];
-    //       }
-    //       return []; // Trả về mảng rỗng nếu không phải danh mục hiện tại
-    //     });
-    //     this.productCategory = await Promise.all(productPromises);
-    //   } catch (error) {
-    //     console.log("error", error);
-    //   }
-    // },
+    
     async getProductCategory() {
       try {
         const categoryId = this.products.CATEGORY_ID; // Lấy CATEGORY_ID của sản phẩm hiện tại
@@ -702,6 +897,126 @@ a {
   height: 200px; /* Chiều cao cố định cho hình ảnh */
 }
 .mb-0 {
-  margin-bottom: 50px !important;
+  margin-bottom: 14px !important;
+}
+
+
+/*cmt*/
+.review-card {
+    background-color: #fff; /* Nền trắng cho mỗi khung đánh giá */
+    border-radius: 8px; /* Bo tròn góc */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Đổ bóng nhẹ */
+    padding: 15px; /* Khoảng cách bên trong */
+    margin-bottom: 20px; /* Khoảng cách giữa các khung đánh giá */
+    transition: transform 0.2s; /* Hiệu ứng khi di chuột */
+    cursor: pointer; /* Cho phép người dùng nhấp chuột */
+}
+
+.review-card:hover {
+    transform: scale(1.02); /* Phóng to nhẹ khi di chuột */
+}
+
+.review-header {
+    display: flex; /* Sử dụng flexbox để căn chỉnh các phần tử */
+    align-items: center; /* Căn giữa theo chiều dọc */
+}
+
+.avatar {
+    width: 50px; /* Kích thước ảnh đại diện */
+    height: 50px; /* Kích thước ảnh đại diện */
+    border-radius: 50%; /* Bo tròn ảnh đại diện */
+    margin-right: 10px; /* Khoảng cách bên phải của ảnh đại diện */
+}
+
+.user-info {
+    flex-grow: 1; /* Cho phép phần thông tin người dùng mở rộng */
+}
+
+.user-name {
+    font-weight: bold; /* Đậm tên người dùng */
+    margin-bottom: 5px; /* Khoảng cách bên dưới tên người dùng */
+        cursor: pointer; /* Đặt lại con trỏ thành dấu mũi tên khi hover */
+
+}
+
+.rating-stars .star {
+    color: #ccc; /* Màu sắc cho các sao chưa được chọn */
+    font-size: 18px; /* Kích thước sao */
+}
+
+.rating-stars .star.filled {
+    color: #ffcc00; /* Màu vàng cho sao đã được chọn */
+}
+
+.review-body {
+    margin-top: 10px; /* Khoảng cách giữa tiêu đề và nội dung đánh giá */
+}
+
+.comment {
+    font-size: 16px; /* Kích thước chữ cho nội dung đánh giá */
+    line-height: 1.5; /* Khoảng cách dòng */
+}
+
+.review-footer {
+    margin-top: 10px; /* Khoảng cách giữa nội dung đánh giá và chân khung */
+    font-size: 12px; /* Kích thước chữ nhỏ cho thông tin thêm */
+    color: #666; /* Màu sắc nhạt cho thông tin thêm */
+}
+
+.star {
+  padding: 10px; /* Tăng khoảng cách giữa các ngôi sao */
+}
+
+.star:hover, .star:focus {
+  color: #ffd700; /* Hiệu ứng khi di chuột qua ngôi sao */
+}
+
+.filled {
+  color: #ffd700; /* Màu vàng cho ngôi sao đã chọn */
+}
+
+/*số sao tổng*/
+.text-secondary {
+    color: #ccc; /* Màu cho sao chưa được chọn (màu xám) */
+}
+
+.text-warning {
+    color: #ffd700; /* Màu cho sao đã được chọn (màu vàng) */
+}
+
+.average-text {
+  font-size: 16px; /* Kích thước chữ vừa phải */
+  font-weight: normal; /* Không in đậm */
+  font-style: normal; /* Đảm bảo chữ không bị nghiêng */
+  color: #333; /* Màu chữ tối hơn để dễ nhìn */
+}
+
+/*xếp hạng*/
+.filter-rating {
+  display: flex; /* Sử dụng flexbox để sắp xếp các phần tử */
+  align-items: center; /* Căn giữa theo chiều dọc */
+  justify-content: flex-end; /* Đẩy phần tử sang bên phải */
+  margin: 20px; /* Khoảng cách từ các cạnh */
+}
+
+.rating-dropdown {
+  margin-left: 10px; /* Khoảng cách giữa tiêu đề và dropdown */
+}
+.rating-title {
+    font-size: 0.9rem; /* Giảm kích thước chữ "Xếp Hạng" */
+    margin-bottom: 0; /* Đảm bảo không có khoảng cách thừa */
+}
+.rating-stars .TO{
+  font-size: 1.5rem; /* Tăng kích thước sao */
+}
+
+/*Khung đánh giá*/
+.review-container {
+    background-color: #f9f9f9; /* Màu nền cho khung */
+    border: 1px solid #ddd; /* Đường viền */
+    border-radius: 8px; /* Bo góc khung */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Đổ bóng cho khung */
+    margin: 20px 0; /* Khoảng cách phía trên và dưới */
+    padding: 20px; /* Khoảng cách bên trong khung */
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
-  <div class="container px-0">
-    <nav class="navbar navbar-light bg-white navbar-expand-xl">
+  <div class="container px-0 ">
+    <nav class="navbar navbar-light bg-white navbar-expand-xl fixed-top shadow">
       <router-link to="/" class="navbar-brand">
         <h1 class="text-dark color1 display-6">BAD HABBITS STORE</h1>
       </router-link>
@@ -86,4 +86,14 @@ export default {
 .color1{
   color: black !important;
 }
+.fixed-top {
+    position: fixed;
+    top: 0 !important;
+    right: 0;
+    left: 0;
+    z-index: 1030;
+}
+.shadow {
+    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15) !important;
+} 
 </style>

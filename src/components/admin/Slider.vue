@@ -29,7 +29,7 @@
           >
             <li class="sidebar-item">
               <router-link to="/admin/products"
-                ><a class="sidebar-link">Quản lý sản phẩm</a></router-link
+                ><a class="sidebar-link">Quản lý Kho</a></router-link
               >
             </li>
             <li class="sidebar-item">
@@ -37,6 +37,12 @@
                 <a class="sidebar-link">Quản lý người dùng</a></router-link
               >
             </li>
+            <li class="sidebar-item">
+              <router-link to="/admin/addProducts" class="sidebar-link">
+                Quản lý sản phẩm
+              </router-link>
+            </li>
+
           </ul>
         </li>
       </ul>
@@ -46,6 +52,7 @@
 
 <script>
 export default {
+  // eslint-disable-next-line vue/multi-word-component-names
   name: "Slider",
 };
 </script>

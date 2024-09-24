@@ -130,6 +130,7 @@
                             })
                           }}
                         </p>
+                        
                         <p
                           @click="addCartNonKV(item._id)"
                           href="#"
@@ -613,5 +614,18 @@ export default {
   color: #ff9300; 
 }
 
+/*sao đánh giá*/
+.average-rating {
+    margin-left: 10px; /* Khoảng cách giữa giá và số sao */
+}
+
+.average-text {
+    font-size: 1.2em; /* Kích thước chữ cho số trung bình */
+    margin-right: 5px; /* Khoảng cách giữa số trung bình và các ngôi sao */
+}
+
+.rating-stars .fa-star.filled {
+    color: gold; /* Màu cho ngôi sao đã được đánh giá */
+}
 
 </style>
