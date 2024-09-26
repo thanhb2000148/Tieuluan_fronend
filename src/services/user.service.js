@@ -27,6 +27,16 @@ class UserService {
       console.error(error);
     }
   }
+   //Thêm phương thức updateUser
+  async updateUser(id, userData) {
+    try {
+      const response = await this.api.put(`/users/${id}`, userData);
+      console.log("Phản hồi từ API:", response); // Ghi log phản hồi
+      return response.data; // Trả về dữ liệu sau khi cập nhật thành công
+    } catch (error) {
+      console.error("Error updating user:", error);
+    }
+  }
   // Thêm phương thức để lấy URL đăng nhập Google
   // async getGoogleAuthUrl() {
   //   try {

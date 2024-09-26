@@ -1,136 +1,91 @@
 <template>
   <Search />
   <NavBar />
-  <div class="container light-style flex-grow-1 container-p-y">
-    <h4 class="font-weight-bold py-3 mb-4">Thông tin tài khoản</h4>
+ <div class="container light-style flex-grow-1 container-p-y">
+    <h4 class="font-weight-bold py-3 mb-4">Hồ Sơ Của Tôi</h4>
+    <p class="text-muted">Quản lý thông tin hồ sơ để bảo mật tài khoản</p>
+    
     <div v-if="message" :class="['alert', alertClass]" role="alert">
       {{ message }}
     </div>
+
     <div class="card overflow-hidden">
       <div class="row no-gutters row-bordered row-border-light">
         <div class="col-md-3 pt-0">
           <div class="list-group list-group-flush account-settings-links">
-            <a
-              class="list-group-item list-group-item-action"
-              href="#account-general"
-              @click="selectTab('general')"
-              >Thông tin tài khoản</a
-            >
-            <a
-              class="list-group-item list-group-item-action"
-              href="#shipping-address"
-              @click="selectTab('shipping-address')"
-              >Địa chỉ giao hàng</a
-            >
-            <a
-              class="list-group-item list-group-item-action"
-              href="#order"
-              @click="selectTab('order')"
-              >Đơn hàng</a
-            >
-            <button
-              type="button"
-              class="btn btn-danger mt-3 my-3"
-              @click="logout"
-            >
-              Đăng xuất
-            </button>
+            <a class="list-group-item list-group-item-action" :class="{ 'active': selectedTab === 'general' }" href="#account-general" @click="selectTab('general')">Thông tin tài khoản</a>
+            <a class="list-group-item list-group-item-action" :class="{ 'active': selectedTab === 'shipping-address' }" href="#shipping-address" @click="selectTab('shipping-address')">Địa chỉ giao hàng</a>
+            <a class="list-group-item list-group-item-action" :class="{ 'active': selectedTab === 'order' }" href="#order" @click="selectTab('order')">Đơn hàng</a>
+            <button type="button" class="btn btn-danger mt-3 my-3" @click="logout">Đăng xuất</button>
           </div>
         </div>
         <div class="col-md-9">
           <div class="tab-content">
-            <!-- Tab Thông tin tài khoản -->
-            <div
-              class="tab-pane fade"
-              :class="{ 'active show': selectedTab === 'general' }"
-              id="account-general"
-            >
-              <div class="card-body media align-items-center">
-                <img
-                  src="https://bootdey.com/img/Content/avatar/avatar1.png"
-                  alt="Avatar"
-                  class="d-block ui-w-80"
-                />
-                <div class="media-body ml-4">
-                  <label class="btn btn-outline-primary">
-                    Tải ảnh mới
-                    <input type="file" class="account-settings-fileinput" />
-                  </label>
-                  &nbsp;
-                  <button type="button" class="btn btn-default md-btn-flat">
-                    Đặt lại
-                  </button>
-                  <div class="text-light small mt-1">
-                    Cho phép JPG, GIF hoặc PNG. Kích thước tối đa 800K
+            <div class="tab-pane fade" :class="{ 'active show': selectedTab === 'general' }" id="account-general">
+              <div class="card-body">
+                <div class="d-flex align-items-start align-items-sm-center gap-4">
+                  <img :src="userById.AVT_URL || previewUrl || 'https://bootdey.com/img/Content/avatar/avatar1.png'" alt="Avatar" class="d-block rounded" height="100" width="100" id="uploadedAvatar"/>
+                  <div class="button-wrapper">
+                    <label for="upload" class="btn btn-primary me-2 mb-4" tabindex="0">
+                      <span class="d-none d-sm-block">Chọn Ảnh</span>
+                      <i class="bx bx-upload d-block d-sm-none"></i>
+                      <input type="file" id="upload" class="account-file-input" hidden accept="image/png, image/jpeg" @change="handleFileChange"/>
+                    </label>
+                    <p class="text-muted mb-0">Dụng lượng file tối đa 1 MB</p>
+                    <p class="text-muted mb-0">Định dạng:.JPEG, .PNG</p>
                   </div>
                 </div>
               </div>
-              <hr class="border-light m-0" />
+              <hr class="my-0" />
               <div class="card-body">
-                <div class="form-group">
-                  <label for="lastName" class="form-label">Họ và Tên</label>
-                  <input
-                    id="lastName"
-                    type="text"
-                    class="form-control"
-                    v-model="userById.LAST_NAME"
-                    readonly
-                  />
-                </div>
-                <!-- <div class="form-group">
-                  <label for="middleName" class="form-label">Tên đệm</label>
-                  <input
-                    id="middleName"
-                    type="text"
-                    class="form-control"
-                    v-model="userById.MIDDLE_NAME"
-                    readonly
-                  />
-                </div> -->
-                <!-- <div class="form-group">
-                  <label for="firstName" class="form-label">Tên</label>
-                  <input
-                    id="firstName"
-                    type="text"
-                    class="form-control"
-                    v-model="userById.FIRST_NAME"
-                    readonly
-                  />
-                </div> -->
-                <div class="form-group">
-                  <label for="phone" class="form-label">Số điện thoại</label>
-                  <input
-                    id="phone"
-                    type="text"
-                    class="form-control"
-                    v-model="userById.PHONE_NUMBER"
-                    readonly
-                  />
-                </div>
-                <div class="form-group">
-                  <label for="email" class="form-label">E-mail</label>
-                  <input
-                    id="email"
-                    type="email"
-                    class="form-control"
-                    v-model="userById.EMAIL_USER"
-                    readonly
-                  />
-                </div>
-                <!-- <div class="form-group">
-                  <label for="email" class="form-label">Giới tính</label>
-                  <input
-                    id="gender"
-                    type="text"
-                    class="form-control"
-                    v-model="userById.GENGER_USER"
-                    readonly
-                  />
-                </div> -->
+                <form id="formAccountSettings" @submit.prevent="saveUser">
+                  <div class="row">
+                    <div class="mb-3 col-md-6">
+                      <label for="email" class="form-label">Email</label>
+                      <input class="form-control" type="email" id="email" v-model="userById.EMAIL_USER" readonly />
+                      <!-- <a href="#" class="text-primary">Thay Đổi</a> -->
+                    </div>
+                    <div class="mb-3 col-md-6">
+                      <label for="lastName" class="form-label">Tên</label>
+                      <input class="form-control" type="text" id="lastName" v-model="userById.LAST_NAME" :readonly="!isEditing" />
+                    </div>
+                    <div class="mb-3 col-md-6">
+                      <label for="phone" class="form-label">Số điện thoại</label>
+                      <input type="text" class="form-control" id="phone" v-model="userById.PHONE_NUMBER" :readonly="!isEditing" />
+                      <!-- <a href="#" class="text-primary" v-if="!userById.PHONE_NUMBER">Thêm</a> -->
+                    </div>
+                   <div class="mb-3 col-md-6">
+                      <label for="birthday" class="form-label">Ngày sinh</label>
+                      <input class="form-control" type="date" id="birthday" v-model="userById.BIRTHDAY" :readonly="!isEditing" />
+                    </div>
+                    <div class="mb-3 col-md-6">
+                      <label for="gender" class="form-label">Giới tính</label>
+                      <div>
+                        <label class="form-check form-check-inline">
+                          <input class="form-check-input" type="radio" v-model="userById.GENGER_USER" value="Nam" :disabled="!isEditing">
+                          <span class="form-check-label">Nam</span>
+                        </label>
+                        <label class="form-check form-check-inline">
+                          <input class="form-check-input" type="radio" v-model="userById.GENGER_USER" value="Nữ" :disabled="!isEditing">
+                          <span class="form-check-label">Nữ</span>
+                        </label>
+                        <label class="form-check form-check-inline">
+                          <input class="form-check-input" type="radio" v-model="userById.GENGER_USER" value="Khác" :disabled="!isEditing">
+                          <span class="form-check-label">Khác</span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="mt-2">
+                    <button type="submit" class="btn btn-primary me-2" v-if="isEditing">Lưu</button>
+                    <button type="button" class="btn btn-outline-secondary" @click="toggleEdit">{{ isEditing ? 'Hủy' : 'Chỉnh sửa' }}</button>
+                  </div>
+                </form>
               </div>
             </div>
-            <!-- Tab Địa chỉ giao hàng -->
-            <div
+            
+            <!-- Địa chỉ giao hàng -->
+           <div
               class="tab-pane fade"
               :class="{ 'active show': selectedTab === 'shipping-address' }"
               id="shipping-address"
@@ -346,12 +301,9 @@
                 </div>
               </div>
             </div>
-            <!-- tab thông tin đơn hàng -->
-            <div
-              class="tab-pane fade"
-              :class="{ 'active show': selectedTab === 'order' }"
-              id="order"
-            >
+
+            <!-- Thông tin đơn hàng -->
+            <div class="tab-pane fade" :class="{ 'active show': selectedTab === 'order' }" id="order">
               <div class="card-body pb-2">
                 <h1 class="text-center">Danh sách đơn hàng mới nhất</h1>
                 <div class="container mt-5">
@@ -359,44 +311,23 @@
                     <table class="table table-bordered table-striped">
                       <thead class="thead-dark">
                         <tr>
-                          <th class="col text-center">STT</th>
-                          <th class="col text-center">Mã đơn hàng</th>
-                          <th class="col text-center">Ngày đặt</th>
-                          <th class="col text-center">Thành tiền</th>
-                          <th class="col text-center">Trạng thái thanh toán</th>
-                          <th class="col text-center">
-                            Phương thức thanh toán
-                          </th>
+                          <th class="text-center">STT</th>
+                          <th class="text-center">Mã đơn hàng</th>
+                          <th class="text-center">Ngày đặt</th>
+                          <th class="text-center">Thành tiền</th>
+                          <th class="text-center">Trạng thái thanh toán</th>
+                          <th class="text-center">Phương thức thanh toán</th>
                         </tr>
                       </thead>
                       <tbody>
-                        <tr
-                          v-for="(order, index) in filteredOrders"
-                          :key="order._id"
-                        >
+                        <tr v-for="(order, index) in filteredOrders" :key="order._id">
                           <td class="text-center">{{ index + 1 }}</td>
                           <td class="text-center">{{ order.ORDER_CODE }}</td>
-                          <td class="text-center">
-                            {{ formatDateTime(order.TIME_PAYMENT) }}
-                          </td>
-                          <td class="text-center">
-                            {{
-                              totalPriceOrder(order).toLocaleString("vi-VN", {
-                                style: "currency",
-                                currency: "VND",
-                              })
-                            }}
-                          </td>
-                          <td class="text-center">
-                            {{
-                              getLastOrderStatus(order.LIST_STATUS).STATUS_NAME
-                            }}
-                          </td>
-                          <td class="text-center">
-                            {{ order.PAYMENT_METHOD }}
-                          </td>
+                          <td class="text-center">{{ formatDateTime(order.TIME_PAYMENT) }}</td>
+                          <td class="text-center">{{ totalPriceOrder(order).toLocaleString("vi-VN", { style: "currency", currency: "VND" }) }}</td>
+                          <td class="text-center">{{ getLastOrderStatus(order.LIST_STATUS).STATUS_NAME }}</td>
+                          <td class="text-center">{{ order.PAYMENT_METHOD }}</td>
                         </tr>
-                        <!-- Các dòng dữ liệu khác có thể thêm vào đây -->
                       </tbody>
                     </table>
                   </div>
@@ -408,9 +339,12 @@
       </div>
     </div>
   </div>
+
+
   <AppFooter />
 </template>
 <script>
+import axios from 'axios';
 import VueCookies from "vue-cookies";
 import AddressService from "@/services/addresses.service";
 import userService from "@/services/user.service";
@@ -418,6 +352,7 @@ import NavBar from "@/components/User/layout/NavBar.vue";
 import AppFooter from "@/components/User/layout/AppFooter.vue";
 import orderService from "@/services/order.service";
 import Search from "@/components/User/Home/Search.vue";
+// import { uploadImage } from '@/services/imageService';
 import Swal from "sweetalert2";
 export default {
   name: "UserInformation",
@@ -448,23 +383,26 @@ export default {
         commune: "",
         desc: "",
       },
-      editedUser: {
-        lastName: "",
-        // middleName: "",
-        // firstName: "",
-        phone: "",
-        email: "",
-        // gender: "male",
-        addresses: [],
-      },
+      // editedUser: {
+      //   lastName: "",
+      //   // middleName: "",
+      //   // firstName: "",
+      //   phone: "",
+      //   email: "",
+      //   // gender: "male",
+      //   addresses: [],
+      // },
       selectedTab: "general",
       message: "",
       alertClass: "",
+      isEditing: false, // trạng thái cho chế độ chỉnh sửa
+      selectedFile: null, // Biến để lưu tệp được chọn
+      previewUrl: null, // Biến để lưu đường dẫn ảnh xem trước
     };
   },
   async created() {
     await this.fetchUserLogin();
-    console.log("lấy user login",this.user);
+    console.log("lấy user login", this.user);
     await this.fetchUserById();
     console.log("lấy user theo ID", this.userById);
     await this.fetchOrderUser();
@@ -482,6 +420,7 @@ export default {
         console.log(error);
       }
     },
+
     getLastOrderStatus(statusList) {
       // Lấy trạng thái đơn hàng cuối cùng từ danh sách trạng thái
       return statusList[statusList.length - 1];
@@ -503,6 +442,10 @@ export default {
         const response = await userService.getUserById(this.user.USER_ID);
         if (response && response.data) {
           this.userById = response.data;
+          if (this.userById.BIRTHDAY) {
+            const date = new Date(this.userById.BIRTHDAY);
+            this.userById.BIRTHDAY = date.toISOString().split('T')[0]; // Chỉ lấy phần ngày theo định dạng YYYY-MM-DD
+          }
         } else {
           console.log("Không có dữ liệu người dùng đăng nhập.");
         }
@@ -524,8 +467,86 @@ export default {
         console.error(error);
       }
     },
+    toggleEdit() {
+      this.isEditing = !this.isEditing; // Chuyển đổi chế độ chỉnh sửa
+    },
+    // handleFileChange(event) {
+    //   this.selectedFile = event.target.files[0]; // Lưu file đã chọn
+    //   this.previewUrl = URL.createObjectURL(this.selectedFile); // Cập nhật đường dẫn xem trước
+    // },
+    async handleFileChange(event) {
+    this.selectedFile = event.target.files[0]; // Lưu file đã chọn
+
+    // Cập nhật đường dẫn xem trước
+    if (this.selectedFile) {
+      this.previewUrl = URL.createObjectURL(this.selectedFile); // Xem trước ảnh đã chọn
+
+      // Gọi hàm lưu người dùng, hàm saveUser sẽ tự xử lý việc upload ảnh nếu có file
+      await this.saveUser(); // Lưu người dùng và upload ảnh
+    }
+  },
+    async uploadImage() {
+      try {
+        const formData = new FormData();
+        formData.append('image', this.selectedFile); // selectedFile là file ảnh đã chọn
+
+        // Gọi API upload ảnh
+        const response = await axios.post('http://localhost:8000/v1/upload/', formData);
+        return response.data.data.url; // URL ảnh từ Cloudinary
+
+      } catch (error) {
+        console.error('Lỗi khi tải ảnh lên:', error);
+        return null; // Trả về null nếu có lỗi
+      }
+    },
+
+    async saveUser() {
+      try {
+        let imageUrl = null;
+        // Nếu có tệp đã chọn, gọi uploadImage
+        if (this.selectedFile) {
+          imageUrl = await this.uploadImage();
+          if (!imageUrl) {
+            this.message = "Lỗi khi tải ảnh lên.";
+            this.alertClass = "alert-danger";
+            return; // Dừng lại nếu không tải ảnh thành công
+          }
+        }
+
+        const updatedUser = {
+          LAST_NAME: this.userById.LAST_NAME,
+          PHONE_NUMBER: this.userById.PHONE_NUMBER,
+          AVT_URL: imageUrl || this.userById.AVT_URL, // Gửi URL ảnh vào API updateUser nếu có
+          BIRTHDAY: this.userById.BIRTHDAY, // Thêm trường ngày sinh
+          GENGER_USER: this.userById.GENGER_USER, // Thêm trường giới tính
+
+        };
+
+       const response = await userService.updateUser(this.user.USER_ID, updatedUser);
+
+        if (response) {
+        // Cập nhật lại thông tin người dùng và URL ảnh trong `this.userById`
+          this.userById.AVT_URL = imageUrl || this.userById.AVT_URL;
+        this.isEditing = false; // Đóng chế độ chỉnh sửa sau khi lưu
+        this.message = "Cập nhật thông tin thành công.";
+        this.alertClass = "alert-success";
+      }
+        // // Gọi API cập nhật thông tin người dùng
+        // await userService.updateUser(this.user.USER_ID, updatedUser);
+        // this.isEditing = false; // Đóng chế độ chỉnh sửa sau khi lưu
+        // this.message = "Cập nhật thông tin thành công.";
+        // this.alertClass = "alert-success";
+
+      } catch (error) {
+        console.error("Lỗi khi cập nhật thông tin người dùng:", error);
+        this.message = "Có lỗi xảy ra khi cập nhật thông tin.";
+        this.alertClass = "alert-danger";
+      }
+    },
+  
     async createAddress() {
       try {
+        // eslint-disable-next-line no-unused-vars
         const addAddress = await AddressService.createAddress(this.newAddress);
         this.fetchAddresses();
       } catch (error) {
@@ -542,6 +563,7 @@ export default {
           denyButtonText: `Không`,
         });
         if (result.isConfirmed) {
+          // eslint-disable-next-line no-unused-vars
           const deleteAddres = await AddressService.deleteAddress(id);
           this.address = this.address.filter((item) => item._id !== id);
         }
@@ -562,7 +584,7 @@ export default {
         console.error("Lỗi khi gọi service lấy địa chỉ:", error);
       }
     },
-
+    
     async fetchAddresses() {
       try {
         const response = await AddressService.getAddress();
@@ -649,6 +671,7 @@ export default {
   mounted() {
     this.fetchAddresses();
   },
+  
 };
 </script>
 
