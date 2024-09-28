@@ -37,6 +37,7 @@ export default {
   components: {
     Slider,
     Nav,
+    // eslint-disable-next-line vue/no-unused-components
     Footer,
     ClothingComponent,
     FoodComponent,

@@ -519,6 +519,7 @@ export default {
           AVT_URL: imageUrl || this.userById.AVT_URL, // Gửi URL ảnh vào API updateUser nếu có
           BIRTHDAY: this.userById.BIRTHDAY, // Thêm trường ngày sinh
           GENGER_USER: this.userById.GENGER_USER, // Thêm trường giới tính
+          EMAIL_USER: this.userById.EMAIL_USER
 
         };
 
@@ -526,7 +527,7 @@ export default {
 
         if (response) {
         // Cập nhật lại thông tin người dùng và URL ảnh trong `this.userById`
-          this.userById.AVT_URL = imageUrl || this.userById.AVT_URL;
+        this.userById.AVT_URL = imageUrl || this.userById.AVT_URL;
         this.isEditing = false; // Đóng chế độ chỉnh sửa sau khi lưu
         this.message = "Cập nhật thông tin thành công.";
         this.alertClass = "alert-success";
@@ -614,19 +615,6 @@ export default {
       this.message = "";
       this.alertClass = "";
     },
-
-    resetEditedUser() {
-      this.editedUser = {
-        lastName: "",
-        // middleName: "",
-        // firstName: "",
-        phone: "",
-        email: "",
-        gender: "male",
-        addresses: [],
-      };
-    },
-
     async logout() {
       try {
         VueCookies.remove("access_token");

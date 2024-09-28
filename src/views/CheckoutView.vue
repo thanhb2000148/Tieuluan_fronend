@@ -2,174 +2,119 @@
   <NavBar />
   <Search />
   <SinglePageHeader />
-  <div class="container-fluid py-5">
-    <div class="container py-5">
-      <h1 class="mb-4">Thông tin giao hàng</h1>
-      <form action="#">
-        <div class="row g-5">
-          <div class="col-md-12 col-lg-6 col-xl-7">
-            <div class="row">
-              <div class="col-md-12">
-                <div class="row">
-                  <div class="col-md-2 text-center p-0">
-                    <div class="avatar my-5">
-                      <img src="../../public/img/avatar.jpg" alt="" />
-                      <div v-if="user && user.USER_ID">
-                        {{ user.USER_NAME }}
-                      </div>
-                      <div v-else>Loading...</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-12">
-                <div class="form-control bg-white my-3">
-                  <select
-                    @change="HandleSelect"
-                    name=""
-                    id="select-address"
-                    class="w-100 border-0 bg-white"
-                  >
-                    <option value="">Địa chỉ đã lưu</option>
-                    <option
-                      v-for="(item, index) in address"
-                      :key="index._id"
-                      :value="item._id"
-                    >
-                      {{
-                        item.DESC +
-                        " " +
-                        item.COMMUNE +
-                        " " +
-                        item.DISTRICT +
-                        " " +
-                        item.PROVINCE
-                      }}
-                    </option>
-                  </select>
-                </div>
-                <div class="col-md-12 col-lg-6 w-100">
-                  <div class="form-item">
-                    <label class="form-label my-3">Tỉnh/Thành Phố</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      v-model="selectedAddress.PROVINCE"
-                      readonly
-                    />
-                  </div>
-                </div>
-                <div class="col-md-12 col-lg-6 w-100">
-                  <div class="form-item">
-                    <label class="form-label my-3">Quận/Huyện</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      v-model="selectedAddress.DISTRICT"
-                      readonly
-                    />
-                  </div>
-                </div>
-                <div class="col-md-12 col-lg-6 w-100">
-                  <div class="form-item">
-                    <label class="form-label my-3">Xã/Phường</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      v-model="selectedAddress.COMMUNE"
-                      readonly
-                    />
-                  </div>
-                </div>
-                <div class="col-md-12 col-lg-6 w-100">
-                  <div class="form-item">
-                    <label class="form-label my-3">Địa chỉ chi tiết</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      v-model="selectedAddress.DESC"
-                      readonly
-                    />
-                  </div>
-                </div>
+  <div class="container py-5">
+    <h1 class="text-center mb-5">Thông tin giao hàng</h1>
+    <div class="row">
+      <div class="col-lg-8">
+        <div class="card shadow-sm mb-4">
+          <div class="card-body">
+            <div class="d-flex align-items-center mb-4">
+              <img :src="avatarUrl" alt="Avatar" class="avatar-img me-3" />
+              <div>
+                <h5 class="mb-0">{{ userById?.EMAIL_USER || 'Loading...' }}</h5>
+                <small class="text-muted">Thông tin người dùng</small>
               </div>
             </div>
-            <button
-              @click="addOrder()"
-              type="button"
-              class="btn border-secondary py-3 px-4 text-uppercase w-100 text-primary my-5"
-            >
-              Tiến hành thanh toán
-            </button>
-          </div>
-          <div class="col-md-12 col-lg-6 col-xl-5">
-            <div class="table-responsive">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th scope="col">Sản phẩm</th>
-                    <th scope="col">Tên</th>
-                    <th scope="col">Giá</th>
-                    <th scope="col">Số lượng</th>
-                    <th scope="col">Tổng cộng</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="(item, index) in cart" :key="index">
-                    <th scope="row">
-                      <div class="d-flex align-items-center mt-2">
-                        <img
-                          :src="
-                            item.ITEM.PRODUCT_DETAILS
-                              .LIST_FILE_ATTACHMENT_DEFAULT[0].FILE_URL
-                          "
-                          class="img-fluid rounded-circle"
-                          style="width: 90px; height: 90px"
-                          alt=""
-                        />
-                      </div>
-                    </th>
-                    <td class="py-5">
-                      {{ item.ITEM.PRODUCT_DETAILS.NAME_PRODUCT }}
-                    </td>
-                    <td class="py-5">{{ formatPrice(item.ITEM.PRICE) }}</td>
-                    <td class="py-5">x {{ item.ITEM.QUANTITY }}</td>
-                    <td class="py-5">
-                      {{
-                        formatPrice(
-                          totalPrice(item.ITEM.PRICE, item.ITEM.QUANTITY)
-                        )
-                      }}
-                    </td>
-                  </tr>
-
-                  <tr>
-                    <th scope="row"></th>
-                    <td class="py-5">
-                      <p class="mb-0 text-dark text-uppercase py-3">
-                        Tổng đơn hàng
-                      </p>
-                    </td>
-                    <td class="py-5"></td>
-                    <td class="py-5"></td>
-                    <td class="py-5">
-                      <div class="py-3 border-bottom border-top">
-                        <p class="mb-0 text-dark">
-                          {{ formatPrice(calculateTotalCart()) }}
-                        </p>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+            <div class="mb-4">
+              <label for="select-address" class="form-label">Địa chỉ đã lưu</label>
+              <select
+                @change="HandleSelect"
+                id="select-address"
+                class="form-select"
+              >
+                <option value="">Chọn địa chỉ</option>
+                <option
+                  v-for="(item, index) in address"
+                  :key="index._id"
+                  :value="item._id"
+                >
+                  {{ `${item.DESC}, ${item.COMMUNE}, ${item.DISTRICT}, ${item.PROVINCE}` }}
+                </option>
+              </select>
             </div>
-
-            <div
-              class="row g-4 text-center align-items-center justify-content-center pt-4"
-            ></div>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">Tỉnh/Thành Phố</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  v-model="selectedAddress.PROVINCE"
+                  readonly
+                />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Quận/Huyện</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  v-model="selectedAddress.DISTRICT"
+                  readonly
+                />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Xã/Phường</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  v-model="selectedAddress.COMMUNE"
+                  readonly
+                />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Địa chỉ chi tiết</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  v-model="selectedAddress.DESC"
+                  readonly
+                />
+              </div>
+            </div>
           </div>
         </div>
-      </form>
+        <button
+          @click="addOrder()"
+          type="button"
+          class="btn btn-primary btn-lg w-100"
+        >
+          Tiến hành thanh toán
+        </button>
+      </div>
+      <div class="col-lg-4">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title mb-4">Đơn hàng của bạn</h5>
+            <div class="order-summary">
+              <div v-for="(item, index) in cart" :key="index" class="d-flex align-items-center mb-3 position-relative">
+                <div class="product-image-wrapper" @mouseover="showProductDetails(index)" @mouseleave="hideProductDetails">
+                  <img
+                    :src="item.ITEM.PRODUCT_DETAILS.LIST_FILE_ATTACHMENT_DEFAULT[0].FILE_URL"
+                    class="img-fluid rounded"
+                    style="width: 60px; height: 60px; object-fit: cover;"
+                    alt=""
+                  />
+                  <div v-if="hoveredProduct === index" class="product-details-popup">
+                    <h6>{{ item.ITEM.PRODUCT_DETAILS.NAME_PRODUCT }}</h6>
+                    <p>Giá: {{ formatPrice(item.ITEM.PRICE) }}</p>
+                    <p>Số lượng: {{ item.ITEM.QUANTITY }}</p>
+                    <p>Tổng cộng: {{ formatPrice(totalPrice(item.ITEM.PRICE, item.ITEM.QUANTITY)) }}</p>
+                  </div>
+                </div>
+                <div class="ms-3 flex-grow-1">
+                  <h6 class="mb-0">{{ item.ITEM.PRODUCT_DETAILS.NAME_PRODUCT }}</h6>
+                  <small class="text-muted">{{ item.ITEM.QUANTITY }} x {{ formatPrice(item.ITEM.PRICE) }}</small>
+                </div>
+                <span class="text-primary">{{ formatPrice(totalPrice(item.ITEM.PRICE, item.ITEM.QUANTITY)) }}</span>
+              </div>
+            </div>
+            <hr>
+            <div class="d-flex justify-content-between mt-4">
+              <h5>Tổng cộng</h5>
+              <h5 class="text-primary">{{ formatPrice(calculateTotalCart()) }}</h5>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   <AppFooter />
@@ -187,6 +132,7 @@ import addressesService from "@/services/addresses.service";
 import formatUtils from "../utils/format";
 import Swal from "sweetalert2";
 import Search from "@/components/User/Home/Search.vue";
+
 export default {
   name: "CheckOutView",
   components: {
@@ -199,7 +145,9 @@ export default {
     return {
       cart: [],
       user: [],
+      userById: [],
       address: [],
+      avatarUrl: '',
       selectedAddress: {
         DESC: "",
         COMMUNE: "",
@@ -207,6 +155,7 @@ export default {
         PROVINCE: "",
       },
       addressSelected: false,
+      hoveredProduct: null,
     };
   },
   async created() {
@@ -214,13 +163,15 @@ export default {
     await this.getUser();
     await this.populateProducts();
     await this.getAddresses();
+    await this.fetchUserById();
+    console.log("lấy user theo ID", this.userById);
   },
   methods: {
     async getCart() {
       try {
         const response = await cartService.getCart();
         if (response && response.data) {
-          this.cart = response.data; // Đặt dữ liệu giỏ hàng vào biến cục bộ
+          this.cart = response.data;
         }
       } catch (error) {
         console.error(error);
@@ -228,10 +179,9 @@ export default {
     },
     async populateProducts() {
       for (let item of this.cart) {
-        // Duyệt qua từng mục trong giỏ hàng và lấy chi tiết sản phẩm sử dụng `getProduct`
         const productDetails = await this.getProduct(item.ITEM.ID_PRODUCT);
         if (productDetails) {
-          item.productDetails = productDetails; // Giả sử bạn muốn thêm productDetails cho mỗi mục
+          item.productDetails = productDetails;
         }
       }
     },
@@ -242,7 +192,6 @@ export default {
           return {
             name: response.data.NAME_PRODUCT,
             imageUrl: response.data.LIST_FILE_ATTACHMENT_DEFAULT[0].FILE_URL,
-            // Thêm các trường khác nếu cần
           };
         }
       } catch (error) {
@@ -252,10 +201,10 @@ export default {
     },
     formatPrice(price) {
       if (typeof price !== "undefined") {
-        const formatter = formatUtils.formatNumber(); // Initialize the formatter function
-        return formatter(price); // Format the price using the formatter function
+        const formatter = formatUtils.formatNumber();
+        return formatter(price);
       } else {
-        return "0"; // Hoặc giá trị mặc định khác tùy vào yêu cầu của bạn
+        return "0";
       }
     },
     totalPrice(price, quantity) {
@@ -297,6 +246,20 @@ export default {
         console.error(error);
       }
     },
+    async fetchUserById() {
+      try {
+        const response = await userService.getUserById(this.user.USER_ID);
+        if (response && response.data) {
+          this.userById = response.data;
+          console.log("AVT_URL:", this.user.AVT_URL);
+          this.avatarUrl = this.userById.AVT_URL ? this.userById.AVT_URL : '/img/avatar.jpg';
+        } else {
+          console.log("Không có dữ liệu người dùng đăng nhập.");
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
     async getAddresses() {
       try {
         const response = await addressesService.getAddress();
@@ -329,8 +292,71 @@ export default {
         return total + this.totalPrice(item.ITEM.PRICE, item.ITEM.QUANTITY);
       }, 0);
     },
+    // Hiễn thị phần xem nhanh sản phẩm
+    showProductDetails(index) {
+      this.hoveredProduct = index;
+    },
+    hideProductDetails() {
+      this.hoveredProduct = null;
+    },
   },
 };
 </script>
 
-<style></style>
+<style>
+.avatar-img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid #f0f0f0;
+}
+
+.card {
+  border: none;
+  border-radius: 15px;
+}
+
+.btn-primary {
+  border-radius: 30px;
+  padding: 12px 30px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.order-summary {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+/*css phần xem nhanh*/
+.product-image-wrapper {
+  position: relative;
+  cursor: pointer;
+}
+
+.product-details-popup {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  z-index: 1000;
+  min-width: 200px;
+}
+
+.product-details-popup h6 {
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.product-details-popup p {
+  margin-bottom: 3px;
+  font-size: 0.9em;
+}
+
+</style>
