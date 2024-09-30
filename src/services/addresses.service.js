@@ -38,6 +38,7 @@ class AddressService {
   async deleteAddress(id) {
     try {
       const response = await this.api.delete(`/${id}`);
+      console.log("API delete response:", response);
       return response.data;
     } catch (error) {
       console.error(`Error deleting address with id ${id}:`, error);

@@ -32,6 +32,39 @@
                 </option>
               </select>
             </div>
+            <div class="mb-4">
+              <button @click="showAddAddressModal" class="btn btn-outline-primary w-100">
+                <i class="bi bi-plus-circle me-2"></i>Thêm địa chỉ mới
+              </button>
+            </div>
+                <!-- Modal Thêm Địa Chỉ Mới -->
+                  <div v-if="showModal" class="modal-overlay">
+                    <div class="modal-content">
+                      <h2>Thêm Địa Chỉ Mới</h2>
+                      <form @submit.prevent="addNewAddress">
+                        <div class="form-group">
+                          <label for="newProvince">Tỉnh/Thành Phố</label>
+                          <input type="text" id="newProvince" v-model="newAddress.provide" required>
+                        </div>
+                        <div class="form-group">
+                          <label for="newDistrict">Quận/Huyện</label>
+                          <input type="text" id="newDistrict" v-model="newAddress.district" required>
+                        </div>
+                        <div class="form-group">
+                          <label for="newCommune">Xã/Phường</label>
+                          <input type="text" id="newCommune" v-model="newAddress.commune" required>
+                        </div>
+                        <div class="form-group">
+                          <label for="newDesc">Địa chỉ chi tiết</label>
+                          <input type="text" id="newDesc" v-model="newAddress.desc" required>
+                        </div>
+                        <div class="button-group">
+                          <button type="submit" class="btn-primary">Lưu địa chỉ</button>
+                          <button type="button" class="btn-secondary" @click="closeModal">Hủy</button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
             <div class="row g-3">
               <div class="col-md-6">
                 <label class="form-label">Tỉnh/Thành Phố</label>
@@ -97,6 +130,16 @@
                     <h6>{{ item.ITEM.PRODUCT_DETAILS.NAME_PRODUCT }}</h6>
                     <p>Giá: {{ formatPrice(item.ITEM.PRICE) }}</p>
                     <p>Số lượng: {{ item.ITEM.QUANTITY }}</p>
+                    <!-- Hiển thị thuộc tính phân loại -->
+                  <div v-if="item.ITEM.LIST_MATCH_KEY && item.ITEM.LIST_MATCH_KEY.length" class="product-attributes">
+                    <h6>Phân loại:</h6>
+                    <ul>
+                      <li v-for="(keyValue, keyIndex) in item.ITEM.LIST_MATCH_KEY" :key="keyIndex">
+                      {{ keyValue.KEY }}: {{ keyValue.VALUE }}
+                      </li>
+                    </ul>
+                  <div class="divider"></div>
+                  </div>
                     <p>Tổng cộng: {{ formatPrice(totalPrice(item.ITEM.PRICE, item.ITEM.QUANTITY)) }}</p>
                   </div>
                 </div>
@@ -154,8 +197,15 @@ export default {
         DISTRICT: "",
         PROVINCE: "",
       },
+      newAddress: {
+        provide: "",
+        district: "",
+        commune: "",
+        desc: "",
+      },
       addressSelected: false,
       hoveredProduct: null,
+      showModal: false,
     };
   },
   async created() {
@@ -167,6 +217,48 @@ export default {
     console.log("lấy user theo ID", this.userById);
   },
   methods: {
+    showAddAddressModal() {
+      this.showModal = true;
+    },
+    closeModal() {
+      this.showModal = false;
+      this.newAddress = { provide: "", district: "", commune: "", desc: "" };
+    },
+    async addNewAddress() {
+      try {
+        const response = await addressesService.createAddress(this.newAddress);
+        if (response && response.data) {
+          this.address.push(response.data);
+          this.closeModal();
+          this.fetchAddresses();
+          Swal.fire({
+            icon: "success",
+            title: "Thêm địa chỉ thành công",
+            text: "Địa chỉ mới đã được thêm vào danh sách.",
+          });
+        }
+     } catch (error) {
+      console.error("Error adding new address:", error);
+        Swal.fire({
+          icon: "error",
+          title: "Có lỗi xảy ra",
+          text: "Không thể thêm địa chỉ mới.",
+        });
+     }
+    },
+    async fetchAddresses() {
+      try {
+        const response = await addressesService.getAddress();
+        if (response && response.data) {
+          this.address = response.data;
+        }
+      } catch (error) {
+        console.error("Error fetching addresses:", error);
+        this.message = "Có lỗi xảy ra khi tải danh sách địa chỉ.";
+        this.alertClass = "alert-danger";
+      }
+    },
+
     async getCart() {
       try {
         const response = await cartService.getCart();
@@ -358,5 +450,89 @@ export default {
   margin-bottom: 3px;
   font-size: 0.9em;
 }
+.divider {
+  height: 1px; /* Độ cao của đường kẻ */
+  background-color: #ccc; /* Màu sắc của đường kẻ */
+  margin: 20px 0; /* Khoảng cách trên và dưới đường kẻ */
+  width: 100%; /* Độ rộng của đường kẻ */
+}
+.product-attributes {
+  margin: 0; /* Loại bỏ khoảng cách bên ngoài */
+  padding: 0; /* Loại bỏ khoảng cách bên trong */
+}
 
+.product-attributes ul {
+  list-style-type: none; /* Loại bỏ dấu chấm đầu dòng mặc định */
+  padding-left: 0; /* Loại bỏ thụt lùi cho danh sách */
+}
+
+.product-attributes li {
+  margin: 0; /* Loại bỏ khoảng cách trên và dưới cho từng mục */
+  padding: 0; /* Loại bỏ khoảng cách bên trong cho từng mục */
+}
+
+
+
+
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.button-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.btn-primary, .btn-secondary {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+}
 </style>

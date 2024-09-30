@@ -43,7 +43,6 @@
                     <div class="mb-3 col-md-6">
                       <label for="email" class="form-label">Email</label>
                       <input class="form-control" type="email" id="email" v-model="userById.EMAIL_USER" readonly />
-                      <!-- <a href="#" class="text-primary">Thay Đổi</a> -->
                     </div>
                     <div class="mb-3 col-md-6">
                       <label for="lastName" class="form-label">Tên</label>
@@ -52,7 +51,6 @@
                     <div class="mb-3 col-md-6">
                       <label for="phone" class="form-label">Số điện thoại</label>
                       <input type="text" class="form-control" id="phone" v-model="userById.PHONE_NUMBER" :readonly="!isEditing" />
-                      <!-- <a href="#" class="text-primary" v-if="!userById.PHONE_NUMBER">Thêm</a> -->
                     </div>
                    <div class="mb-3 col-md-6">
                       <label for="birthday" class="form-label">Ngày sinh</label>
@@ -107,6 +105,7 @@
                   </div>
                 </div>
               </div>
+
               <!-- Modal -->
               <div
                 class="modal fade"
@@ -383,15 +382,6 @@ export default {
         commune: "",
         desc: "",
       },
-      // editedUser: {
-      //   lastName: "",
-      //   // middleName: "",
-      //   // firstName: "",
-      //   phone: "",
-      //   email: "",
-      //   // gender: "male",
-      //   addresses: [],
-      // },
       selectedTab: "general",
       message: "",
       alertClass: "",
@@ -470,10 +460,6 @@ export default {
     toggleEdit() {
       this.isEditing = !this.isEditing; // Chuyển đổi chế độ chỉnh sửa
     },
-    // handleFileChange(event) {
-    //   this.selectedFile = event.target.files[0]; // Lưu file đã chọn
-    //   this.previewUrl = URL.createObjectURL(this.selectedFile); // Cập nhật đường dẫn xem trước
-    // },
     async handleFileChange(event) {
     this.selectedFile = event.target.files[0]; // Lưu file đã chọn
 
@@ -547,31 +533,87 @@ export default {
   
     async createAddress() {
       try {
-        // eslint-disable-next-line no-unused-vars
+        // Gọi API để tạo địa chỉ mới
         const addAddress = await AddressService.createAddress(this.newAddress);
+        
+        // Hiển thị thông báo thành công khi tạo địa chỉ mới
+        await Swal.fire({
+          icon: "success",
+          title: "Thêm địa chỉ thành công",
+          text: addAddress.message,
+        });
+
+        // Tải lại danh sách địa chỉ
         this.fetchAddresses();
       } catch (error) {
-        console.error(error);
+        console.error("Lỗi khi thêm địa chỉ:", error);
+        await Swal.fire({
+          icon: "error",
+          title: "Lỗi",
+          text: "Có lỗi xảy ra khi thêm địa chỉ.",
+        });
       }
     },
-    async deleteAddress(id) {
+
+      async deleteAddress(id) {
       try {
         const result = await Swal.fire({
           title: "Bạn có chắc chắn xóa địa chỉ này không?",
           showDenyButton: false,
           showCancelButton: true,
           confirmButtonText: "Có",
-          denyButtonText: `Không`,
+          denyButtonText: "Không",
         });
+
         if (result.isConfirmed) {
-          // eslint-disable-next-line no-unused-vars
-          const deleteAddres = await AddressService.deleteAddress(id);
+          // Gọi API từ AddressService để xóa địa chỉ
+          const deletedAddress = await AddressService.deleteAddress(id);
+          
+          // Hiển thị thông báo thành công khi xóa địa chỉ
+          await Swal.fire({
+            icon: "success",
+            title: "Xóa địa chỉ thành công",
+            text: deletedAddress.message, // Sử dụng thông báo trả về
+          });
+
+          // Cập nhật danh sách địa chỉ sau khi xóa thành công
           this.address = this.address.filter((item) => item._id !== id);
         }
       } catch (error) {
-        console.error(error);
+        console.error("Lỗi khi xóa địa chỉ:", error);
+        await Swal.fire({
+          icon: "error",
+          title: "Lỗi",
+          text: "Có lỗi xảy ra khi xóa địa chỉ.",
+        });
       }
     },
+
+
+    async saveUpdateAddress(id) {
+      try {
+        const response = await AddressService.updateAddress(id, this.updateAddress);
+        if (response) {
+          this.showModal = false;
+          this.fetchAddresses();
+          
+          // Hiển thị thông báo thành công khi cập nhật địa chỉ
+          await Swal.fire({
+            icon: "success",
+            title: "Cập nhật địa chỉ thành công",
+            text: "Địa chỉ đã được cập nhật thành công.",
+          });
+        }
+      } catch (error) {
+        console.error("Lỗi khi cập nhật địa chỉ:", error);
+        await Swal.fire({
+          icon: "error",
+          title: "Lỗi",
+          text: "Có lỗi xảy ra khi cập nhật địa chỉ.",
+        });
+      }
+    },
+
     async fetchAddressById(id) {
       try {
         const getAddressResponse = await AddressService.getAddressById(id);
@@ -626,18 +668,6 @@ export default {
         this.alertClass = "alert-danger";
       }
     },
-
-    async saveUpdateAddress(id) {
-      const response = await AddressService.updateAddress(
-        id,
-        this.updateAddress
-      );
-      if (response) {
-        this.showModal = false;
-        this.fetchAddresses();
-      }
-    },
-
     selectTab(tab) {
       this.selectedTab = tab;
     },
