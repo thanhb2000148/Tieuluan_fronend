@@ -67,10 +67,9 @@ class ReviewService {
   }
 
   // Xóa đánh giá (nếu cần)
-  async deleteReview(reviewId, productId) {
+  async deleteReview(reviewId) {
     try {
       const response = await this.api.delete(`/${reviewId}`);
-      await this.updateAverageRating(productId); // Cập nhật tổng số sao khi có đánh giá bị xóa
       return response.data;
     } catch (error) {
       console.error("Error deleting review:", error);
@@ -88,6 +87,29 @@ class ReviewService {
       throw error; // Ném lỗi để xử lý ở nơi khác
     }
   }
+  // Lấy đánh giá của người dùng theo userId
+  async getReviewsByUser(userId) {
+    try {
+        const response = await this.api.get(`/user/${userId}`); // Gọi API với URL để lấy đánh giá theo userId
+        return response.data; // Giả định rằng response.data chứa dữ liệu bạn cần
+    } catch (error) {
+        console.error("Error getting reviews by user:", error);
+        throw error; // Ném lỗi để xử lý ở nơi khác
+    }
+  }
+  // Lấy đánh giá theo productId
+async getReviewsByProductId(productId) {
+  try {
+    const response = await this.api.get(`/${productId}/user`); // Gọi API với URL đúng
+    return response.data; // Giả định rằng response.data chứa dữ liệu bạn cần
+  } catch (error) {
+    console.error("Error getting reviews by product ID:", error);
+    throw error; // Ném lỗi để xử lý ở nơi khác
+  }
+}
+
+
+
 
 }
 
