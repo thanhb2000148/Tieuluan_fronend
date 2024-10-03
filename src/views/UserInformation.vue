@@ -23,19 +23,29 @@
           <div class="tab-content">
             <div class="tab-pane fade" :class="{ 'active show': selectedTab === 'general' }" id="account-general">
               <div class="card-body">
-                <div class="d-flex align-items-start align-items-sm-center gap-4">
-                  <img :src="userById.AVT_URL || previewUrl || 'https://bootdey.com/img/Content/avatar/avatar1.png'" alt="Avatar" class="d-block rounded" height="100" width="100" id="uploadedAvatar"/>
-                  <div class="button-wrapper">
-                    <label for="upload" class="btn btn-primary me-2 mb-4" tabindex="0">
-                      <span class="d-none d-sm-block">Chọn Ảnh</span>
-                      <i class="bx bx-upload d-block d-sm-none"></i>
-                      <input type="file" id="upload" class="account-file-input" hidden accept="image/png, image/jpeg" @change="handleFileChange"/>
-                    </label>
-                    <p class="text-muted mb-0">Dụng lượng file tối đa 1 MB</p>
-                    <p class="text-muted mb-0">Định dạng:.JPEG, .PNG</p>
-                  </div>
-                </div>
-              </div>
+  <div class="d-flex align-items-start align-items-sm-center gap-4">
+    <img :src="userById.AVT_URL || previewUrl || 'https://bootdey.com/img/Content/avatar/avatar1.png'" alt="Avatar" class="d-block rounded" height="100" width="100" id="uploadedAvatar"/>
+    <div class="button-wrapper">
+      <label for="upload" class="btn btn-primary me-2 mb-4" tabindex="0">
+        <span class="d-none d-sm-block">Chọn Ảnh</span>
+        <i class="bx bx-upload d-block d-sm-none"></i>
+        <input type="file" id="upload" class="account-file-input" hidden accept="image/png, image/jpeg" @change="handleFileChange"/>
+      </label>
+      <!-- Trạng thái upload ảnh -->
+      <div class="upload-status d-flex align-items-center">
+        <div v-if="isUploading" class="text-muted mb-0">
+          <p class="mb-0">Đang tải ảnh lên...</p>
+          <div class="spinner-border spinner-border-sm ms-2" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      </div>
+      <p class="text-muted mb-0">Dụng lượng file tối đa 1 MB</p>
+      <p class="text-muted mb-0">Định dạng: .JPEG, .PNG</p>
+    </div>
+  </div>
+</div>
+
               <hr class="my-0" />
               <div class="card-body">
                 <form id="formAccountSettings" @submit.prevent="saveUser">
@@ -388,6 +398,7 @@ export default {
       isEditing: false, // trạng thái cho chế độ chỉnh sửa
       selectedFile: null, // Biến để lưu tệp được chọn
       previewUrl: null, // Biến để lưu đường dẫn ảnh xem trước
+      isUploading: false,
     };
   },
   async created() {
@@ -473,8 +484,10 @@ export default {
   },
     async uploadImage() {
       try {
+         this.isUploading = true; 
         const formData = new FormData();
         formData.append('image', this.selectedFile); // selectedFile là file ảnh đã chọn
+        
 
         // Gọi API upload ảnh
         const response = await axios.post('http://localhost:8000/v1/upload/', formData);
@@ -482,6 +495,7 @@ export default {
 
       } catch (error) {
         console.error('Lỗi khi tải ảnh lên:', error);
+        
         return null; // Trả về null nếu có lỗi
       }
     },
@@ -492,6 +506,7 @@ export default {
         // Nếu có tệp đã chọn, gọi uploadImage
         if (this.selectedFile) {
           imageUrl = await this.uploadImage();
+           this.isUploading = false;
           if (!imageUrl) {
             this.message = "Lỗi khi tải ảnh lên.";
             this.alertClass = "alert-danger";
@@ -807,4 +822,15 @@ html:not(.dark-style) .account-settings-links .list-group-item.active {
 .icon-plus i {
   font-size: 30px;
 }
+
+ /*trang thái loading up anh*/
+.upload-status {
+  height: 5px; /* Giữ cho chiều cao cố định để tránh nhảy lên */
+}
+
+.spinner-border {
+  width: 1rem;
+  height: 1rem;
+}
+
 </style>
