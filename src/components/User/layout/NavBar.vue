@@ -46,9 +46,25 @@
               >{{ cart.length }}</span
             >
           </router-link>
-          <router-link to="/userinformation" class="my-auto">
+          <!-- <router-link to="/userinformation" class="my-auto">
             <i class="fas fa-user fa-2x"></i>
-          </router-link>
+          </router-link> -->
+           <div class="dropdown my-auto">
+            <router-link to="/userinformation" class="d-flex align-items-center dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fas fa-user fa-2x"></i>
+            </router-link>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li>
+                <router-link to="/userinformation" class="dropdown-item">Thông tin người dùng</router-link>
+              </li>
+              <li v-if="isAdmin">
+                <router-link to="/admin" class="dropdown-item">Quản trị viên</router-link>
+              </li>
+              <li>
+                <button class="dropdown-item" @click="logout">Đăng xuất</button>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </nav>
@@ -57,17 +73,46 @@
 
 <script>
 import cartService from "@/services/cart.service";
+import VueCookies from "vue-cookies";
+import userService from "@/services/user.service";
+
+
 export default {
   name: "NavBar",
   data() {
     return {
       cart: [],
+       user: [],
+      isAdmin: false, // Thêm biến để lưu trạng thái admin
     };
   },
   async created() {
+     await this.fetchUserLogin();
+    console.log("lấy user login", this.user);
     await this.getCart();
   },
   methods: {
+        async fetchUserLogin() {
+      try {
+        const response = await userService.getUserLogin();
+        if (response && response.data) {
+          this.user = response.data;
+          console.log("User data:", this.user); // Thêm dòng này để kiểm tra
+          
+          // Kiểm tra quyền admin
+          if (this.user.OBJECT_ROLE && this.user.OBJECT_ROLE.IS_ADMIN === true) {
+            this.isAdmin = true;
+          } else {
+            this.isAdmin = false;
+          }
+        } else {
+          console.log("Không có dữ liệu người dùng đăng nhập.");
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
+
     async getCart() {
       try {
         const response = await cartService.getCart();
@@ -76,6 +121,18 @@ export default {
         }
       } catch (error) {
         console.error(error);
+      }
+    },
+    
+     async logout() {
+      try {
+        VueCookies.remove("access_token");
+        VueCookies.remove("refresh_token");
+        this.$router.push("/login");
+      } catch (error) {
+        console.error("Error logging out:", error);
+        this.message = "Có lỗi xảy ra khi đăng xuất.";
+        this.alertClass = "alert-danger";
       }
     },
   },

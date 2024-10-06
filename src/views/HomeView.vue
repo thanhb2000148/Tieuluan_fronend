@@ -85,8 +85,10 @@
 
 <script>
 import NavBar from "@/components/User/layout/NavBar.vue";
+
 import AppFooter from "@/components/User/layout/AppFooter.vue";
 import Featurs from "@/components/User/Home/Featurs.vue";
+import userService from "@/services/user.service";
 import Hero from "@/components/User/Home/Hero.vue";
 import ProductCard from "@/components/User/Home/ProductCard.vue";
 import categoryService from "@/services/category.service";
@@ -107,6 +109,7 @@ export default {
     return {
       nameCategory: [],
       productCategory: [],
+      user: [],
       currentTab: "all",
       page: 1,
       limit: 6,
@@ -120,6 +123,8 @@ export default {
   },
   async created() {
     try {
+      await this.fetchUserLogin();
+    console.log("lấy user login", this.user);
       await this.getCategory();
       console.log("mãng category", this.nameCategory);
       await this.getProductCategory();
@@ -131,6 +136,19 @@ export default {
   methods: {
     setCurrentTab(tab) {
       this.currentTab = tab;
+    },
+    async fetchUserLogin() {
+      try {
+        const response = await userService.getUserLogin();
+        if (response && response.data) {
+          this.user = response.data;
+          console.log("User data:", this.user); // Thêm dòng này để kiểm tra
+        } else {
+          console.log("Không có dữ liệu người dùng đăng nhập.");
+        }
+      } catch (error) {
+        console.error(error);
+      }
     },
     async getCategory() {
       try {
