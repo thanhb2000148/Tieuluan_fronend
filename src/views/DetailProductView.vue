@@ -340,9 +340,7 @@
               </form>
           </div>
       </div>
-
-
-
+    <!--From sản Phẩm liên quan-->
       <h1 class="fw-bold mb-0">Sản phẩm liên quan</h1>
       <div class="row g-4">
         <div
@@ -378,7 +376,6 @@
           </router-link>
         </div>
       </div>
-     
     </div>
   </div>
   <AppFooter />

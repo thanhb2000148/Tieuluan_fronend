@@ -61,20 +61,6 @@
               <button type="submit" class="btn-custom-green">Đăng nhập</button>
             </div>
           </form>
-
-          <!-- <div class="sigup-or"><span>Hoặc</span></div>
-
-          <div class="text-center social">
-            <button class="signup-google" @click="initiateGoogleLogin">
-              <i class="fab fa-google signup-google-icon"></i>
-              <span class="signup-google-text">Google</span>
-            </button>
-            <button class="signup-facebook">
-              <i class="fab fa-facebook signup-facebook-icon"></i>
-              <span class="signup-facebook-text">Facebook</span>
-            </button>
-          </div> -->
-
           <div v-if="errorMessage" class="alert alert-danger" role="alert">
             {{ errorMessage }}
           </div>
@@ -152,37 +138,7 @@ export default {
         this.errorMessage = "Tên người dùng hoặc mật khẩu không đúng.";
       }
     },
-    // async initiateGoogleLogin() {
-    //   try {
-    //     const response = await UserService.getGoogleAuthUrl();
-    //     window.location.href = response.authUrl; // Redirect to Google Auth URL
-    //   } catch (error) {
-    //     console.error("Lỗi khi lấy URL đăng nhập Google:", error);
-    //     this.errorMessage = "Không thể lấy URL đăng nhập Google.";
-    //   }
-    // },
-    // async handleGoogleLogin() {
-    //   const urlParams = new URLSearchParams(window.location.search);
-    //   const token = urlParams.get("token");
-
-    //   if (token) {
-    //     try {
-    //       const response = await UserService.googleLogin(token); // Nhận token từ BE
-    //       localStorage.setItem("access_token", response.data.accessToken);
-    //       // localStorage.setItem("refresh_token", response.data.refreshToken);
-    //       this.$router.push("/"); // Chuyển hướng đến trang chính
-    //     } catch (error) {
-    //       console.error("Lỗi khi xử lý đăng nhập Google:", error);
-    //       this.errorMessage = "Đăng nhập bằng Google thất bại.";
-    //     }
-    //   } else {
-    //     this.errorMessage = "Không có mã xác thực từ Google.";
-    //   }
-    // },
-    // Hàm để nhận và xử lý token sau khi Google trả 
-    // googleLogin() {
-    //   window.location.href = "http://localhost:8000/v1/user/auth/google"; // phía backend Google OAuth
-    // },
+    
     redirectToRegister() {
       this.$router.push("/register");
     },

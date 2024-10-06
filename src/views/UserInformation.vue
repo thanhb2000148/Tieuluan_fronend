@@ -23,28 +23,28 @@
           <div class="tab-content">
             <div class="tab-pane fade" :class="{ 'active show': selectedTab === 'general' }" id="account-general">
               <div class="card-body">
-  <div class="d-flex align-items-start align-items-sm-center gap-4">
-    <img :src="userById.AVT_URL || previewUrl || 'https://bootdey.com/img/Content/avatar/avatar1.png'" alt="Avatar" class="d-block rounded" height="100" width="100" id="uploadedAvatar"/>
-    <div class="button-wrapper">
-      <label for="upload" class="btn btn-primary me-2 mb-4" tabindex="0">
-        <span class="d-none d-sm-block">Chọn Ảnh</span>
-        <i class="bx bx-upload d-block d-sm-none"></i>
-        <input type="file" id="upload" class="account-file-input" hidden accept="image/png, image/jpeg" @change="handleFileChange"/>
-      </label>
-      <!-- Trạng thái upload ảnh -->
-      <div class="upload-status d-flex align-items-center">
-        <div v-if="isUploading" class="text-muted mb-0">
-          <p class="mb-0">Đang tải ảnh lên...</p>
-          <div class="spinner-border spinner-border-sm ms-2" role="status">
-            <span class="visually-hidden">Loading...</span>
-          </div>
-        </div>
-      </div>
-      <p class="text-muted mb-0">Dụng lượng file tối đa 1 MB</p>
-      <p class="text-muted mb-0">Định dạng: .JPEG, .PNG</p>
-    </div>
-  </div>
-</div>
+              <div class="d-flex align-items-start align-items-sm-center gap-4">
+                <img :src="userById.AVT_URL || previewUrl || 'https://bootdey.com/img/Content/avatar/avatar1.png'" alt="Avatar" class="d-block rounded" height="100" width="100" id="uploadedAvatar"/>
+                <div class="button-wrapper">
+                  <label for="upload" class="btn btn-primary me-2 mb-4" tabindex="0">
+                    <span class="d-none d-sm-block">Chọn Ảnh</span>
+                    <i class="bx bx-upload d-block d-sm-none"></i>
+                    <input type="file" id="upload" class="account-file-input" hidden accept="image/png, image/jpeg" @change="handleFileChange"/>
+                  </label>
+                  <!-- Trạng thái upload ảnh -->
+                  <div class="upload-status d-flex align-items-center">
+                    <div v-if="isUploading" class="text-muted mb-0">
+                      <p class="mb-0">Đang tải ảnh lên...</p>
+                      <div class="spinner-border spinner-border-sm ms-2" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                      </div>
+                    </div>
+                  </div>
+                  <p class="text-muted mb-0">Dụng lượng file tối đa 1 MB</p>
+                  <p class="text-muted mb-0">Định dạng: .JPEG, .PNG</p>
+                </div>
+              </div>
+            </div>
 
               <hr class="my-0" />
               <div class="card-body">
@@ -472,15 +472,15 @@ export default {
       this.isEditing = !this.isEditing; // Chuyển đổi chế độ chỉnh sửa
     },
     async handleFileChange(event) {
-    this.selectedFile = event.target.files[0]; // Lưu file đã chọn
+      this.selectedFile = event.target.files[0]; // Lưu file đã chọn
 
-    // Cập nhật đường dẫn xem trước
-    if (this.selectedFile) {
-      this.previewUrl = URL.createObjectURL(this.selectedFile); // Xem trước ảnh đã chọn
+      // Cập nhật đường dẫn xem trước
+      if (this.selectedFile) {
+        this.previewUrl = URL.createObjectURL(this.selectedFile); // Xem trước ảnh đã chọn
 
-      // Gọi hàm lưu người dùng, hàm saveUser sẽ tự xử lý việc upload ảnh nếu có file
-      await this.saveUser(); // Lưu người dùng và upload ảnh
-    }
+        // Gọi hàm lưu người dùng, hàm saveUser sẽ tự xử lý việc upload ảnh nếu có file
+        await this.saveUser(); // Lưu người dùng và upload ảnh
+      }
   },
     async uploadImage() {
       try {
