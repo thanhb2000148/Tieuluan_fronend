@@ -83,7 +83,7 @@
 <script>
 import Slider from "../components/admin/Slider.vue";
 import Nav from "../components/admin/Nav.vue";
-import Footer from "../components/admin/Footer.vue";
+// import Footer from "../components/admin/Footer.vue";
 import productService from "@/services/product.service";
 import Pagination from "v-pagination-3";
 export default {
@@ -91,7 +91,7 @@ export default {
   components: {
     Slider,
     Nav,
-    Footer,
+    // Footer,
     Pagination,
   },
   data() {

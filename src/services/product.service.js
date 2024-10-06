@@ -30,7 +30,7 @@ class ProductService {
     }
   }
   async create(product) {
-    return (await this.api.post("/", product)).data;
+    return (await this.api.post("/fashion", product)).data;
   }
   async getProductByIdCategory(id) {
     try {
