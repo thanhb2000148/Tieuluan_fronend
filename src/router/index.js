@@ -149,6 +149,12 @@ const routes = [
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/DashBoardCategory.vue"),
   },
+  {
+    path: "/admin/addprices",
+    name: "DashBoardpries",
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/DashBoardpries.vue"),
+  },
 ];
 
 const router = createRouter({
