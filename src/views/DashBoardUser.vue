@@ -107,14 +107,14 @@
 <script>
 import Slider from "../components/admin/Slider.vue";
 import Nav from "../components/admin/Nav.vue";
-import Footer from "../components/admin/Footer.vue";
+// import Footer from "../components/admin/Footer.vue";
 import userService from "@/services/user.service";
 export default {
   name: "DashboardUsers",
   components: {
     Slider,
     Nav,
-    Footer,
+    // Footer,
   },
   data() {
     return {
