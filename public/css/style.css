@@ -454,7 +454,7 @@
 
 
 /*** Single Page Start ***/
-.pagination {
+/* .pagination {
     display: inline-block;
 }
   
@@ -477,7 +477,56 @@
 
 .nav.nav-tabs .nav-link.active {
     border-bottom: 2px solid var(--bs-secondary) !important;
-}
+} */
+ .pagination {
+     display: flex !important;
+     /* Hiển thị dưới dạng flex để nằm ngang */
+     justify-content: center !important;
+     /* Canh giữa các mục phân trang */
+     margin-top: 20px;
+     padding: 0;
+     /* Đặt padding về 0 */
+     list-style: none;
+     /* Loại bỏ kiểu danh sách */
+ }
+
+ .pagination a {
+     color: var(--bs-dark);
+     /* Màu chữ */
+     padding: 10px 16px;
+     /* Padding cho các nút */
+     text-decoration: none;
+     /* Bỏ gạch chân */
+     border: 1px solid var(--bs-secondary);
+     /* Biên cho các nút */
+     margin: 0 4px;
+     /* Khoảng cách giữa các nút */
+     transition: background-color 0.5s, transform 0.2s;
+     /* Hiệu ứng chuyển đổi */
+ }
+
+ .pagination a.active {
+     background-color: var(--bs-primary);
+     /* Màu nền cho trang hiện tại */
+     color: var(--bs-light);
+     /* Màu chữ cho trang hiện tại */
+ }
+
+ .pagination a:hover:not(.active) {
+     background-color: var(--bs-primary);
+     /* Màu nền khi hover */
+     transform: scale(1.05);
+     /* Tăng kích thước khi hover */
+ }
+
+ .pagination a:disabled {
+     background-color: #c0c0c0;
+     /* Màu nền cho nút vô hiệu hóa */
+     color: #fff;
+     /* Màu chữ cho nút vô hiệu hóa */
+     pointer-events: none;
+     /* Ngăn không cho click */
+ }
 /*** Single Page End ***/
 
 
