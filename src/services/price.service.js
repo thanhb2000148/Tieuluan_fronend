@@ -3,12 +3,27 @@ class PriceService {
   constructor(baseUrl = "/api/v1/price") {
     this.api = createApiClient(baseUrl);
   }
+
   async getAllPrices() {
     try {
       const response = await this.api.get(`/all`); // Assuming the API endpoint to get all prices is just the base URL
       return response.data; // Ensure it returns the data you need
     } catch (error) {
       console.error("Error fetching all prices:", error);
+    }
+  }
+  // API thêm giá cho sản phẩm
+  async addPrice(id_product, price_number, keys = [], values = []) {
+    try {
+      const payload = {
+        price_number: price_number,
+        key: keys,
+        value: values,
+      };
+      const response = await this.api.post(`/${id_product}`, payload);
+      return response.data;
+    } catch (error) {
+      console.error("Lỗi khi thêm giá:", error);
     }
   }
 

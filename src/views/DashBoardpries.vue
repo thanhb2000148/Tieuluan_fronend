@@ -7,6 +7,35 @@
         <div class="container-fluid">
           <h1 class="mb-4 text-center">Sản phẩm trong cửa hàng</h1>
 
+          <!-- Modal cho thêm giá -->
+  <!-- Modal cho thêm giá -->
+          <div v-if="showAddPriceForm" class="modal-overlay">
+            <div class="modal-content">
+              <span class="close" @click="showAddPriceForm = false">&times;</span>
+              <h3>Thêm giá cho sản phẩm</h3>
+              <div>
+                <label for="addPriceType">Chọn loại giá:</label>
+                <select v-model="addSelectedPriceType" id="addPriceType">
+                  <option value="default">Giá mặc định</option>
+                  <option value="attribute">Giá theo thuộc tính</option>
+                </select>
+              </div>
+              <div v-if="addSelectedPriceType === 'default'">
+                <label for="addNewPrice">Nhập giá mới:</label>
+                <input type="number" v-model="addNewPrice" id="addNewPrice" />
+              </div>
+              <div v-if="addSelectedPriceType === 'attribute'">
+                <label for="addAttributeKeys">Nhập thuộc tính (Màu sắc, Kích thước):</label>
+                <input type="text" v-model="addAttributeKeys" id="addAttributeKeys" placeholder="Ví dụ: Màu Sắc,Kích Thước" />
+                <label for="addAttributeValues">Nhập giá trị tương ứng:</label>
+                <input type="text" v-model="addAttributeValues" id="addAttributeValues" placeholder="Ví dụ: Trắng,M" />
+                <label for="addNewAttributePrice">Nhập giá mới:</label>
+                <input type="number" v-model="addNewAttributePrice" id="addNewAttributePrice" />
+              </div>
+              <button class="btn-update" @click="addNewPriceForProduct">Thêm giá</button>
+              <button class="btn-close" @click="showAddPriceForm = false">Đóng</button>
+            </div>
+          </div>
          <!-- Modal cho cập nhật giá -->
             <div v-if="showPriceForm" class="modal-overlay">
             <div class="modal-content">
@@ -149,6 +178,11 @@ export default {
       selectedProductId: null,
       selectedListPriceId: null,
       showPriceForm: false,
+      addSelectedPriceType: "default",
+      addNewPrice: null,
+      addNewAttributePrice: null,
+      addAttributeKeys: "",
+      addAttributeValues: "",
     };
   },
   created() {
@@ -231,31 +265,30 @@ export default {
         console.error("Lỗi khi lấy thông tin giá mặc định:", error);
       }
     },
-async updatePrice() {
-    const idProduct = this.selectedProductId;
+    async updatePrice() {
+      const idProduct = this.selectedProductId;
 
-    if (!idProduct) {
-        console.error("Thiếu ID sản phẩm");
-        Swal.fire({
-            icon: 'error',
-            title: 'Lỗi',
-            text: 'Không tìm thấy ID sản phẩm. Vui lòng thử lại.',
-            confirmButtonText: 'OK',
-        });
-        return;
-    }
+      if (!idProduct) {
+          console.error("Thiếu ID sản phẩm");
+          Swal.fire({
+              icon: 'error',
+              title: 'Lỗi',
+              text: 'Không tìm thấy ID sản phẩm. Vui lòng thử lại.',
+              confirmButtonText: 'OK',
+          });
+          return;
+      }
 
-    // Tạo payload dựa trên loại giá được chọn
-    const payload = this.createPayload();
+      // Tạo payload dựa trên loại giá được chọn
+      const payload = this.createPayload();
 
-    console.log("Thông tin cập nhật giá:", {
-        idProduct,
-        selectedPriceType: this.selectedPriceType,
-        payload,
-        selectedListPriceId: this.selectedListPriceId
-    });
-
-    try {
+      console.log("Thông tin cập nhật giá:", {
+          idProduct,
+          selectedPriceType: this.selectedPriceType,
+          payload,
+          selectedListPriceId: this.selectedListPriceId
+      });
+      try {
         let response;
         if (this.selectedPriceType === "default") {
             // Nếu là giá mặc định, tìm ID list_price tương ứng
@@ -268,15 +301,15 @@ async updatePrice() {
         }
 
         console.log("Cập nhật giá thành công:", response);
-        Swal.fire({
-            icon: 'success',
-            title: 'Thành công',
-            text: 'Cập nhật giá thành công!',
-            confirmButtonText: 'OK',
-        });
+          Swal.fire({
+              icon: 'success',
+              title: 'Thành công',
+              text: 'Cập nhật giá thành công!',
+              confirmButtonText: 'OK',
+          });
         this.showPriceForm = false;
         await this.getProduct(); // Refresh danh sách sản phẩm
-    } catch (error) {
+       }catch (error) {
         console.error("Lỗi khi cập nhật giá:", error);
         Swal.fire({
             icon: 'error',
@@ -284,8 +317,9 @@ async updatePrice() {
             text: 'Có lỗi xảy ra khi cập nhật giá. Vui lòng thử lại.',
             confirmButtonText: 'OK',
         });
-    }
-},
+      }
+      },
+    
 
 
 
