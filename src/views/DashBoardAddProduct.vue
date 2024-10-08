@@ -5,14 +5,14 @@
       <Nav />
       <main class="content px-3 py-2">
         <div class="container-fluid">
-          <h1>Thêm sản phẩm</h1>
+          <h1 class="page-title">Thêm sản phẩm</h1>
           
           <div v-if="loading" class="loading-indicator">
             <p>Đang thêm sản phẩm, vui lòng chờ...</p>
           </div>
 
           <div v-if="!successMessage"> <!-- Chỉ hiển thị form nếu không có thông báo thành công -->
-            <form @submit.prevent="submitForm">
+            <form @submit.prevent="submitForm" class="product-form">
               <div class="form-group">
                 <label for="name">Tên Sản Phẩm</label>
                 <input
@@ -22,10 +22,10 @@
                   id="name"
                   placeholder="Nhập tên sản phẩm"
                   @input="validateName"
-
                 />
                 <div v-if="errors.name" class="text-danger">{{ errors.name }}</div>
               </div>
+
               <div class="form-group">
                 <label for="short_desc">Mô Tả Ngắn</label>
                 <input
@@ -35,10 +35,10 @@
                   id="short_desc"
                   placeholder="Nhập mô tả ngắn"
                   @input="validateShortDesc"
-
                 />
                 <div v-if="errors.short_desc" class="text-danger">{{ errors.short_desc }}</div>
               </div>
+
               <div class="form-group">
                 <label for="desc_product">Mô Tả Chi Tiết</label>
                 <textarea
@@ -48,7 +48,6 @@
                   rows="3"
                   placeholder="Nhập mô tả chi tiết"
                   @input="validateDescProduct"
-
                 ></textarea>
                 <div v-if="errors.desc_product" class="text-danger">{{ errors.desc_product }}</div>
               </div>
@@ -74,6 +73,7 @@
                   @input="validateSize"
                 />
               </div>
+
               <div class="form-group">
                 <label for="color">Màu Sắc (Nhập các màu sắc, cách nhau bởi dấu phẩy)</label>
                 <input
@@ -82,33 +82,37 @@
                   class="form-control"
                   id="color"
                   placeholder="Nhập màu sắc (vd: Đen, Trắng)"
-                                    @input="validateColor"
-
+                  @input="validateColor"
                 />
               </div>
+
               <div class="form-group">
                 <label for="thumbnail">Ảnh đại diện sản phẩm</label>
                 <input
                   type="file"
                   class="form-control"
                   id="thumbnail" 
-                  placeholder="Tải lên file ảnh"
                   @change="handleFileChange($event, 'thumbnail')"
                 />
               </div>
-              <div class="form-group">
-                <label for="detail_images">Ảnh chi tiết sản phẩm</label>
-                <button type="button" class="btn btn-primary" @click="addDetailImageInput">Thêm ảnh chi tiết</button>
-                <div v-for="(image, index) in uploadedDetailImages" :key="index" class="mt-2">
-                  <input
-                    type="file"
-                    class="form-control"
-                    :id="'detail_images_' + index"
-                    placeholder="Tải lên file ảnh"
-                    @change="handleFileChange($event, index)"
-                  />
-                </div>
-              </div>
+
+             <div class="form-group">
+  <label for="detail_images">Ảnh Chi Tiết Sản Phẩm</label>
+  <p class="helper-text">Bạn có thể thêm nhiều ảnh chi tiết để làm rõ hơn về sản phẩm.</p>
+  <button type="button" class="btn btn-success mb-2" @click="addDetailImageInput">
+    <i class="fas fa-plus"></i> Thêm Ảnh Chi Tiết
+  </button>
+  <div v-for="(image, index) in uploadedDetailImages" :key="index" class="mt-2">
+    <input
+      type="file"
+      class="form-control"
+      :id="'detail_images_' + index"
+      @change="handleFileChange($event, index)"
+    />
+  </div>
+</div>
+
+
               <button type="submit" class="btn btn-primary" :disabled="loading">
                 <span v-if="loading">Đang xử lý...</span>
                 <span v-else>Thêm Sản Phẩm</span>
@@ -124,6 +128,7 @@
     </div>
   </div>
 </template>
+
 
 
 <script>
@@ -372,9 +377,52 @@ export default {
 </script>
 
 <style>
-/* Bạn có thể thêm CSS tại đây nếu cần */
+
+/* Cải thiện kiểu chữ và kích thước */
+.page-title {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20px; /* Khoảng cách dưới tiêu đề */
+}
+
+.product-form {
+  background-color: #f9f9f9; /* Màu nền cho form */
+  border-radius: 10px; /* Bo góc cho form */
+  padding: 20px; /* Padding cho form */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Bóng cho form */
+}
+
+.form-group {
+  margin-bottom: 15px; /* Khoảng cách giữa các nhóm form */
+}
+
+.form-control {
+  border: 1px solid #ccc; /* Viền cho các input */
+  border-radius: 4px; /* Bo góc cho các input */
+}
+
+.btn-primary {
+  background-color: #007bff; /* Màu nền cho nút */
+  color: #fff; /* Màu chữ cho nút */
+}
+
+.loading-indicator {
+  text-align: center;
+  font-size: 1.2rem; /* Kích thước chữ cho loading */
+}
+
 .text-danger {
   color: red;
   font-size: 0.875em; /* Kích thước font nhỏ hơn cho thông báo lỗi */
+}
+
+.alert {
+  font-size: 1.1rem; /* Kích thước font cho thông báo thành công */
+}
+.helper-text {
+  font-size: 0.9rem; /* Kích thước chữ nhỏ hơn cho gợi ý */
+  color: #6c757d; /* Màu chữ nhạt hơn */
+  margin-bottom: 10px; /* Khoảng cách dưới gợi ý */
 }
 </style>
