@@ -6,13 +6,58 @@
       <main class="content px-3 py-2">
         <div class="container-fluid">
           <h1 class="mb-4 text-center">Sản phẩm trong cửa hàng</h1>
+                    <div class="d-flex justify-content-between mb-3">
 
+          <button class="btn btn-primary" @click="showAddPriceModal">Thêm Giá</button>
+           <div class="filter-search">
+              <select v-model="filterOption" class="form-select" @change="filterProducts">
+                <option value="all">Tất cả</option>
+                <option value="new">Sản phẩm Mới Nhất</option>
+              </select>
+              <form class="form-inline" @submit.prevent>
+              <div class="input-group">
+                <input
+                  class="form-control"
+                  type="search"
+                  placeholder="Tìm kiếm..."
+                  aria-label="Search"
+                  v-model="searchText"
+                  @input="filterProducts" 
+                />
+                <div class="input-group-append">
+                  <button class="btn btn-outline-success" type="submit">
+                    <i class="fas fa-search"></i>
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+          </div>
+          
           <!-- Modal cho thêm giá -->
-  <!-- Modal cho thêm giá -->
           <div v-if="showAddPriceForm" class="modal-overlay">
             <div class="modal-content">
               <span class="close" @click="showAddPriceForm = false">&times;</span>
               <h3>Thêm giá cho sản phẩm</h3>
+              <!-- Dropdown để chọn sản phẩm -->
+              <div class="form-group">
+                <label for="productSelect" class="form-label">Chọn sản phẩm:</label>
+                <select v-model="selectedProduct" id="productSelect" class="form-control">
+                  <option v-for="(product, index) in products" :key="index" :value="product">
+                    {{ product.NAME_PRODUCT }}
+                  </option>
+                </select>
+              </div>
+
+              <!-- Hiển thị thuộc tính của sản phẩm được chọn -->
+              <div v-if="selectedProduct" class="attributes-container">
+                <h4 class="attributes-title">Thuộc tính của sản phẩm:</h4>
+                <ul class="attributes-list">
+                  <li v-for="(attribute, index) in selectedProduct.LIST_PRODUCT_METADATA" :key="index">
+                    <b class="attribute-key">{{ attribute.KEY }}:</b> <span class="attribute-value">{{ attribute.VALUE.join(', ') }}</span>
+                  </li>
+                </ul>
+              </div>
               <div>
                 <label for="addPriceType">Chọn loại giá:</label>
                 <select v-model="addSelectedPriceType" id="addPriceType">
@@ -36,35 +81,35 @@
               <button class="btn-close" @click="showAddPriceForm = false">Đóng</button>
             </div>
           </div>
-         <!-- Modal cho cập nhật giá -->
-            <div v-if="showPriceForm" class="modal-overlay">
+
+          <!-- Modal cho cập nhật giá -->
+          <div v-if="showPriceForm" class="modal-overlay">
             <div class="modal-content">
-                <span class="close" @click="showPriceForm = false">&times;</span>
-                <h3>Cập nhật giá sản phẩm</h3>
-                <div>
+              <span class="close" @click="showPriceForm = false">&times;</span>
+              <h3>Cập nhật giá sản phẩm</h3>
+              <div>
                 <label for="priceType">Chọn loại giá:</label>
                 <select v-model="selectedPriceType" id="priceType">
-                    <option value="default">Giá mặc định</option>
-                    <option value="attribute">Giá theo thuộc tính</option>
+                  <option value="default">Giá mặc định</option>
+                  <option value="attribute">Giá theo thuộc tính</option>
                 </select>
-                </div>
-                <div v-if="selectedPriceType === 'default'">
+              </div>
+              <div v-if="selectedPriceType === 'default'">
                 <label for="newPrice">Nhập giá mới:</label>
                 <input type="number" v-model="newPrice" id="newPrice" />
-                </div>
-                <div v-if="selectedPriceType === 'attribute'">
+              </div>
+              <div v-if="selectedPriceType === 'attribute'">
                 <label for="attributeKeys">Nhập thuộc tính (Màu sắc, Kích thước):</label>
                 <input type="text" v-model="attributeKeys" id="attributeKeys" placeholder="Ví dụ: Màu Sắc,Kích Thước" />
                 <label for="attributeValues">Nhập giá trị tương ứng:</label>
                 <input type="text" v-model="attributeValues" id="attributeValues" placeholder="Ví dụ: Trắng,M" />
                 <label for="newAttributePrice">Nhập giá mới:</label>
                 <input type="number" v-model="newAttributePrice" id="newAttributePrice" />
-                </div>
-                <button class="btn-update" @click="updatePrice">Cập nhật giá</button>
-                <!-- <button class="btn-close" @click="showPriceForm = false">Đóng</button> -->
+              </div>
+              <button class="btn-update" @click="updatePrice">Cập nhật giá</button>
+              <button class="btn-close" @click="showPriceForm = false">Đóng</button>
             </div>
-            </div>
-
+          </div>
 
           <table class="table table-bordered">
             <thead>
@@ -95,17 +140,10 @@
                 </td>
                 <td>
                   <ul class="list-unstyled text-center">
-                    <li
-                      v-for="(detail, i) in product.QUANTITY_BY_KEY_VALUE"
-                      :key="i"
-                    >
+                    <li v-for="(detail, i) in product.QUANTITY_BY_KEY_VALUE" :key="i">
                       <div class="row">
                         <div class="col-md-6">
-                          <span
-                            class="text-center"
-                            v-for="(key, j) in detail.LIST_MATCH_KEY"
-                            :key="j"
-                          >
+                          <span class="text-center" v-for="(key, j) in detail.LIST_MATCH_KEY" :key="j">
                             <b>{{ key.KEY }}:</b> {{ key.VALUE[0] }}<span v-if="j < detail.LIST_MATCH_KEY.length - 1">,</span>
                           </span>
                         </div>
@@ -120,7 +158,6 @@
                   </ul>
                 </td>
                 <td class="text-center">
-                  <!-- <button class="btn btn-sm btn-primary">Sửa</button> -->
                   <button class="btn btn-sm btn-primary" @click="editPrice(product._id)">Sửa</button>
                   <button class="btn btn-sm btn-danger">Xóa</button>
                 </td>
@@ -169,15 +206,19 @@ export default {
       numberProduct: [],
       page: 1,
       limit: 6,
-        skip: 1,
+      skip: 1,
+      searchText: '', // văn bản tìm kiếm
+      selectedProduct: null, // Biến để lưu sản phẩm được chọn
       selectedPriceType: "default", // Loại giá được chọn
+      filterOption: 'all', // trạng thái dropdown
       newPrice: null,
       newAttributePrice: null,
       attributeKeys: "",
       attributeValues: "",
       selectedProductId: null,
       selectedListPriceId: null,
-      showPriceForm: false,
+      showPriceForm: false, // Trạng thái modal cập nhật giá
+      showAddPriceForm: false, // Trạng thái cho modal "Thêm giá"
       addSelectedPriceType: "default",
       addNewPrice: null,
       addNewAttributePrice: null,
@@ -190,67 +231,97 @@ export default {
     this.getProduct();
     },
   mounted() {
-      this.fetchProducts(); 
+    this.fetchProducts(); 
      this.fetchAllPrices(); 
-},
-    methods: {
-    showError(message) {
-        // Bạn có thể xử lý hiển thị lỗi ở đây
-        console.error(message);
-        // Ví dụ: Hiển thị thông báo lỗi lên giao diện
-        alert(message);
-        },
-    showSuccess(message) {
-        // Bạn có thể xử lý hiển thị lỗi ở đây
-        console.error(message);
-        // Ví dụ: Hiển thị thông báo lỗi lên giao diện
-        alert(message);
-    },
-    async getProduct() {
-        try {
-            const response = await productService.getAll(this.skip, this.limit);
-            if (response && response.data) {
-            this.products = response.data;
-            // Gọi hàm để lấy giá cho từng sản phẩm
-                await this.fetchProducts();
-                await this.fetchDefaultPrices(); // Fetch default prices here
+  },
+  computed: {
+    filteredProducts() {
+      // Sao chép toàn bộ sản phẩm từ `numberProduct` (tất cả sản phẩm)
+      let filtered = [...this.numberProduct];
 
-            }
-        } catch (error) {
-            console.error(error);
+      // Tìm kiếm theo tên sản phẩm
+      if (this.searchText) {
+        filtered = filtered.filter(product =>
+          product.NAME_PRODUCT.toLowerCase().includes(this.searchText.toLowerCase())
+        );
+      }
+
+       // Lọc theo sản phẩm mới nhất (lấy các sản phẩm cuối bảng)
+      if (this.filterOption === 'new') {
+        filtered = filtered.reverse();  // Đảo ngược danh sách sản phẩm
+      }
+
+      // Áp dụng phân trang cho dữ liệu đã lọc
+      return filtered.slice((this.page - 1) * this.limit, this.page * this.limit);
+    },
+},
+  methods: {
+    showError(message) {
+      console.error(message);
+      alert(message);
+    },
+    showSuccess(message) {
+      console.error(message);
+      alert(message);
+    },
+     myCallback() {
+      this.skip = this.page;
+      this.getProduct();
+    },
+    filterProducts() {
+    // Khi người dùng thay đổi filter hoặc nhập tìm kiếm, cập nhật danh sách sản phẩm
+    this.page = 1; // Reset về trang đầu khi tìm kiếm hoặc lọc
+  },
+    async getProduct() {
+      try {
+        const response = await productService.getAll(this.skip, this.limit);
+        if (response && response.data) {
+          this.products = response.data; // Cập nhật sản phẩm hiện tại
+          // Gọi hàm để lấy giá cho từng sản phẩm
+          await this.fetchAllPrices(); // Fetch all prices once
+          await this.fetchProducts();
+          await this.fetchDefaultPrices(); // Fetch default prices here
         }
+
+        // Cập nhật số lượng sản phẩm tổng thể
+        // await this.getAllProduct();
+      } catch (error) {
+        console.error(error);
+      }
     },
 
     async getAllProduct() {
       try {
         const response = await productService.getAllProduct();
         if (response && response.data) {
-          this.numberProduct = response.data;
+          this.numberProduct = response.data; // Cập nhật danh sách sản phẩm không phân trang
+          await this.fetchProducts(); // Đảm bảo giá được lấy cho tất cả sản phẩm
         }
       } catch (error) {
         console.error(error);
       }
-        },
-     async fetchAllPrices() {
-    try {
-      const data = await PriceService.getAllPrices();
-      console.log("All Prices:", data);
-      this.prices = data.data; // Adjust according to your response structure
-    } catch (error) {
-      console.error("Error fetching all prices:", error);
-    }
-  },
-// Hàm xử lý khi bấm nút Sửa
+    },
+    async fetchAllPrices() {
+      try {
+        const data = await PriceService.getAllPrices();
+        console.log("All Prices:", data);
+        this.prices = data.data; // Adjust according to your response structure
+      } catch (error) {
+        console.error("Error fetching all prices:", error);
+      }
+    },
+
     // Nhấn vào nút "Sửa"
-  async editPrice(productId) {
+    async editPrice(productId) {
       if (!productId) {
         console.error("Không tìm thấy ID của sản phẩm");
         return;
       }
       this.selectedProductId = productId;
       this.selectedListPriceId = null; // Reset list_price_id
-      this.showPriceForm = true;
-      
+      this.showPriceForm = true; // Hiển thị modal cập nhật giá
+      this.showAddPriceForm = false; // Đảm bảo modal thêm giá không hiển thị
+
       // Lấy thông tin giá mặc định
       try {
         const priceData = await PriceService.getDefaultPrice(productId);
@@ -265,130 +336,131 @@ export default {
         console.error("Lỗi khi lấy thông tin giá mặc định:", error);
       }
     },
+    showAddPriceModal() {
+      this.showAddPriceForm = true; // Hiển thị modal thêm giá
+      this.showPriceForm = false; // Đảm bảo modal cập nhật giá không hiển thị
+      this.selectedProduct = null; // Đặt lại sản phẩm đã chọn
+
+    },
     async updatePrice() {
       const idProduct = this.selectedProductId;
 
       if (!idProduct) {
-          console.error("Thiếu ID sản phẩm");
-          Swal.fire({
-              icon: 'error',
-              title: 'Lỗi',
-              text: 'Không tìm thấy ID sản phẩm. Vui lòng thử lại.',
-              confirmButtonText: 'OK',
-          });
-          return;
+        console.error("Thiếu ID sản phẩm");
+        Swal.fire({
+          icon: 'error',
+          title: 'Lỗi',
+          text: 'Không tìm thấy ID sản phẩm. Vui lòng thử lại.',
+          confirmButtonText: 'OK',
+        });
+        return;
       }
 
       // Tạo payload dựa trên loại giá được chọn
       const payload = this.createPayload();
 
       console.log("Thông tin cập nhật giá:", {
-          idProduct,
-          selectedPriceType: this.selectedPriceType,
-          payload,
-          selectedListPriceId: this.selectedListPriceId
+        idProduct,
+        selectedPriceType: this.selectedPriceType,
+        payload,
+        selectedListPriceId: this.selectedListPriceId
       });
       try {
         let response;
         if (this.selectedPriceType === "default") {
-            // Nếu là giá mặc định, tìm ID list_price tương ứng
-            this.selectedListPriceId = this.findDefaultPriceId(idProduct);
-            response = await PriceService.updatePrice(idProduct, this.selectedListPriceId, payload);
+          // Nếu là giá mặc định, tìm ID list_price tương ứng
+          this.selectedListPriceId = this.findDefaultPriceId(idProduct);
+          response = await PriceService.updatePrice(idProduct, this.selectedListPriceId, payload);
         } else if (this.selectedListPriceId) {
-            response = await PriceService.updatePrice(idProduct, this.selectedListPriceId, payload);
+          response = await PriceService.updatePrice(idProduct, this.selectedListPriceId, payload);
         } else {
-            response = await PriceService.createPrice(idProduct, payload);
+          response = await PriceService.createPrice(idProduct, payload);
         }
 
         console.log("Cập nhật giá thành công:", response);
-          Swal.fire({
-              icon: 'success',
-              title: 'Thành công',
-              text: 'Cập nhật giá thành công!',
-              confirmButtonText: 'OK',
-          });
+        Swal.fire({
+          icon: 'success',
+          title: 'Thành công',
+          text: 'Cập nhật giá thành công!',
+          confirmButtonText: 'OK',
+        });
         this.showPriceForm = false;
         await this.getProduct(); // Refresh danh sách sản phẩm
-       }catch (error) {
+      } catch (error) {
         console.error("Lỗi khi cập nhật giá:", error);
         Swal.fire({
-            icon: 'error',
-            title: 'Lỗi',
-            text: 'Có lỗi xảy ra khi cập nhật giá. Vui lòng thử lại.',
-            confirmButtonText: 'OK',
+          icon: 'error',
+          title: 'Lỗi',
+          text: 'Có lỗi xảy ra khi cập nhật giá. Vui lòng thử lại.',
+          confirmButtonText: 'OK',
         });
       }
-      },
-    
+    },
+    createPayload() {
+      let payload;
 
-
-
-
-createPayload() {
-    let payload;
-
-    if (this.selectedPriceType === "default") {
+      if (this.selectedPriceType === "default") {
         payload = {
-            price_number: this.newPrice,
+          price_number: this.newPrice,
         };
-    } else if (this.selectedPriceType === "attribute") {
+      } else if (this.selectedPriceType === "attribute") {
         const keys = this.attributeKeys.split(",").map(k => k.trim());
         const values = this.attributeValues.split(",").map(v => v.trim());
         payload = {
-            price_number: this.newAttributePrice,
-            key: keys,
-            value: values,
+          price_number: this.newAttributePrice,
+          key: keys,
+          value: values,
         };
 
         // Tìm list_price_id tương ứng
         this.selectedListPriceId = this.findListPriceId(this.selectedProductId, keys, values);
         console.log("Selected List Price ID từ findListPriceId:", this.selectedListPriceId);
-    }
+      }
 
-    return payload;
-},
-findDefaultPriceId(productId) {
-    // Tìm sản phẩm trong danh sách sản phẩm
-    const product = this.prices.find(p => p.ID_PRODUCT.toString() === productId);
-    if (!product) return null;
+      return payload;
+    },
+    findDefaultPriceId(productId) {
+      // Tìm sản phẩm trong danh sách sản phẩm
+      const product = this.prices.find(p => p.ID_PRODUCT.toString() === productId);
+      if (!product) return null;
 
-    // Tìm giá mặc định trong LIST_PRICE
-    const defaultPrice = product.LIST_PRICE.find(lp => 
+      // Tìm giá mặc định trong LIST_PRICE
+      const defaultPrice = product.LIST_PRICE.find(lp =>
         lp.LIST_MATCH_KEY.length === 0 // kiểm tra LIST_MATCH_KEY rỗng
-    );
+      );
 
-    return defaultPrice ? defaultPrice._id : null; // Trả về ID của giá mặc định
-},
+      return defaultPrice ? defaultPrice._id : null; // Trả về ID của giá mặc định
+    },
 
 
-//cập nhập giá đúng
-findListPriceId(productId, keys, values) {
-    console.log("Tìm List Price ID với tham số:", productId, keys, values);
+    //cập nhập giá đúng
+    findListPriceId(productId, keys, values) {
+      console.log("Tìm List Price ID với tham số:", productId, keys, values);
 
-    // Tìm sản phẩm trong danh sách sản phẩm
-    const product = this.products.find(p => p._id === productId);
-    if (!product) return null;
+      // Tìm sản phẩm trong danh sách sản phẩm
+      const product = this.products.find(p => p._id === productId);
+      if (!product) return null;
 
-    // Tìm giá trong dữ liệu giá đã lấy
-    const priceEntry = this.prices.find(price => price.ID_PRODUCT.toString() === productId);
-    if (!priceEntry) return null;
+      // Tìm giá trong dữ liệu giá đã lấy
+      const priceEntry = this.prices.find(price => price.ID_PRODUCT.toString() === productId);
+      if (!priceEntry) return null;
 
-    // Trường hợp không có thuộc tính, trả về list_price_id của giá mặc định
-    if (keys.length === 0) {
+      // Trường hợp không có thuộc tính, trả về list_price_id của giá mặc định
+      if (keys.length === 0) {
         return this.selectedListPriceId; // Hoặc giá trị khác nếu cần
-    }
+      }
 
-    // Tìm kiếm trong LIST_PRICE
-    const detail = priceEntry.LIST_PRICE.find(lp => 
+      // Tìm kiếm trong LIST_PRICE
+      const detail = priceEntry.LIST_PRICE.find(lp =>
         lp.LIST_MATCH_KEY.length === keys.length &&
-        lp.LIST_MATCH_KEY.every((item, index) => 
-            item.KEY === keys[index] && item.VALUE.includes(values[index])
+        lp.LIST_MATCH_KEY.every((item, index) =>
+          item.KEY === keys[index] && item.VALUE.includes(values[index])
         )
-    );
+      );
 
-    console.log("Chi tiết tìm được:", detail);
-    return detail ? detail._id : null; // Trả về ID của detail
-},
+      console.log("Chi tiết tìm được:", detail);
+      return detail ? detail._id : null; // Trả về ID của detail
+    },
 
 
     async fetchDefaultPrices() {
@@ -409,40 +481,136 @@ findListPriceId(productId, keys, values) {
         }
       }
     },
-    async fetchProducts() {
-        console.log("Bắt đầu fetchProducts");
+  async fetchProducts() {
+    console.log("Bắt đầu fetchProducts");
 
-        for (const product of this.products) {
-            for (const detail of product.QUANTITY_BY_KEY_VALUE) {
-            const keys = detail.LIST_MATCH_KEY.map((item) => item.KEY); // Trích xuất các key (màu sắc, kích thước)
-            const values = detail.LIST_MATCH_KEY.map((item) => item.VALUE[0]); // Trích xuất các giá trị tương ứng
+    // Tạo một mảng để chứa tất cả các Promise
+    const pricePromises = [];
 
-            console.log("key[]:", keys);
-            console.log("value[]:", values);
+    for (const product of this.products) {
+      for (const detail of product.QUANTITY_BY_KEY_VALUE) {
+        const keys = detail.LIST_MATCH_KEY.map((item) => item.KEY); // Trích xuất các key (màu sắc, kích thước)
+        const values = detail.LIST_MATCH_KEY.map((item) => item.VALUE[0]); // Trích xuất các giá trị tương ứng
+        console.log("key[]:", keys);
+        console.log("value[]:", values);
+        
+        // Tạo promise cho mỗi lần gọi API
+        const pricePromise = PriceService.getPriceProduct(product._id, keys, values)
+          .then(priceData => {
+            console.log("Kết quả từ PriceService:", priceData);
+            detail.PRICE = (priceData && priceData.success && priceData.data.length > 0)
+              ? priceData.data[0].PRICE_NUMBER
+              : 'Chưa có giá';
+            console.log("Giá:", detail.PRICE);
+          })
+          .catch(error => {
+            console.error("Lỗi khi gọi PriceService:", error);
+            detail.PRICE = 'Đã xảy ra lỗi khi lấy giá';
+          });
 
-            try {
-                // Gọi dịch vụ lấy giá dựa trên ID sản phẩm và các thuộc tính
-                const priceData = await PriceService.getPriceProduct(product._id, keys, values);
-                console.log("Kết quả từ PriceService:", priceData);
+        // Đẩy promise vào mảng
+        pricePromises.push(pricePromise);
+      }
+    }
 
-                // Gán giá đã lấy hoặc thông báo mặc định nếu không có
-                detail.PRICE = (priceData && priceData.success && priceData.data.length > 0) 
-                    ? priceData.data[0].PRICE_NUMBER 
-                    : 'Chưa có giá';
-                
-                console.log("Giá:", detail.PRICE);
-            } catch (error) {
-                console.error("Lỗi khi gọi PriceService:", error);
-                detail.PRICE = 'Đã xảy ra lỗi khi lấy giá';
-            }
-            }
-        }
-    },
-    myCallback() {
-      this.skip = this.page;
-      this.getProduct();
-    },
+    // Đợi tất cả các Promise hoàn thành
+    await Promise.all(pricePromises);
+
+    console.log("Hoàn thành fetchProducts");
   },
+// async fetchProducts() {
+//       console.log("Bắt đầu fetchProducts");
+//       for (const product of this.products) {
+//         for (const detail of product.QUANTITY_BY_KEY_VALUE) {
+//           const keys = detail.LIST_MATCH_KEY.map((item) => item.KEY); // Trích xuất các key (màu sắc, kích thước)
+//           const values = detail.LIST_MATCH_KEY.map((item) => item.VALUE[0]); // Trích xuất các giá trị tương ứng
+//           console.log("key[]:", keys);
+//           console.log("value[]:", values);
+//           try {
+//             // Gọi dịch vụ lấy giá dựa trên ID sản phẩm và các thuộc tính
+//             const priceData = await PriceService.getPriceProduct(product._id, keys, values);
+//             console.log("Kết quả từ PriceService:", priceData);
+//             // Gán giá đã lấy hoặc thông báo mặc định nếu không có
+//             detail.PRICE = (priceData && priceData.success && priceData.data.length > 0)
+//               ? priceData.data[0].PRICE_NUMBER
+//               : 'Chưa có giá';
+//             console.log("Giá:", detail.PRICE);
+//           } catch (error) {
+//             console.error("Lỗi khi gọi PriceService:", error);
+//             detail.PRICE = 'Đã xảy ra lỗi khi lấy giá';
+//           }
+//         }
+//       }
+//     }
+   async addNewPriceForProduct() {
+    const idProduct = this.selectedProduct._id;
+    if (!idProduct) {
+        console.error("Thiếu ID sản phẩm");
+        Swal.fire({
+            icon: 'error',
+            title: 'Lỗi',
+            text: 'Không tìm thấy ID sản phẩm. Vui lòng thử lại.',
+            confirmButtonText: 'OK',
+        });
+        return;
+    }
+
+    const payload = this.createAddPricePayload();
+    console.log("Thông tin thêm giá:", {
+        idProduct,
+        selectedPriceType: this.addSelectedPriceType,
+        payload,
+    });
+
+    try {
+        let response;
+        if (this.addSelectedPriceType === "default") {
+            response = await PriceService.addPrice(idProduct, this.addNewPrice, null, null);
+        } else {
+            const keys = this.addAttributeKeys.split(",").map(k => k.trim());
+            const values = this.addAttributeValues.split(",").map(v => v.trim());
+            response = await PriceService.addPrice(idProduct, this.addNewAttributePrice, keys, values);
+        }
+
+        console.log("Thêm giá thành công:", response);
+        Swal.fire({
+            icon: 'success',
+            title: 'Thành công',
+            text: 'Thêm giá thành công!',
+            confirmButtonText: 'OK',
+        });
+        this.showAddPriceForm = false;
+        await this.getProduct(); // Refresh danh sách sản phẩm
+    } catch (error) {
+        console.error("Lỗi khi thêm giá:", error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Lỗi',
+            text: 'Có lỗi xảy ra khi thêm giá. Vui lòng thử lại.',
+            confirmButtonText: 'OK',
+        });
+    }
+},
+    createAddPricePayload() {
+      let payload;
+
+      if (this.addSelectedPriceType === "default") {
+        payload = {
+          price_number: this.addNewPrice,
+        };
+      } else if (this.addSelectedPriceType === "attribute") {
+        const keys = this.addAttributeKeys.split(",").map(k => k.trim());
+        const values = this.addAttributeValues.split(",").map(v => v.trim());
+        payload = {
+          price_number: this.addNewAttributePrice,
+          key: keys,
+          value: values,
+        };
+      }
+
+      return payload;
+    },
+  }
 };
 </script>
 
@@ -550,6 +718,7 @@ findListPriceId(productId, keys, values) {
   margin: 20px 0;
 }
 /* Modal */
+
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -621,6 +790,47 @@ select {
 .btn-update:hover,
 .btn-close:hover {
     opacity: 0.8; /* Hiệu ứng mờ khi hover */
+}
+/* Flexbox for Filter and Search */
+.filter-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.input-group {
+  display: flex;
+}
+
+.attributes-container {
+  border: 1px solid #ddd; /* Đường viền xung quanh khung */
+  border-radius: 8px; /* Bo tròn các góc */
+  padding: 15px; /* Padding cho khung */
+  background-color: #f9f9f9; /* Màu nền nhẹ cho khung */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Hiệu ứng bóng nhẹ */
+  margin-top: 15px; /* Khoảng cách phía trên */
+}
+
+.attributes-title {
+  text-align: center;
+  margin-bottom: 10px; /* Khoảng cách phía dưới tiêu đề */
+  font-size: 1.5rem; /* Kích thước chữ lớn hơn */
+  color: #333; /* Màu chữ tối */
+  font-weight: bold; /* Làm chữ đậm */
+}
+
+.attributes-list {
+  list-style-type: none; /* Loại bỏ dấu chấm đầu dòng */
+  padding-left: 0; /* Bỏ khoảng cách bên trái */
+}
+
+.attribute-key {
+  color: #007bff; /* Màu chữ cho tên thuộc tính */
+  font-weight: bold; /* Làm chữ đậm */
+}
+
+.attribute-value {
+  color: #555; /* Màu chữ cho giá trị thuộc tính */
 }
 
 </style>

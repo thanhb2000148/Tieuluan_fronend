@@ -13,19 +13,20 @@ class PriceService {
     }
   }
   // API thêm giá cho sản phẩm
-  async addPrice(id_product, price_number, keys = [], values = []) {
+  async addPrice(id_product, price_number, keys = null, values = null) {
     try {
-      const payload = {
-        price_number: price_number,
-        key: keys,
-        value: values,
-      };
+      // Tạo payload tùy thuộc vào việc có keys và values hay không
+      const payload = keys && values 
+        ? { price_number, key: keys, value: values }
+        : { price_number };
+
       const response = await this.api.post(`/${id_product}`, payload);
       return response.data;
     } catch (error) {
       console.error("Lỗi khi thêm giá:", error);
     }
   }
+
 
   async getDefaultPrice(id) {
     try {
