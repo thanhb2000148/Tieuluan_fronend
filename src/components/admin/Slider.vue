@@ -2,8 +2,8 @@
   <aside id="sidebar" class="js-sidebar">
     <!-- Content For Sidebar -->
     <div class="h-100">
-      <div class="sidebar-logo">
-        <a href="#">Admin</a>
+      <div class="sidebar-logo text-center mb-4">
+        <a href="#" class="font-weight-bold">Admin</a>
       </div>
       <ul class="sidebar-nav">
         <li class="sidebar-item">
@@ -12,49 +12,58 @@
             Dashboard
           </a>
         </li>
-        <li class="sidebar-item">
+       <li class="sidebar-item">
           <a
             href="#"
             class="sidebar-link collapsed"
-            data-bs-target="#pages"
+            data-bs-target="#product-pages"
             data-bs-toggle="collapse"
             aria-expanded="false"
-            ><i class="fa-solid fa-file-lines pe-2"></i>
-            Trang
+            ><i class="fa-solid fa-boxes pe-2"></i>
+            Quản lý Sản phẩm
           </a>
           <ul
-            id="pages"
+            id="product-pages"
             class="sidebar-dropdown list-unstyled collapse"
             data-bs-parent="#sidebar"
           >
+            <!-- <li class="sidebar-item">
+              <router-link to="/admin/products">
+                <a class="sidebar-link">Danh sách Sản phẩm</a>
+              </router-link>
+            </li> -->
             <li class="sidebar-item">
-              <router-link to="/admin/products"
-                ><a class="sidebar-link">Quản lý Kho</a></router-link
-              >
-            </li>
-            <li class="sidebar-item">
-              <router-link to="/admin/user">
-                <a class="sidebar-link">Quản lý người dùng</a></router-link
-              >
-            </li>
-            <li class="sidebar-item">
-              <router-link to="/admin/addProducts" class="sidebar-link">
-                Quản lý sản phẩm
+              <router-link to="/admin/addProducts">
+                <a class="sidebar-link">Thêm Sản phẩm</a>
               </router-link>
             </li>
-             <li class="sidebar-item">
-              <router-link to="/admin/category" class="sidebar-link">
-                Quản lý Danh Mục
-              </router-link>
-            </li>
-
             <li class="sidebar-item">
-              <router-link to="/admin/addprices" class="sidebar-link">
-                Quản lý Giá 
+              <router-link to="/admin/productDetails">
+                <a class="sidebar-link">Chi tiết Sản phẩm</a>
               </router-link>
             </li>
-
           </ul>
+        </li>
+
+        <li class="sidebar-item">
+          <router-link to="/admin/products">
+            <a class="sidebar-link">Quản lý Kho</a>
+          </router-link>
+        </li>
+        <li class="sidebar-item">
+          <router-link to="/admin/addprices">
+            <a class="sidebar-link">Quản lý Giá</a>
+          </router-link>
+        </li>
+        <li class="sidebar-item">
+          <router-link to="/admin/category">
+            <a class="sidebar-link">Quản lý Danh Mục</a>
+          </router-link>
+        </li>
+         <li class="sidebar-item">
+          <router-link to="/admin/user">
+            <a class="sidebar-link">Quản lý người dùng</a>
+          </router-link>
         </li>
       </ul>
     </div>
@@ -63,23 +72,19 @@
 
 <script>
 import userService from "@/services/user.service";
-// import VueCookies from "vue-cookies";
-
 
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
   name: "Slider",
-   data() {
+  data() {
     return {
       user: [],
-             isAdmin: false, // Thêm biến để lưu trạng thái admin
-
+      isAdmin: false, // Thêm biến để lưu trạng thái admin
     };
-},
+  },
   async created() {
-     await this.fetchUserLogin();
+    await this.fetchUserLogin();
     console.log("lấy user login", this.user);
-  
   },
   methods: {
     async fetchUserLogin() {
@@ -107,8 +112,59 @@ export default {
     redirectToHome() {
       this.$router.push("/"); // Chuyển hướng về trang chủ
     },
-  }
+  },
 };
 </script>
 
-<style></style>
+<style scoped>
+#sidebar {
+  background-color: #343a40;
+  color: #fff;
+  min-height: 100vh;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+  transition: width 0.3s;
+}
+
+.sidebar-logo {
+  font-size: 24px;
+  color: #fff;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.sidebar-nav {
+  list-style-type: none;
+  padding: 0;
+}
+
+.sidebar-item {
+  position: relative;
+  margin-bottom: 10px;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  color: #fff;
+  text-decoration: none;
+  transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
+}
+
+.sidebar-link:hover,
+.sidebar-link:focus {
+  background-color: #495057;
+  color: #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.sidebar-link i {
+  min-width: 20px; /* Giúp biểu tượng có độ rộng đều nhau */
+  transition: transform 0.3s;
+}
+
+.sidebar-link:hover i {
+  transform: scale(1.1); /* Tăng kích thước biểu tượng */
+}
+
+</style>

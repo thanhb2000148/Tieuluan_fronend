@@ -35,30 +35,30 @@
           </div>
 
           <!-- Modal for adding product quantity -->
-<div v-if="showAddProductModal" class="modal">
-  <div class="modal-content">
-    <span class="close" @click="showAddProductModal = false">&times;</span>
-    <h2 class="modal-title">Thêm Số Lượng Kho cho Sản Phẩm</h2>
+        <div v-if="showAddProductModal" class="modal">
+          <div class="modal-content">
+            <span class="close" @click="showAddProductModal = false">&times;</span>
+            <h2 class="modal-title">Thêm Số Lượng Kho cho Sản Phẩm</h2>
 
-    <!-- Dropdown để chọn sản phẩm -->
-    <div class="form-group">
-      <label for="productSelect" class="form-label">Chọn sản phẩm:</label>
-      <select v-model="selectedProduct" id="productSelect" class="form-control">
-        <option v-for="(product, index) in filteredProducts" :key="index" :value="product">
-          {{ product.NAME_PRODUCT }} - Hiện có: {{ product.NUMBER_INVENTORY_PRODUCT }}
-        </option>
-      </select>
-    </div>
+            <!-- Dropdown để chọn sản phẩm -->
+            <div class="form-group">
+              <label for="productSelect" class="form-label">Chọn sản phẩm:</label>
+              <select v-model="selectedProduct" id="productSelect" class="form-control">
+                <option v-for="(product, index) in filteredProducts" :key="index" :value="product">
+                  {{ product.NAME_PRODUCT }} - Hiện có: {{ product.NUMBER_INVENTORY_PRODUCT }}
+                </option>
+              </select>
+            </div>
 
-   <!-- Hiển thị thuộc tính của sản phẩm được chọn -->
-<div v-if="selectedProduct" class="attributes-container">
-  <h4 class="attributes-title">Thuộc tính của sản phẩm:</h4>
-  <ul class="attributes-list">
-    <li v-for="(attribute, index) in selectedProduct.LIST_PRODUCT_METADATA" :key="index">
-      <b class="attribute-key">{{ attribute.KEY }}:</b> <span class="attribute-value">{{ attribute.VALUE.join(', ') }}</span>
-    </li>
-  </ul>
-</div>
+          <!-- Hiển thị thuộc tính của sản phẩm được chọn -->
+        <div v-if="selectedProduct" class="attributes-container">
+          <h4 class="attributes-title">Thuộc tính của sản phẩm:</h4>
+          <ul class="attributes-list">
+            <li v-for="(attribute, index) in selectedProduct.LIST_PRODUCT_METADATA" :key="index">
+              <b class="attribute-key">{{ attribute.KEY }}:</b> <span class="attribute-value">{{ attribute.VALUE.join(', ') }}</span>
+            </li>
+          </ul>
+        </div>
 
     <!-- Form để thêm số lượng và thuộc tính Màu Sắc, Kích Thước -->
     <form @submit.prevent="addProduct">
@@ -176,16 +176,13 @@ export default {
       attributes: [],  // khởi tạo attributes
       filterOption: 'all', // trạng thái dropdown
       searchText: '', // văn bản tìm kiếm
-
-
-
     };
   },
   created() {
     this.getAllProduct();
     this.getProduct();
   },
-   computed: {
+  computed: {
     filteredProducts() {
       // Sao chép toàn bộ sản phẩm từ `numberProduct` (tất cả sản phẩm)
       let filtered = [...this.numberProduct];
