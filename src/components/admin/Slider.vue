@@ -1,71 +1,71 @@
 <template>
   <aside id="sidebar" class="js-sidebar">
-    <!-- Content For Sidebar -->
-    <div class="h-100">
-      <div class="sidebar-logo text-center mb-4">
-        <a href="#" class="font-weight-bold">Admin</a>
+    <div class="sidebar-wrapper">
+      <div class="sidebar-header">
+        <img src="/path-to-your-logo.png" alt="Admin Logo" class="sidebar-logo">
+        <h1 class="sidebar-title">Admin</h1>
       </div>
-      <ul class="sidebar-nav">
-        <li class="sidebar-item">
-          <a href="#" class="sidebar-link">
-            <i class="fa-solid fa-list pe-2"></i>
-            Dashboard
-          </a>
-        </li>
-       <li class="sidebar-item">
-          <a
-            href="#"
-            class="sidebar-link collapsed"
-            data-bs-target="#product-pages"
-            data-bs-toggle="collapse"
-            aria-expanded="false"
-            ><i class="fa-solid fa-boxes pe-2"></i>
-            Quản lý Sản phẩm
-          </a>
-          <ul
-            id="product-pages"
-            class="sidebar-dropdown list-unstyled collapse"
-            data-bs-parent="#sidebar"
-          >
-            <!-- <li class="sidebar-item">
-              <router-link to="/admin/products">
-                <a class="sidebar-link">Danh sách Sản phẩm</a>
-              </router-link>
-            </li> -->
-            <li class="sidebar-item">
-              <router-link to="/admin/addProducts">
-                <a class="sidebar-link">Thêm Sản phẩm</a>
-              </router-link>
-            </li>
-            <li class="sidebar-item">
-              <router-link to="/admin/productDetails">
-                <a class="sidebar-link">Chi tiết Sản phẩm</a>
-              </router-link>
-            </li>
-          </ul>
-        </li>
-
-        <li class="sidebar-item">
-          <router-link to="/admin/products">
-            <a class="sidebar-link">Quản lý Kho</a>
-          </router-link>
-        </li>
-        <li class="sidebar-item">
-          <router-link to="/admin/addprices">
-            <a class="sidebar-link">Quản lý Giá</a>
-          </router-link>
-        </li>
-        <li class="sidebar-item">
-          <router-link to="/admin/category">
-            <a class="sidebar-link">Quản lý Danh Mục</a>
-          </router-link>
-        </li>
-         <li class="sidebar-item">
-          <router-link to="/admin/user">
-            <a class="sidebar-link">Quản lý người dùng</a>
-          </router-link>
-        </li>
-      </ul>
+      <nav class="sidebar-nav">
+        <ul>
+          <li class="sidebar-item">
+            <a href="#" class="sidebar-link">
+              <i class="fas fa-tachometer-alt"></i>
+              <span>Dashboard</span>
+            </a>
+          </li>
+          <li class="sidebar-item has-submenu">
+            <a href="#" class="sidebar-link" data-bs-toggle="collapse" data-bs-target="#product-pages" aria-expanded="false">
+              <i class="fas fa-box-open"></i>
+              <span>Quản lý Sản phẩm</span>
+              <i class="fas fa-chevron-down submenu-icon"></i>
+            </a>
+            <ul id="product-pages" class="submenu collapse" data-bs-parent="#sidebar">
+              <li class="sidebar-item">
+                <router-link to="/admin/addProducts" class="sidebar-link">
+                  <i class="fas fa-plus-circle"></i>
+                  <span>Thêm Sản phẩm</span>
+                </router-link>
+              </li>
+              <li class="sidebar-item">
+                <router-link to="/admin/productDetails" class="sidebar-link">
+                  <i class="fas fa-info-circle"></i>
+                  <span>Chi tiết Sản phẩm</span>
+                </router-link>
+              </li>
+            </ul>
+          </li>
+          <li class="sidebar-item">
+            <router-link to="/admin/products" class="sidebar-link">
+              <i class="fas fa-warehouse"></i>
+              <span>Quản lý Kho</span>
+            </router-link>
+          </li>
+          <li class="sidebar-item">
+            <router-link to="/admin/addprices" class="sidebar-link">
+              <i class="fas fa-tags"></i>
+              <span>Quản lý Giá</span>
+            </router-link>
+          </li>
+          <li class="sidebar-item">
+            <router-link to="/admin/category" class="sidebar-link">
+              <i class="fas fa-list-ul"></i>
+              <span>Quản lý Danh Mục</span>
+            </router-link>
+          </li>
+          <li class="sidebar-item">
+            <router-link to="/admin/productOder" class="sidebar-link">
+              <i class="fas fa-shopping-cart"></i>
+              <span>Quản lý Đơn Hàng</span>
+            </router-link>
+          </li>
+          <li class="sidebar-item">
+            <router-link to="/admin/user" class="sidebar-link">
+              <i class="fas fa-users"></i>
+              <span>Quản lý người dùng</span>
+            </router-link>
+          </li>
+        </ul>
+      </nav>
     </div>
   </aside>
 </template>
@@ -118,53 +118,94 @@ export default {
 
 <style scoped>
 #sidebar {
-  background-color: #343a40;
-  color: #fff;
+  background-color: #2c3e50;
+  color: #ecf0f1;
   min-height: 100vh;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
-  transition: width 0.3s;
+  width: 250px;
+  transition: all 0.3s ease;
+}
+
+.sidebar-wrapper {
+  padding: 20px 0;
+}
+
+.sidebar-header {
+  padding: 20px;
+  text-align: center;
 }
 
 .sidebar-logo {
-  font-size: 24px;
-  color: #fff;
-  text-align: center;
-  margin-bottom: 20px;
+  width: 60px;
+  height: auto;
+  margin-bottom: 10px;
 }
 
-.sidebar-nav {
+.sidebar-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.sidebar-nav ul {
   list-style-type: none;
   padding: 0;
+  margin: 0;
 }
 
 .sidebar-item {
-  position: relative;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
 }
 
 .sidebar-link {
   display: flex;
   align-items: center;
-  padding: 10px 20px;
-  color: #fff;
+  padding: 12px 20px;
+  color: #ecf0f1;
   text-decoration: none;
-  transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
+  transition: all 0.3s ease;
 }
 
-.sidebar-link:hover,
-.sidebar-link:focus {
-  background-color: #495057;
-  color: #ffffff;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+.sidebar-link:hover, .sidebar-link:focus {
+  background-color: #34495e;
+  color: #3498db;
 }
 
 .sidebar-link i {
-  min-width: 20px; /* Giúp biểu tượng có độ rộng đều nhau */
-  transition: transform 0.3s;
+  margin-right: 10px;
+  font-size: 1.1rem;
+  width: 20px;
+  text-align: center;
 }
 
-.sidebar-link:hover i {
-  transform: scale(1.1); /* Tăng kích thước biểu tượng */
+.has-submenu > .sidebar-link {
+  justify-content: space-between;
+}
+
+.submenu-icon {
+  transition: transform 0.3s ease;
+}
+
+.has-submenu > .sidebar-link[aria-expanded="true"] .submenu-icon {
+  transform: rotate(180deg);
+}
+
+.submenu {
+  padding-left: 20px;
+}
+
+.submenu .sidebar-link {
+  padding: 10px 15px;
+}
+
+@media (max-width: 768px) {
+  #sidebar {
+    width: 0;
+    overflow: hidden;
+  }
+  
+  #sidebar.active {
+    width: 250px;
+  }
 }
 
 </style>
