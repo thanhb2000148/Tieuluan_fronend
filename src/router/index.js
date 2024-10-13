@@ -155,11 +155,17 @@ const routes = [
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/DashBoardpries.vue"),
   },
-   {
+  {
     path: "/admin/productDetails",
     name: "DashboardProductDetail",
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/DashBoardProductDetail.vue"),
+  },
+   {
+    path: "/admin/productOder",
+    name: "DashboardProductOder",
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/DashBoardProductOder.vue"),
   },
 ];
 

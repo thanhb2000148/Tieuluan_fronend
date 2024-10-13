@@ -49,6 +49,18 @@ class ProductService {
       throw error;
     }
   }
+ async update(id, product) {
+  try {
+    const response = await this.api.put(`/${id}`, product);
+    console.log("Dữ liệu trả về từ server:", response.data); // Log dữ liệu trả về
+    return response.data;
+  } catch (error) {
+    console.error(`Error updating product with ID ${id}:`, error);
+    throw error;
+  }
+}
+
+
    
 }
 export default new ProductService();
