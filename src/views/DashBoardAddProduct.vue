@@ -97,22 +97,20 @@
               </div>
 
              <div class="form-group">
-  <label for="detail_images">Ảnh Chi Tiết Sản Phẩm</label>
-  <p class="helper-text">Bạn có thể thêm nhiều ảnh chi tiết để làm rõ hơn về sản phẩm.</p>
-  <button type="button" class="btn btn-success mb-2" @click="addDetailImageInput">
-    <i class="fas fa-plus"></i> Thêm Ảnh Chi Tiết
-  </button>
-  <div v-for="(image, index) in uploadedDetailImages" :key="index" class="mt-2">
-    <input
-      type="file"
-      class="form-control"
-      :id="'detail_images_' + index"
-      @change="handleFileChange($event, index)"
-    />
-  </div>
-</div>
-
-
+                <label for="detail_images">Ảnh Chi Tiết Sản Phẩm</label>
+                <p class="helper-text">Bạn có thể thêm nhiều ảnh chi tiết để làm rõ hơn về sản phẩm.</p>
+                <button type="button" class="btn btn-success mb-2" @click="addDetailImageInput">
+                  <i class="fas fa-plus"></i> Thêm Ảnh Chi Tiết
+                </button>
+                <div v-for="(image, index) in uploadedDetailImages" :key="index" class="mt-2">
+                  <input
+                    type="file"
+                    class="form-control"
+                    :id="'detail_images_' + index"
+                    @change="handleFileChange($event, index)"
+                  />
+                </div>
+              </div>
               <button type="submit" class="btn btn-primary" :disabled="loading">
                 <span v-if="loading">Đang xử lý...</span>
                 <span v-else>Thêm Sản Phẩm</span>
