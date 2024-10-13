@@ -19,5 +19,15 @@ class OrderService {
       console.error(error);
     }
   }
+  // API để lấy danh sách tất cả đơn hàng
+  async getOrdersAll() {
+    try {
+      const response = await this.api.get("/all"); // Sử dụng URL lấy tất cả đơn hàng
+      return response.data;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  
 }
 export default new OrderService();
