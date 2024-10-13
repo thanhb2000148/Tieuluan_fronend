@@ -2,175 +2,129 @@
   <NavBar />
   <Search />
   <SinglePageHeaderVue />
-  <div class="container-fluid py-5">
-    <div class="container py-5">
-      <div v-if="cart.length === 0">
-        <div class="text-cart-empty">
-          <img src="../../public/img/cart_empty.png" alt="" />
-          <p class="text-center">
-            Hiện tại không có sản phẩm nào trong giỏ hàng của Anh/Chị.
-          </p>
+  
+  <div class="cart-view bg-light py-5">
+    <div class="container">
+      <h1 class="mb-4 text-center cart-title">Giỏ hàng của bạn</h1>
+      
+      <div v-if="cart.length === 0" class="text-center py-5 empty-cart">
+        <img src="../../public/img/cart_empty.png" alt="" class="mb-4" style="max-width: 200px;" />
+        <p class="lead text-muted">
+          Hiện tại không có sản phẩm nào trong giỏ hàng của Anh/Chị.
+        </p>
+        <router-link to="/products" class="btn btn-primary btn-lg">Tiếp tục mua sắm</router-link>
+      </div>
+      
+      <div v-else class="row">
+        <div class="col-lg-8">
+          <div class="card shadow-sm mb-4 cart-items">
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-borderless mb-0">
+                  <thead class="bg-primary text-white">
+                    <tr>
+                      <th scope="col" class="py-3 px-4">Sản phẩm</th>
+                      <th scope="col" class="py-3 px-4">Giá</th>
+                      <th scope="col" class="py-3 px-4">Số lượng</th>
+                      <th scope="col" class="py-3 px-4">Tổng cộng</th>
+                      <th scope="col" class="py-3 px-4"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="item in cart" :key="item.ITEM._id" class="cart-item">
+                      <td class="py-3 px-4">
+                        <div class="d-flex align-items-center">
+                          <img
+                            v-if="item.ITEM.PRODUCT_DETAILS && item.ITEM.PRODUCT_DETAILS.imageUrl"
+                            :src="item.ITEM.PRODUCT_DETAILS.imageUrl"
+                            class="img-fluid me-3 rounded product-image"
+                            alt=""
+                          />
+                          <div>
+                            <h6 class="mb-0 product-name" v-if="item.ITEM.PRODUCT_DETAILS">
+                              {{ item.ITEM.PRODUCT_DETAILS.name }}
+                            </h6>
+                            <small class="text-muted" v-else>Thông tin sản phẩm không có sẵn</small>
+                            <div class="mt-1 product-details">
+                              <small class="text-muted" v-if="item.ITEM.LIST_MATCH_KEY && item.ITEM.LIST_MATCH_KEY[0]">
+                                {{ item.ITEM.LIST_MATCH_KEY[0].KEY }}: {{ item.ITEM.LIST_MATCH_KEY[0].VALUE }}
+                              </small>
+                              <br v-if="item.ITEM.LIST_MATCH_KEY && item.ITEM.LIST_MATCH_KEY[1]" />
+                              <small class="text-muted" v-if="item.ITEM.LIST_MATCH_KEY && item.ITEM.LIST_MATCH_KEY[1]">
+                                {{ item.ITEM.LIST_MATCH_KEY[1].KEY }}: {{ item.ITEM.LIST_MATCH_KEY[1].VALUE }}
+                              </small>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="py-3 px-4 product-price">{{ formatPrice(item.ITEM.PRICE) }}</td>
+                      <td class="py-3 px-4">
+                        <div class="input-group input-group-sm quantity-control">
+                          <button
+                            @click="updateNumberCartMinus(item.ITEM.ID_PRODUCT, item.ITEM._id, item.ITEM.QUANTITY - 1, item.ITEM._id)"
+                            class="btn btn-outline-secondary"
+                            type="button"
+                          >
+                            <i class="fa fa-minus"></i>
+                          </button>
+                          <input
+                            type="text"
+                            class="form-control text-center"
+                            :value="item.ITEM.QUANTITY"
+                            readonly
+                          />
+                          <button
+                            @click="updateNumberCartPlus(item.ITEM.ID_PRODUCT, item.ITEM._id, item.ITEM.QUANTITY + 1, item.ITEM._id)"
+                            class="btn btn-outline-secondary"
+                            type="button"
+                          >
+                            <i class="fa fa-plus"></i>
+                          </button>
+                        </div>
+                      </td>
+                      <td class="py-3 px-4 product-total">
+                        <strong>{{ formatPrice(totalPrice(item.ITEM.PRICE, item.ITEM.QUANTITY)) }}</strong>
+                      </td>
+                      <td class="py-3 px-4">
+                        <button
+                          class="btn btn-sm btn-outline-danger remove-item"
+                          @click="deleteCart(item.ITEM._id)"
+                        >
+                          <i class="fa fa-trash"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <router-link to="/products" class="btn btn-outline-primary btn-lg">
+              <i class="fa fa-arrow-left me-2"></i>Tiếp tục mua sắm
+            </router-link>
+          </div>
         </div>
-      </div>
-      <div class="table-responsive" v-else>
-        <table class="table">
-          <thead>
-            <tr>
-              <th scope="col">Ảnh sản phẩm</th>
-              <th scope="col">Tên sản phẩm</th>
-              <th scope="col">Phân loại</th>
-              <th scope="col">Giá</th>
-              <th scope="col">Số lượng</th>
-              <th scope="col">Tổng cộng</th>
-              <th scope="col">Xử lý</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="item in cart" :key="item.ITEM._id">
-              <td>
-                <div class="d-flex align-items-center">
-                  <img
-                    v-if="
-                      item.ITEM.PRODUCT_DETAILS &&
-                      item.ITEM.PRODUCT_DETAILS.imageUrl
-                    "
-                    :src="item.ITEM.PRODUCT_DETAILS.imageUrl"
-                    class="img-fluid me-5 rounded-circle"
-                    style="width: 80px; height: 80px"
-                    alt=""
-                  />
-                </div>
-              </td>
-
-              <td>
-                <p class="mb-0 mt-4" v-if="item.ITEM.PRODUCT_DETAILS">
-                  {{ item.ITEM.PRODUCT_DETAILS.name }}
-                </p>
-                <p class="mb-0 mt-4" v-else>Thông tin sản phẩm không có sẵn</p>
-              </td>
-              <td>
-                <p class="mb-0 mt-4">
-                  <span
-                    v-if="
-                      item.ITEM.LIST_MATCH_KEY && item.ITEM.LIST_MATCH_KEY[0]
-                    "
-                    class="d-block"
-                  >
-                    {{ item.ITEM.LIST_MATCH_KEY[0].KEY }}:
-                    {{ item.ITEM.LIST_MATCH_KEY[0].VALUE }}
-                  </span>
-                  <span v-else class="d-block">Thông tin không có sẵn</span>
-                  <span
-                    v-if="
-                      item.ITEM.LIST_MATCH_KEY && item.ITEM.LIST_MATCH_KEY[1]
-                    "
-                    class="d-block"
-                  >
-                    {{ item.ITEM.LIST_MATCH_KEY[1].KEY }}:
-                    {{ item.ITEM.LIST_MATCH_KEY[1].VALUE }}
-                  </span>
-                  <span v-else class="d-block">Thông tin không có sẵn</span>
-                </p>
-              </td>
-              <td>
-                <p class="mb-0 mt-4">{{ formatPrice(item.ITEM.PRICE) }}</p>
-              </td>
-              <td>
-                <div class="input-group quantity mt-4" style="width: 100px">
-                  <div class="input-group-btn">
-                    <button
-                      @click="
-                        updateNumberCartMinus(
-                          item.ITEM.ID_PRODUCT,
-                          item.ITEM._id,
-                          item.ITEM.QUANTITY - 1,
-                          item.ITEM._id
-                        )
-                      "
-                      class="btn btn-sm btn-minus rounded-circle bg-light border"
-                    >
-                      <i class="fa fa-minus"></i>
-                    </button>
-                  </div>
-                  <input
-                    type="text"
-                    class="form-control form-control-sm text-center border-0"
-                    :value="item.ITEM.QUANTITY"
-                  />
-                  <div class="input-group-btn">
-                    <button
-                      @click="
-                        updateNumberCartPlus(
-                          item.ITEM.ID_PRODUCT,
-                          item.ITEM._id,
-                          item.ITEM.QUANTITY + 1,
-                          item.ITEM._id
-                        )
-                      "
-                      class="btn btn-sm btn-plus rounded-circle bg-light border"
-                    >
-                      <i class="fa fa-plus"></i>
-                    </button>
-                  </div>
-                </div>
-              </td>
-              <td>
-                <p class="mb-0 mt-4">
-                  {{
-                    formatPrice(totalPrice(item.ITEM.PRICE, item.ITEM.QUANTITY))
-                  }}
-                </p>
-              </td>
-              <td>
-                <button
-                  class="btn btn-md rounded-circle bg-light border mt-4"
-                  @click="deleteCart(item.ITEM._id)"
-                >
-                  <i class="fa fa-times text-danger"></i>
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div v-if="cart.length > 0">
-        <!-- <div class="mt-5">
-          <input
-            type="text"
-            class="border-0 border-bottom rounded me-5 py-3 mb-4"
-            placeholder="Coupon Code"
-          />
-          <button
-            class="btn border-secondary rounded-pill px-4 py-3 text-primary"
-            type="button"
-          >
-            Apply Coupon
-          </button>
-        </div> -->
-        <div class="row g-4 justify-content-end">
-          <div class="col-8"></div>
-          <div class="col-sm-8 col-md-7 col-lg-6 col-xl-4">
-            <div class="bg-light rounded">
-              <div class="p-4">
-                <h1 class="display-6 mb-4">
-                  <span class="fw-normal">Tổng đơn hàng</span>
-                </h1>
+        
+        <div class="col-lg-4">
+          <div class="card shadow-sm order-summary">
+            <div class="card-body">
+              <h5 class="card-title mb-4">Tổng đơn hàng</h5>
+              <div class="d-flex justify-content-between mb-3">
+                <span>Tạm tính:</span>
+                <strong>{{ formatPrice(calculateTotalCart()) }}</strong>
               </div>
-              <div
-                class="py-4 mb-4 border-top border-bottom d-flex justify-content-between"
-              >
-                <h5 class="mb-0 ps-4 me-4">Tổng cộng</h5>
-                <p class="mb-0 pe-4">
-                  {{ formatPrice(calculateTotalCart()) }}
-                </p>
+              <hr>
+              <div class="d-flex justify-content-between mb-4">
+                <span class="h5">Tổng cộng:</span>
+                <strong class="h5 text-primary">{{ formatPrice(calculateTotalCart()) }}</strong>
               </div>
-
               <button
                 @click="checkLenghtCart()"
-                class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4"
+                class="btn btn-primary btn-lg w-100"
                 type="button"
               >
-                Thanh toán
+                Tiến hành thanh toán
               </button>
             </div>
           </div>
@@ -178,6 +132,7 @@
       </div>
     </div>
   </div>
+  
   <AppFooter />
 </template>
 
@@ -201,6 +156,8 @@ export default {
   data() {
     return {
       cart: [],
+          shippingFee: 30000, // Giả sử phí vận chuyển là 30,000 VND
+
     };
   },
   async created() {
@@ -408,11 +365,136 @@ export default {
 </script>
 
 <style scoped>
-.text-cart-empty p {
-  font-size: 25px;
+.cart-view {
+  background-color: #f8f9fa;
 }
-.text-cart-empty img {
-  display: block;
-  margin: 0 auto;
+
+.cart-title {
+  font-size: 2.5rem;
+  font-weight: 300;
+  color: #343a40;
+  margin-bottom: 2rem;
+}
+
+.card {
+  border: none;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  transition: box-shadow 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.cart-items .table th {
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+}
+
+.cart-item {
+  transition: background-color 0.3s ease;
+}
+
+.cart-item:hover {
+  background-color: #f8f9fa;
+}
+
+.product-image {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+}
+
+.product-name {
+  font-weight: 500;
+  color: #343a40;
+}
+
+.product-details {
+  font-size: 0.85rem;
+}
+
+.product-price, .product-total {
+  font-weight: 500;
+  color: #495057;
+}
+
+.quantity-control {
+  width: 120px;
+}
+
+.quantity-control .btn {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+}
+
+.quantity-control input {
+  font-weight: 500;
+}
+
+.remove-item {
+  transition: all 0.3s ease;
+}
+
+.remove-item:hover {
+  background-color: #dc3545;
+  color: white;
+}
+
+.order-summary {
+  background-color: #ffffff;
+}
+
+.order-summary .card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #343a40;
+}
+
+.btn-primary, .bg-primary {
+  background-color: #4A90E2 !important;
+  border-color: #4A90E2 !important;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover, .btn-outline-primary:hover {
+  opacity: 0.9;
+}
+
+.btn-outline-primary {
+  color: #4A90E2;
+  border-color: #4A90E2;
+}
+
+.text-primary {
+  color: #4A90E2 !important;
+}
+
+.empty-cart p {
+  font-size: 1.1rem;
+  color: #6c757d;
+}
+
+.btn-lg {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+}
+
+@media (max-width: 768px) {
+  .cart-title {
+    font-size: 2rem;
+  }
+  
+  .product-image {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .quantity-control {
+    width: 100px;
+  }
 }
 </style>
