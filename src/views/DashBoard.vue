@@ -101,6 +101,7 @@ import Slider from "../components/admin/Slider.vue";
 import Nav from "../components/admin/Nav.vue";
 import Footer from "../components/admin/Footer.vue";
 export default {
+  // eslint-disable-next-line vue/multi-word-component-names
   name: "Dashboard",
   components: {
     Slider,
