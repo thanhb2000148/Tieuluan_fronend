@@ -13,7 +13,7 @@
             </router-link>
 
             <!-- Thanh Tìm kiếm -->
-            <form class="form-inline">
+            <form class="form-inline" @submit.prevent>
               <div class="input-group">
                 <input
                   class="form-control"
@@ -45,7 +45,8 @@
                   <th class="space-code">Mã đơn hàng</th>
                   <th class="space-date">Ngày đặt</th>
                   <th class="space-total">Thành tiền</th>
-                  <th class="space-status">Trạng thái đơn hàng</th>
+                  <th class="space-status">Trạng thái thanh toán</th>
+                  <th class="space-statusoder">Trạng thái đơn hàng</th>
                   <th class="space-payment">Phương thức thanh toán</th>
                   <th class="space-action">Hành động</th>
                 </tr>
@@ -57,6 +58,9 @@
                   <td>{{ formatDateTime(order.TIME_PAYMENT) }}</td>
                   <td>{{ totalPriceOrder(order).toLocaleString("vi-VN", { style: "currency", currency: "VND" }) }}</td>
                   <td>{{ getLastOrderStatus(order.LIST_STATUS).STATUS_NAME }}</td>
+                  <td :class="getStatusClass(order.ORDER_STATUS)">
+                    {{ order.ORDER_STATUS }}
+                  </td>
                   <td>{{ order.PAYMENT_METHOD }}</td>
                   <td>
                     <button @click="openEditModal(order)" class="btn btn-secondary btn-sm">Sửa</button>
@@ -76,12 +80,23 @@
             <div class="modal-content">
               <span class="close" @click="closeEditModal">&times;</span>
               <h2>Chỉnh sửa trạng thái đơn hàng</h2>
+
+              <!-- Chọn trạng thái đơn hàng -->
               <label for="status">Chọn trạng thái:</label>
               <select v-model="selectedOrderStatus" id="status">
-                <option v-for="status in orderStatuses" :key="status" :value="status">{{ status }}</option>
+                <option value="Đã Duyệt">Đã Duyệt (Đang xử lý)</option>
+                <option value="Đang vận chuyển">Giao Hàng (Đang vận chuyển)</option>
               </select>
+
+              <!-- Nút cập nhật -->
               <button @click="updateOrderStatus" class="btn btn-primary">Cập nhật</button>
             </div>
+          </div>
+
+          <!-- Hiển thị thông báo -->
+          <div v-if="successMessage" class="alert alert-success" role="alert">
+            {{ successMessage }}
+            <button @click="resetSuccessMessage" class="btn btn-sm btn-outline-success">OK</button>
           </div>
         </div>
       </main>
@@ -104,19 +119,44 @@ export default {
     return {
       adminOrders: [],
       searchQuery: "",
-      selectedStatus: "",
+      selectedStatus: "", // Biến để lưu trạng thái được chọn
       isModalOpen: false,
       selectedOrderStatus: "",
-      orderStatuses: ["Chuẩn bị đơn hàng", "Đã giao hàng"], // Trạng thái đơn hàng cho admin
+      selectedOrderId: "",
+      orderStatuses: [
+      "Đang xử lý", 
+      "Đang vận chuyển", 
+      "Chờ Duyệt", 
+      "Đã giao", 
+      "Chưa hoàn thành thanh toán"
+    ], // Cập nhật danh sách trạng thái đơn hàng
+      successMessage: "",
     };
   },
   async created() {
     await this.fetchAdminOrders();
   },
   methods: {
+    getStatusClass(status) {
+      switch (status) {
+        case 'Đã giao':
+          return 'text-success';
+        case 'Đang xử lý':
+          return 'text-warning';
+        case 'Đã Duyệt':
+        case 'Chờ Duyệt':
+          return 'text-danger';
+        case 'Đang vận chuyển':
+          return 'text-primary';
+        default:
+          return '';
+      }
+    },
     async fetchAdminOrders() {
       try {
         const response = await orderService.getOrdersAll();
+        console.log("Dữ liệu từ server:", response);
+
         if (response && Array.isArray(response.data)) {
           this.adminOrders = response.data;
         } else {
@@ -140,48 +180,48 @@ export default {
       return totalPriceOrder;
     },
     openEditModal(order) {
-      this.selectedOrderStatus = this.getLastOrderStatus(order.LIST_STATUS).STATUS_NAME; // Lấy trạng thái hiện tại
-      this.selectedOrderCode = order.ORDER_CODE; // Lưu mã đơn hàng để cập nhật
-      this.isModalOpen = true; // Mở modal
+      this.selectedOrderStatus = order.ORDER_STATUS;
+      this.selectedOrderId = order._id;
+      this.isModalOpen = true;
     },
     closeEditModal() {
-      this.isModalOpen = false; // Đóng modal
+      this.isModalOpen = false;
     },
-   async updateOrderStatus() {
-  try {
-    // Kiểm tra trạng thái hiện tại để gọi đúng API
-    const lastStatus = this.getLastOrderStatus(this.adminOrders.find(order => order.ORDER_CODE === this.selectedOrderCode).LIST_STATUS);
-    
-    if (lastStatus.STATUS_NAME === "Chuẩn bị đơn hàng" && this.selectedOrderStatus === "Đã giao hàng") {
-      // Nếu đang chuẩn bị đơn hàng và chọn "Đã giao hàng"
-      await orderService.markOrderAsDelivered(this.selectedOrderCode);
-    } else if (lastStatus.STATUS_NAME === "Chờ xác nhận" && this.selectedOrderStatus === "Chuẩn bị đơn hàng") {
-      // Nếu đang chờ xác nhận và chọn "Chuẩn bị đơn hàng"
-      await orderService.confirmOrder(this.selectedOrderCode);
-    } else {
-      this.$toast.error("Trạng thái không hợp lệ!");
-      return;
-    }
+    async updateOrderStatus() {
+      try {
+        if (this.selectedOrderStatus === "Đã Duyệt") {
+          await orderService.updateOrderStatusToProcessing(this.selectedOrderId);
+        } else if (this.selectedOrderStatus === "Đang vận chuyển") {
+          await orderService.updateOrderToShipping(this.selectedOrderId);
+        } else {
+          console.error("Trạng thái không hợp lệ!");
+          return;
+        }
 
-    await this.fetchAdminOrders(); // Tải lại danh sách đơn hàng
-    this.closeEditModal(); // Đóng modal
-    this.$toast.success("Trạng thái đơn hàng đã được cập nhật!"); // Thông báo thành công
-  } catch (error) {
-    console.error("Lỗi khi cập nhật trạng thái đơn hàng:", error);
-    this.$toast.error("Có lỗi xảy ra khi cập nhật trạng thái đơn hàng!"); // Thông báo lỗi
-  }
-}
-
+        this.successMessage = "Cập nhật trạng thái đơn hàng thành công!";
+        await this.fetchAdminOrders();
+        this.closeEditModal();
+      } catch (error) {
+        console.error("Lỗi khi cập nhật trạng thái đơn hàng:", error);
+      }
+    },
+    resetSuccessMessage() {
+      this.successMessage = "";
+      this.selectedOrderStatus = "";
+      this.selectedOrderId = "";
+    },
   },
   computed: {
    filteredAdminOrders() {
-    return this.adminOrders.filter(order => {
-      // Kiểm tra nếu ORDER_CODE không phải là null
-      const orderCode = order.ORDER_CODE || ""; // Nếu null thì gán thành chuỗi rỗng
-      const matchesSearch = orderCode.toLowerCase().includes(this.searchQuery.toLowerCase());
+    return this.adminOrders.filter((order) => {
+      const orderCode = order.ORDER_CODE || "";
+      const matchesSearch = orderCode
+        .toLowerCase()
+        .includes(this.searchQuery.toLowerCase());
 
-      const lastStatus = this.getLastOrderStatus(order.LIST_STATUS);
-      const matchesStatus = this.selectedStatus ? lastStatus && lastStatus.STATUS_NAME === this.selectedStatus : true;
+      const matchesStatus = this.selectedStatus
+        ? order.ORDER_STATUS === this.selectedStatus
+        : true;
 
       return matchesSearch && matchesStatus;
     });
@@ -189,6 +229,7 @@ export default {
   },
 };
 </script>
+
 
 <style>
 .modal {
@@ -200,8 +241,8 @@ export default {
   width: 100%; /* Full width */
   height: 100%; /* Full height */
   overflow: auto; /* Bỏ qua thanh cuộn */
-  background-color: rgb(0,0,0); /* Màu nền */
-  background-color: rgba(0,0,0,0.4); /* Nền trong suốt */
+  background-color: rgb(0, 0, 0); /* Màu nền */
+  background-color: rgba(0, 0, 0, 0.4); /* Nền trong suốt */
 }
 
 .modal-content {
@@ -225,4 +266,49 @@ export default {
   text-decoration: none;
   cursor: pointer;
 }
+
+.text-success {
+  color: green;
+}
+
+.text-warning {
+  color: orange;
+}
+
+.text-danger {
+  color: red;
+}
+.alert {
+  position: fixed; /* Đặt vị trí cố định */
+  top: 20px; /* Khoảng cách từ trên cùng */
+  left: 50%; /* Đặt ở giữa theo chiều ngang */
+  transform: translateX(-50%); /* Căn giữa thông báo */
+  z-index: 999; /* Đặt ở trên cùng */
+  width: 80%; /* Đặt chiều rộng thông báo */
+  max-width: 600px; /* Đặt chiều rộng tối đa */
+  padding: 15px; /* Khoảng cách bên trong */
+  border-radius: 5px; /* Bo tròn góc */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Thêm bóng đổ */
+  transition: all 0.3s ease; /* Hiệu ứng chuyển động mượt mà */
+  display: flex; /* Để dễ dàng canh chỉnh các thành phần bên trong */
+  justify-content: space-between; /* Giữa các thành phần */
+  align-items: center; /* Căn giữa theo chiều dọc */
+}
+
+.alert-success {
+  background-color: #d4edda; /* Màu nền cho thông báo thành công */
+  color: #155724; /* Màu chữ */
+}
+
+.alert button {
+  border: none; /* Bỏ viền */
+  background: none; /* Bỏ nền */
+  color: #155724; /* Màu chữ của nút */
+  cursor: pointer; /* Hiển thị con trỏ khi di chuột */
+}
+
+.alert button:hover {
+  text-decoration: underline; /* Gạch chân khi di chuột */
+}
+
 </style>
