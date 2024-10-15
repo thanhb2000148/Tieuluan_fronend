@@ -1,0 +1,274 @@
+.table th,
+.table td {
+    vertical-align: middle;
+}
+
+.btn-group .btn {
+    border-radius: 0;
+}
+
+.btn-group .btn:first-child {
+    border-top-left-radius: 0.25rem;
+    border-bottom-left-radius: 0.25rem;
+}
+
+.btn-group .btn:last-child {
+    border-top-right-radius: 0.25rem;
+    border-bottom-right-radius: 0.25rem;
+}
+
+.badge {
+    font-size: 0.875em;
+}
+
+.modal-body {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+/* Thêm một số style bổ sung để cải thiện giao diện */
+.card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    border: none;
+}
+
+.card-title {
+    color: #333;
+    font-weight: bold;
+}
+
+.table {
+    border-collapse: separate;
+    border-spacing: 0 0.5rem;
+}
+
+.table thead th {
+    border-bottom: 2px solid #dee2e6;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+.table tbody tr {
+    background-color: #fff;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    transition: all 0.2s;
+}
+
+.table tbody tr:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.btn-info {
+    color: #fff;
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+}
+
+.btn-info:hover {
+    color: #fff;
+    background-color: #138496;
+    border-color: #117a8b;
+}
+
+.pagination .page-link {
+    color: #007bff;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+}
+
+.pagination .page-item.active .page-link {
+    z-index: 3;
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.modal-content {
+    border-radius: 0.3rem;
+}
+
+.modal-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.modal-title {
+    color: #333;
+    font-weight: bold;
+}
+
+.list-group-item {
+    border-left: none;
+    border-right: none;
+    padding: 1rem 1.25rem;
+}
+
+/* style modal chi tiết dơn hàng*/
+
+.order-status {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.status-tracker {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    margin-top: 20px;
+}
+
+.status-step {
+    flex: 1;
+    text-align: center;
+    position: relative;
+}
+
+.status-icon {
+    background-color: #ddd;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.status-icon.active {
+    background-color: #00c853;
+    /* Màu xanh lá cây khi hoàn thành */
+}
+
+.status-info p {
+    margin: 5px 0;
+    font-size: 12px;
+}
+
+.status-line {
+    position: absolute;
+    top: 25px;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background-color: #ddd;
+}
+
+.status-progress {
+    height: 100%;
+    background-color: #00c853;
+    /* Màu xanh lá cây cho phần đã hoàn thành */
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+/*thanh tiến trình*/
+.stepper__line {
+    position: relative;
+    width: 100%;
+    height: 4px;
+    background-color: lightgray;
+    margin-top: 16px;
+}
+
+.stepper__line-foreground {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 4px;
+    background-color: green;
+    width: 50%;
+    /* Cần tính toán đúng chiều dài, ví dụ 50% */
+}
+
+.stepper {
+    display: flex;
+    justify-content: space-between;
+    /* Đảm bảo các bước được căn đều */
+    align-items: center;
+    width: 100%;
+    /* Chiếm toàn bộ chiều rộng */
+}
+
+.stepper__step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 20%;
+    /* Tùy chỉnh dựa vào số lượng bước, ví dụ 20% cho 5 bước */
+    position: relative;
+}
+
+.stepper__step-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: lightgray;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.stepper__step--finish .stepper__step-icon {
+    background-color: green;
+    /* Biểu tượng cho bước đã hoàn thành */
+}
+
+/*bảng don hàng*/
+/* Bảng đơn hàng */
+.product-info {
+    margin-bottom: 20px;
+    /* Khoảng cách giữa các sản phẩm */
+}
+
+.product-container {
+    display: flex;
+    /* Sử dụng Flexbox để định dạng hàng ngang */
+    align-items: center;
+    /* Căn giữa theo chiều dọc */
+}
+
+.product-image {
+    max-width: 100px;
+    /* Đặt kích thước tối đa cho hình ảnh */
+    height: auto;
+    /* Giữ tỷ lệ khung hình */
+    margin-right: 15px;
+    /* Khoảng cách bên phải của hình ảnh */
+}
+
+.product-details {
+    display: flex;
+    /* Sử dụng Flexbox cho thông tin sản phẩm */
+    flex-direction: column;
+    /* Đặt hướng dọc cho thông tin sản phẩm */
+}
+
+.product-name {
+    font-size: 18px;
+    /* Kích thước chữ cho tên sản phẩm */
+    font-weight: bold;
+    /* Đậm tên sản phẩm */
+    margin-bottom: 5px;
+    /* Khoảng cách dưới tên sản phẩm */
+}
+
+.product-key {
+    font-size: 14px;
+    /* Kích thước chữ cho thuộc tính */
+    line-height: 1.5;
+    /* Tăng khoảng cách giữa các thuộc tính */
+    margin-bottom: 5px;
+    /* Khoảng cách dưới mỗi thuộc tính */
+}
+
+.product-quantity {
+    font-size: 14px;
+    /* Kích thước chữ cho số lượng */
+    font-weight: normal;
+    /* Thay đổi độ đậm của số lượng */
+}

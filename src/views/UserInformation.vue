@@ -312,37 +312,168 @@
             </div>
 
             <!-- Thông tin đơn hàng -->
-            <div class="tab-pane fade" :class="{ 'active show': selectedTab === 'order' }" id="order">
-              <div class="card-body pb-2">
-                <h1 class="text-center">Danh sách đơn hàng mới nhất</h1>
-                <div class="container mt-5">
-                  <div class="table-responsive">
-                    <table class="table table-bordered table-striped">
-                      <thead class="thead-dark">
-                        <tr>
-                          <th class="text-center">STT</th>
-                          <th class="text-center">Mã đơn hàng</th>
-                          <th class="text-center">Ngày đặt</th>
-                          <th class="text-center">Thành tiền</th>
-                          <th class="text-center">Trạng thái thanh toán</th>
-                          <th class="text-center">Phương thức thanh toán</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr v-for="(order, index) in filteredOrders" :key="order._id">
-                          <td class="text-center">{{ index + 1 }}</td>
-                          <td class="text-center">{{ order.ORDER_CODE }}</td>
-                          <td class="text-center">{{ formatDateTime(order.TIME_PAYMENT) }}</td>
-                          <td class="text-center">{{ totalPriceOrder(order).toLocaleString("vi-VN", { style: "currency", currency: "VND" }) }}</td>
-                          <td class="text-center">{{ getLastOrderStatus(order.LIST_STATUS).STATUS_NAME }}</td>
-                          <td class="text-center">{{ order.PAYMENT_METHOD }}</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
+  <div class="tab-pane fade" :class="{ 'active show': selectedTab === 'order' }" id="order">
+    <div class="card">
+      <div class="card-body">
+        <h2 class="card-title text-center mb-4">Danh sách đơn hàng</h2>
+        
+        <!-- Nút lọc trạng thái -->
+        <div class="d-flex justify-content-center mb-4">
+          <div class="btn-group" role="group">
+            <button 
+              v-for="status in orderStatuses" 
+              :key="status"
+              type="button" 
+              class="btn btn-outline-primary" 
+              :class="{ active: selectedStatus === status }"
+              @click="selectOrderStatus(status)"
+            >
+              {{ status }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Bảng đơn hàng -->
+<div class="table-responsive">
+  <table class="table table-hover">
+    <thead class="table-light">
+      <tr>
+        <th class="text-center">STT</th>
+        <th class="text-center">Thông tin sản phẩm</th>
+        <th class="text-center">Thành tiền</th>
+        <th class="text-center">Thanh toán</th>
+        <th class="text-center">Chi tiết</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="(order, index) in paginatedOrders" :key="order._id">
+        <td class="text-center">{{ index + 1 + (currentPage - 1) * itemsPerPage }}</td>
+        <td class="text-center">
+          <div v-if="order.PRODUCT_DETAILS && order.PRODUCT_DETAILS.length > 0">
+            <div v-for="(product, idx) in order.PRODUCT_DETAILS" :key="idx" class="product-info">
+              <img 
+                :src="product.attachment[0]?.FILE_URL" 
+                alt="Product Image" 
+                class="product-image" 
+                v-if="product.attachment && product.attachment.length > 0" 
+              />
+              <div class="product-name">
+                {{ product.name }} <!-- Hiển thị tên sản phẩm -->
+              </div >
+              <div class="product-key" v-for="(attribute, attrIdx) in product.listMatchKey" :key="attrIdx">
+                {{ attribute.KEY }} : {{ attribute.VALUE }} <!-- Hiển thị các thuộc tính sản phẩm -->
+              </div>
+              
+              <div class="product-quantity" >
+                X{{ product.quantity }} <!-- Hiển thị số lượng -->
               </div>
             </div>
+          </div>
+          <div v-else>
+            <p>Không có sản phẩm nào.</p> <!-- Hiển thị thông báo nếu không có sản phẩm -->
+          </div>
+        </td>
+        <td class="text-center">{{ formatCurrency(totalPriceOrder(order)) }}</td>
+        <td class="text-center">{{ order.PAYMENT_METHOD }}</td>
+        <td class="text-center">
+          <button class="btn btn-sm btn-info" @click="showOrderDetails(order)">
+            <i class="bi bi-eye"></i> Xem
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+        <!-- Phân trang -->
+        <nav aria-label="Page navigation" class="mt-4">
+          <ul class="pagination justify-content-center">
+            <li class="page-item" :class="{ disabled: currentPage === 1 }">
+              <a class="page-link" href="#" @click.prevent="changePage(currentPage - 1)">Trước</a>
+            </li>
+            <li v-for="page in totalPages" :key="page" class="page-item" :class="{ active: page === currentPage }">
+              <a class="page-link" href="#" @click.prevent="changePage(page)">{{ page }}</a>
+            </li>
+            <li class="page-item" :class="{ disabled: currentPage === totalPages }">
+              <a class="page-link" href="#" @click.prevent="changePage(currentPage + 1)">Sau</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+
+  
+      <!-- modal chi tiết đơn hàng -->
+      <div class="modal fade" id="orderDetailsModal" tabindex="-1" aria-labelledby="orderDetailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="orderDetailsModalLabel">Chi tiết đơn hàng</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" v-if="selectedOrder">
+              <!-- Thanh trạng thái đơn hàng -->
+            <div class="order-status">
+        <div class="stepper">
+          <!-- Duyệt qua từng trạng thái trong STATUS_HISTORY -->
+          <div v-for="(status, index) in selectedOrder.STATUS_HISTORY" :key="index" class="stepper__step" 
+          :class="{ 'stepper__step--finish': index <= getLastOrderStatusIndex(selectedOrder.STATUS_HISTORY) }">
+        <div class="stepper__step-icon">
+          <!-- Icon SVG -->
+        </div>
+        <div class="stepper__step-text">{{ status.STATUS_NAME }}</div>
+        <div class="stepper__step-date">{{ formatDateTime(status.TIME) }}</div>
+      </div>
+
+        </div>
+        
+        <!-- Thanh tiến trình -->
+        <div class="stepper__line">
+          <div class="stepper__line-background"></div>
+          <div class="stepper__line-foreground" :style="{ width: progressPercentage(selectedOrder.STATUS_HISTORY) }"></div>
+        </div>
+      </div>
+
+
+        <!-- Thông tin đơn hàng -->
+        <div class="order-info mt-4">
+          <h6>Mã đơn hàng: {{ selectedOrder.ORDER_CODE }}</h6>
+          <p>Ngày đặt: {{ formatDateTime(selectedOrder.TIME_PAYMENT) }}</p>
+          <p>Trạng thái: {{ getLastOrderStatus(selectedOrder.LIST_STATUS).STATUS_NAME }}</p>
+          <p>Phương thức thanh toán: {{ selectedOrder.PAYMENT_METHOD }}</p>
+          <p>Địa chỉ nhận hàng: {{ selectedOrder.ADDRESS }}</p>
+        </div>
+
+        <!-- Danh sách sản phẩm -->
+        <h6 class="mt-4">Sản phẩm:</h6>
+        <div class="product-list">
+          <div v-for="product in selectedOrder.LIST_PRODUCT" :key="product._id" class="product-item">
+            <img :src="product.IMAGE" alt="Product Image" class="product-image">
+            <div class="product-details">
+              <h6>{{ product.NAME_PRODUCT }}</h6>
+              <p>Số lượng: {{ product.QLT }}</p>
+              <p>Đơn giá: {{ formatCurrency(product.UNITPRICES) }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tổng kết đơn hàng -->
+        <div class="order-summary mt-3">
+          <p><strong>Tổng tiền hàng:</strong> {{ formatCurrency(totalPriceOrder(selectedOrder)) }}</p>
+          <p><strong>Phí vận chuyển:</strong> {{ formatCurrency(selectedOrder.SHIPPING_FEE || 0) }}</p>
+          <p><strong>Giảm giá:</strong> {{ formatCurrency(selectedOrder.DISCOUNT || 0) }}</p>
+          <h5><strong>Thành tiền:</strong> {{ formatCurrency(totalPriceOrder(selectedOrder) + (selectedOrder.SHIPPING_FEE || 0) - (selectedOrder.DISCOUNT || 0)) }}</h5>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </div>
           </div>
         </div>
       </div>
@@ -353,6 +484,8 @@
   <AppFooter />
 </template>
 <script>
+import { Modal } from 'bootstrap';
+
 import axios from 'axios';
 import VueCookies from "vue-cookies";
 import AddressService from "@/services/addresses.service";
@@ -361,6 +494,7 @@ import NavBar from "@/components/User/layout/NavBar.vue";
 import AppFooter from "@/components/User/layout/AppFooter.vue";
 import orderService from "@/services/order.service";
 import Search from "@/components/User/Home/Search.vue";
+import productService from '@/services/product.service';
 // import { uploadImage } from '@/services/imageService';
 import Swal from "sweetalert2";
 export default {
@@ -399,6 +533,11 @@ export default {
       selectedFile: null, // Biến để lưu tệp được chọn
       previewUrl: null, // Biến để lưu đường dẫn ảnh xem trước
       isUploading: false,
+      selectedStatus: 'Tất cả',
+      orderStatuses: ['Tất cả', 'Chờ Duyệt', 'Đang xử lý', 'Đang vận chuyển', 'Đã giao','Đã hủy', 'Chưa hoàn thành thanh toán'],
+      currentPage: 1,
+      itemsPerPage: 10,
+      selectedOrder: null,
     };
   },
   async created() {
@@ -409,17 +548,87 @@ export default {
     await this.fetchOrderUser();
     console.log("lấy order theo user", this.orderUser[0]);
   },
-  methods: {
-    async fetchOrderUser() {
-      try {
-        const response = await orderService.getOrderUser();
-        if (response && response.data) {
-          this.orderUser = response.data;
-          console.log(this.orderUser);
-        }
-      } catch (error) {
-        console.log(error);
+   computed: {
+   filteredOrders() {
+      if (this.selectedStatus === 'Tất cả') {
+        return this.orderUser;
       }
+      return this.orderUser.filter(order => 
+        this.getLastOrderStatus(order.LIST_STATUS).STATUS_NAME === this.selectedStatus
+      );
+    },
+    paginatedOrders() {
+      const start = (this.currentPage - 1) * this.itemsPerPage;
+      const end = start + this.itemsPerPage;
+      return this.filteredOrders.slice(start, end);
+    },
+    totalPages() {
+      return Math.ceil(this.filteredOrders.length / this.itemsPerPage);
+    },
+  },
+  methods: {
+    getLastOrderStatusIndex(statusList) {
+    return statusList.length - 1;
+    },
+    progressPercentage(statusHistory) {
+    const totalSteps = statusHistory.length;
+    const completedSteps = statusHistory.filter(step => step.completed).length; 
+    return `${(completedSteps / totalSteps) * 100}%`;
+  },
+     getStatusClass(status) {
+      switch (status) {
+        case 'Đã giao':
+          return 'text-success';
+        case 'Đang xử lý':
+          return 'text-warning';
+        case 'Đã Duyệt':
+        case 'Chờ Duyệt':
+          return 'text-danger';
+        case 'Đang vận chuyển':
+          return 'text-primary';
+        default:
+          return '';
+      }
+    },
+    // async fetchOrderUser() {
+    //   try {
+    //     const response = await orderService.getOrderUser();
+    //     if (response && response.data) {
+    //       this.orderUser = response.data;
+    //       console.log(this.orderUser);
+    //     }
+    //   } catch (error) {
+    //     console.log(error);
+    //   }
+    // },
+    async fetchOrderUser() {
+        try {
+            const response = await orderService.getOrderUser();
+            if (response && response.data) {
+                this.orderUser = response.data;
+
+                // Lặp qua từng đơn hàng để lấy thông tin sản phẩm
+                for (let order of this.orderUser) {
+                    order.PRODUCT_DETAILS = []; // Tạo một mảng để lưu thông tin sản phẩm
+                    for (let product of order.LIST_PRODUCT) {
+                        const productData = await productService.getById(product.ID_PRODUCT);
+                        if (productData && productData.data) {
+                            // Thêm thông tin sản phẩm vào mảng
+                            order.PRODUCT_DETAILS.push({
+                                name: productData.data.NAME_PRODUCT,
+                                attachment: productData.data.LIST_FILE_ATTACHMENT_DEFAULT,
+                                quantity: product.QLT, // Lấy số lượng từ LIST_PRODUCT
+                            listMatchKey: product.LIST_MATCH_KEY // Truy cập các thuộc tính từ LIST_PRODUCT
+                            });
+                        }
+                    }
+                }
+
+                console.log(this.orderUser); // Kiểm tra thông tin đơn hàng đã được cập nhật
+            }
+        } catch (error) {
+            console.log(error);
+        }
     },
 
     getLastOrderStatus(statusList) {
@@ -686,16 +895,32 @@ export default {
     selectTab(tab) {
       this.selectedTab = tab;
     },
-  },
-  computed: {
-    filteredOrders() {
-      const uniqueOrders = {};
-      this.orderUser.forEach((order) => {
-        if (!uniqueOrders[order.ORDER_CODE]) {
-          uniqueOrders[order.ORDER_CODE] = order;
-        }
-      });
-      return Object.values(uniqueOrders);
+    selectOrderStatus(status) {
+      this.selectedStatus = status;
+      this.currentPage = 1;
+    },
+    changePage(page) {
+      if (page >= 1 && page <= this.totalPages) {
+        this.currentPage = page;
+      }
+    },
+    formatCurrency(value) {
+      return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
+    },
+    getStatusBadgeClass(status) {
+      const classes = {
+        'Đã giao': 'badge bg-success',
+        'Đang xử lý': 'badge bg-warning text-dark',
+        'Đang vận chuyển': 'badge bg-info text-dark',
+        'Chờ duyệt': 'badge bg-secondary',
+        'Chưa hoàn thành thanh toán': 'badge bg-danger'
+      };
+      return classes[status] || 'badge bg-primary';
+    },
+    showOrderDetails(order) {
+      this.selectedOrder = order;
+      const modal = new Modal(document.getElementById('orderDetailsModal'));
+      modal.show();
     },
   },
   closeModal() {
@@ -709,128 +934,6 @@ export default {
 </script>
 
 <style scoped>
-body {
-  background: #f5f5f5;
-  margin-top: 20px;
-}
-
-.ui-w-80 {
-  width: 80px !important;
-  height: auto;
-}
-
-.btn-default {
-  border-color: rgba(24, 28, 33, 0.1);
-  background: rgba(0, 0, 0, 0);
-  color: #4e5155;
-}
-
-label.btn {
-  margin-bottom: 0;
-}
-
-.btn-outline-primary {
-  border-color: #26b4ff;
-  background: transparent;
-  color: #26b4ff;
-}
-
-.btn {
-  cursor: pointer;
-}
-
-.text-light {
-  color: #babbbc !important;
-}
-
-.btn-facebook {
-  border-color: rgba(0, 0, 0, 0);
-  background: #3b5998;
-  color: #fff;
-}
-
-.btn-instagram {
-  border-color: rgba(0, 0, 0, 0);
-  background: #000;
-  color: #fff;
-}
-
-.card {
-  background-clip: padding-box;
-  box-shadow: 0 1px 4px rgba(24, 28, 33, 0.012);
-}
-
-.row-bordered {
-  overflow: hidden;
-}
-
-.account-settings-fileinput {
-  position: absolute;
-  visibility: hidden;
-  width: 1px;
-  height: 1px;
-  opacity: 0;
-}
-
-.account-settings-links .list-group-item.active {
-  font-weight: bold !important;
-}
-
-html:not(.dark-style) .account-settings-links .list-group-item.active {
-  background: transparent !important;
-}
-
-.account-settings-multiselect ~ .select2-container {
-  width: 100% !important;
-}
-
-.light-style .account-settings-links .list-group-item {
-  padding: 0.85rem 1.5rem;
-  border-color: rgba(24, 28, 33, 0.03) !important;
-}
-
-.light-style .account-settings-links .list-group-item.active {
-  color: #4e5155 !important;
-}
-
-.material-style .account-settings-links .list-group-item {
-  padding: 0.85rem 1.5rem;
-  border-color: rgba(24, 28, 33, 0.03) !important;
-}
-
-.material-style .account-settings-links .list-group-item.active {
-  color: #4e5155 !important;
-}
-
-.dark-style .account-settings-links .list-group-item {
-  padding: 0.85rem 1.5rem;
-  border-color: rgba(255, 255, 255, 0.03) !important;
-}
-
-.dark-style .account-settings-links .list-group-item.active {
-  color: #fff !important;
-}
-
-.light-style .account-settings-links .list-group-item.active {
-  color: #4e5155 !important;
-}
-
-.light-style .account-settings-links .list-group-item {
-  padding: 0.85rem 1.5rem;
-  border-color: rgba(24, 28, 33, 0.03) !important;
-}
-.icon-plus i {
-  font-size: 30px;
-}
-
- /*trang thái loading up anh*/
-.upload-status {
-  height: 5px; /* Giữ cho chiều cao cố định để tránh nhảy lên */
-}
-
-.spinner-border {
-  width: 1rem;
-  height: 1rem;
-}
-
+@import '../style.css/userinfomation.css';
 </style>
+
