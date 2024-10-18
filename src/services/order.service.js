@@ -40,7 +40,7 @@ class OrderService {
 }
 
 
-async updateOrderToShipping(orderId) {
+  async updateOrderToShipping(orderId) {
     try {
       const response = await this.api.put(`/orders/${orderId}/shipping`);
               console.log("Phản hồi cập nhật trạng thái 'Đang van chuyen':", response); // Thêm log này
@@ -50,8 +50,17 @@ async updateOrderToShipping(orderId) {
         console.error("Lỗi khi cập nhật trạng thái 'Đang vận chuyển':", error);
         throw new Error("Cập nhật trạng thái 'Đang vận chuyển' thất bại!"); // Thêm thông tin lỗi
     }
+  }   
+  async updateOrderStatusSuccess(orderId) {
+    try {
+      const response = await this.api.patch(`/orders/${orderId}/success`);
+      console.log("Phản hồi cập nhật trạng thái 'Đã giao':", response);
+      return response.data;
+    } catch (error) {
+      console.error("Lỗi khi cập nhật trạng thái 'Đã giao':", error);
+      throw new Error("Cập nhật trạng thái 'Đã giao' thất bại!"); // Thêm thông tin lỗi
+    }
+  }
 }
 
-  
-}
 export default new OrderService();
