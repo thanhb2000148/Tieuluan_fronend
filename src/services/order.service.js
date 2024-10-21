@@ -61,6 +61,19 @@ class OrderService {
       throw new Error("Cập nhật trạng thái 'Đã giao' thất bại!"); // Thêm thông tin lỗi
     }
   }
+ async cancelOrder(orderId, cancelReason) {
+    try {
+      // Gọi API để hủy đơn hàng với lý do hủy trong body
+      const response = await this.api.delete(`/orders/${orderId}/cancel`, {
+        data: { cancelReason }, // Chuyển lý do hủy vào body của yêu cầu
+      });
+      return response.data; 
+    } catch (error) {
+      console.error("Lỗi khi hủy đơn hàng:", error);
+      throw new Error("Hủy đơn hàng thất bại!"); // Thêm thông tin lỗi
+    }
+  }
+
 }
 
 export default new OrderService();
