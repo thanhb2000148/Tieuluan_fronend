@@ -3,103 +3,161 @@
     <Slider />
     <div class="main">
       <Nav />
-      <main class="content px-3 py-2">
+      <main class="content p-4">
         <div class="container-fluid">
-          <h1 class="mb-4 text-center">Quản lý đơn hàng</h1>
-          <div class="d-flex justify-content-between align-items-center mb-4">
-            <!-- Nút Quay lại -->
-            <router-link to="/admin" class="btn btn-info button-add">
-              <i class="fas fa-arrow-left"></i> Quay lại
-            </router-link>
-
-            <!-- Thanh Tìm kiếm -->
-            <form class="form-inline" @submit.prevent>
-              <div class="input-group">
-                <input
-                  class="form-control"
-                  type="search"
-                  placeholder="Tìm kiếm theo mã đơn hàng"
-                  aria-label="Search"
-                  v-model="searchQuery"
-                />
-                <div class="input-group-append">
-                  <button class="btn btn-outline-success" type="submit">
-                    <i class="fas fa-search"></i>
-                  </button>
+          <h1 class="mb-4 text-primary">Quản lý đơn hàng</h1>
+          
+          <div class="card shadow-sm mb-4">
+            <div class="card-body">
+              <div class="row g-3 align-items-center">
+                <div class="col-auto">
+                  <router-link to="/admin" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Quay lại
+                  </router-link>
+                </div>
+                <div class="col">
+                  <div class="input-group">
+                    <input
+                      class="form-control"
+                      type="search"
+                      placeholder="Tìm kiếm theo mã đơn hàng"
+                      v-model="searchQuery"
+                    />
+                    <button class="btn btn-outline-primary" type="submit">
+                      <i class="fas fa-search"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="col-auto">
+                  <select v-model="selectedStatus" class="form-select">
+                    <option value="">Tất cả trạng thái</option>
+                    <option v-for="status in orderStatuses" :key="status" :value="status">{{ status }}</option>
+                  </select>
                 </div>
               </div>
-            </form>
-
-            <!-- Lọc theo Trạng thái -->
-            <select v-model="selectedStatus" class="form-control" style="width: 200px;">
-              <option value="">Tất cả trạng thái</option>
-              <option v-for="status in orderStatuses" :key="status" :value="status">{{ status }}</option>
-            </select>
-          </div>
-
-          <div class="table-responsive">
-            <table class="table table-bordered table-hover">
-              <thead>
-                <tr class="text-center">
-                  <th class="space-order">STT</th>
-                  <th class="space-code">Mã đơn hàng</th>
-                  <th class="space-date">Ngày đặt</th>
-                  <th class="space-total">Thành tiền</th>
-                  <th class="space-status">Trạng thái thanh toán</th>
-                  <th class="space-statusoder">Trạng thái đơn hàng</th>
-                  <th class="space-payment">Phương thức thanh toán</th>
-                  <th class="space-action">Hành động</th>
-                </tr>
-              </thead>
-              <tbody v-if="filteredAdminOrders.length > 0" class="text-center">
-                <tr v-for="(order, index) in filteredAdminOrders" :key="order._id">
-                  <td>{{ index + 1 }}</td>
-                  <td>{{ order.ORDER_CODE }}</td>
-                  <td>{{ formatDateTime(order.TIME_PAYMENT) }}</td>
-                  <td>{{ totalPriceOrder(order).toLocaleString("vi-VN", { style: "currency", currency: "VND" }) }}</td>
-                  <td>{{ getLastOrderStatus(order.LIST_STATUS).STATUS_NAME }}</td>
-                  <td :class="getStatusClass(order.ORDER_STATUS)">
-                    {{ order.ORDER_STATUS }}
-                  </td>
-                  <td>{{ order.PAYMENT_METHOD }}</td>
-                  <td>
-                    <button @click="openEditModal(order)" class="btn btn-secondary btn-sm">Sửa</button>
-                  </td>
-                </tr>
-              </tbody>
-              <tfoot v-else>
-                <tr>
-                  <td colspan="7" class="non-order">Không có đơn hàng nào!</td>
-                </tr>
-              </tfoot>
-            </table>
-          </div>
-
-          <!-- Modal Edit Order Status -->
-          <div v-if="isModalOpen" class="modal">
-            <div class="modal-content">
-              <span class="close" @click="closeEditModal">&times;</span>
-              <h2>Chỉnh sửa trạng thái đơn hàng</h2>
-
-              <!-- Chọn trạng thái đơn hàng -->
-              <label for="status">Chọn trạng thái:</label>
-              <select v-model="selectedOrderStatus" id="status">
-                <option value="Đã Duyệt">Đã Duyệt (Đang xử lý)</option>
-                <option value="Đang vận chuyển">Giao Hàng (Đang vận chuyển)</option>
-              </select>
-
-              <!-- Nút cập nhật -->
-              <button @click="updateOrderStatus" class="btn btn-primary">Cập nhật</button>
             </div>
           </div>
 
-          <!-- Hiển thị thông báo -->
-          <div v-if="successMessage" class="alert alert-success" role="alert">
-            {{ successMessage }}
-            <button @click="resetSuccessMessage" class="btn btn-sm btn-outline-success">OK</button>
+          <div class="card shadow-sm">
+            <div class="table-responsive">
+              <table class="table table-hover mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th>STT</th>
+                    <th>Mã đơn hàng</th>
+                    <th>Ngày đặt</th>
+                    <th>Thành tiền</th>
+                    <th>Trạng thái thanh toán</th>
+                    <th>Trạng thái đơn hàng</th>
+                    <th>Phương thức thanh toán</th>
+                    <th>Hành động</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(order, index) in paginatedOrders" :key="order._id">
+                    <td>{{ index + 1 + (currentPage - 1) * itemsPerPage }}</td>
+                    <td><span class="badge bg-light text-dark">{{ order.ORDER_CODE }}</span></td>
+                    <td>{{ formatDateTime(order.TIME_PAYMENT) }}</td>
+                    <td>{{ totalPriceOrder(order).toLocaleString("vi-VN", { style: "currency", currency: "VND" }) }}</td>
+                    <td><span class="badge bg-info">{{ getLastOrderStatus(order.LIST_STATUS).STATUS_NAME }}</span></td>
+                    <td>
+                      <span :class="['badge', getStatusBadgeClass(order.ORDER_STATUS)]">
+                        {{ order.ORDER_STATUS }}
+                      </span>
+                      <i v-if="order.ORDER_STATUS === 'Đã hủy'" 
+                         @click="showCancellationReason(order)" 
+                         class="fas fa-info-circle ms-2 text-muted" 
+                         style="cursor: pointer;">
+                      </i>
+                    </td>
+                    <td>{{ order.PAYMENT_METHOD }}</td>
+                    <td>
+                      <button @click="openEditModal(order)" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-edit me-1"></i>Sửa
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="card-footer bg-light">
+              <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center mb-0">
+                  <li class="page-item" :class="{ disabled: currentPage === 1 }">
+                    <a class="page-link" href="#" @click.prevent="currentPage--">
+                      <span aria-hidden="true">&laquo;</span>
+                    </a>
+                  </li>
+                  <li class="page-item disabled">
+                    <span class="page-link">Trang {{ currentPage }} / {{ totalPages }}</span>
+                  </li>
+                  <li class="page-item" :class="{ disabled: currentPage === totalPages }">
+                    <a class="page-link" href="#" @click.prevent="currentPage++">
+                      <span aria-hidden="true">&raquo;</span>
+                    </a>
+                  </li>
+                </ul>
+              </nav>
+            </div>
           </div>
         </div>
       </main>
+    </div>
+  </div>
+
+  <!-- Modal cập nhật trạng thái -->
+  <div v-if="isModalOpen" class="modal fade show" style="display: block;">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Cập nhật trạng thái đơn hàng</h5>
+          <button type="button" class="btn-close" @click="closeEditModal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="status" class="form-label">Chọn trạng thái:</label>
+            <select v-model="selectedOrderStatus" id="status" class="form-select">
+              <option value="Đã Duyệt">Đã Duyệt (Đang xử lý)</option>
+              <option value="Đang vận chuyển">Giao Hàng (Đang vận chuyển)</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" @click="closeEditModal">Đóng</button>
+          <button type="button" class="btn btn-primary" @click="updateOrderStatus">Cập nhật</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal lý do hủy -->
+  <div v-if="isReasonModalOpen" class="modal fade show" style="display: block;">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Lý do hủy đơn hàng</h5>
+          <button type="button" class="btn-close" @click="closeReasonModal"></button>
+        </div>
+        <div class="modal-body">
+          <p>{{ cancellationReason }}</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" @click="closeReasonModal">Đóng</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Thông báo thành công -->
+  <div v-if="successMessage" class="toast-container position-fixed top-0 end-0 p-3">
+    <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="toast-header">
+        <strong class="me-auto">Thông báo</strong>
+        <button type="button" class="btn-close" @click="resetSuccessMessage"></button>
+      </div>
+      <div class="toast-body">
+        {{ successMessage }}
+      </div>
     </div>
   </div>
 </template>
@@ -119,44 +177,44 @@ export default {
     return {
       adminOrders: [],
       searchQuery: "",
-      selectedStatus: "", // Biến để lưu trạng thái được chọn
+      selectedStatus: "",
+      isReasonModalOpen: false,
       isModalOpen: false,
       selectedOrderStatus: "",
       selectedOrderId: "",
       orderStatuses: [
-      "Đang xử lý", 
-      "Đang vận chuyển", 
-      "Chờ Duyệt", 
-      "Đã giao", 
-      "Chưa hoàn thành thanh toán"
-    ], // Cập nhật danh sách trạng thái đơn hàng
+        "Đang xử lý",
+        "Đang vận chuyển",
+        "Chờ Duyệt",
+        "Đã giao",
+        "Chưa hoàn thành thanh toán",
+        "Đã hủy"
+      ],
       successMessage: "",
+      currentPage: 1,
+      itemsPerPage: 10,
+      cancellationReason: "",
     };
   },
   async created() {
     await this.fetchAdminOrders();
   },
   methods: {
-    getStatusClass(status) {
-      switch (status) {
-        case 'Đã giao':
-          return 'text-success';
-        case 'Đang xử lý':
-          return 'text-warning';
-        case 'Đã Duyệt':
-        case 'Chờ Duyệt':
-          return 'text-danger';
-        case 'Đang vận chuyển':
-          return 'text-primary';
-        default:
-          return '';
-      }
+    getStatusBadgeClass(status) {
+      const statusClasses = {
+        'Đã giao': 'bg-success',
+        'Đang xử lý': 'bg-warning text-dark',
+        'Đã Duyệt': 'bg-info',
+        'Chờ Duyệt': 'bg-secondary',
+        'Đã hủy': 'bg-danger',
+        'Đang vận chuyển': 'bg-primary',
+        'Chưa hoàn thành thanh toán': 'bg-dark'
+      };
+      return statusClasses[status] || 'bg-secondary';
     },
     async fetchAdminOrders() {
       try {
         const response = await orderService.getOrdersAll();
-        console.log("Dữ liệu từ server:", response);
-
         if (response && Array.isArray(response.data)) {
           this.adminOrders = response.data;
         } else {
@@ -170,14 +228,10 @@ export default {
       return statusList && statusList.length > 0 ? statusList[statusList.length - 1] : null;
     },
     formatDateTime(dateTimeStr) {
-      return dateTimeStr ? new Date(dateTimeStr).toLocaleString() : "";
+      return dateTimeStr ? new Date(dateTimeStr).toLocaleString('vi-VN') : "";
     },
     totalPriceOrder(order) {
-      let totalPriceOrder = 0;
-      order.LIST_PRODUCT.forEach((product) => {
-        totalPriceOrder += product.UNITPRICES * product.QLT;
-      });
-      return totalPriceOrder;
+      return order.LIST_PRODUCT.reduce((total, product) => total + product.UNITPRICES * product.QLT, 0);
     },
     openEditModal(order) {
       this.selectedOrderStatus = order.ORDER_STATUS;
@@ -197,118 +251,50 @@ export default {
           console.error("Trạng thái không hợp lệ!");
           return;
         }
-
         this.successMessage = "Cập nhật trạng thái đơn hàng thành công!";
         await this.fetchAdminOrders();
         this.closeEditModal();
+        setTimeout(() => this.resetSuccessMessage(), 3000);
       } catch (error) {
         console.error("Lỗi khi cập nhật trạng thái đơn hàng:", error);
       }
     },
+    showCancellationReason(order) {
+      this.cancellationReason = order.CANCEL_REASON || "Không có lý do nào được cung cấp.";
+      this.isReasonModalOpen = true;
+    },
+    closeReasonModal() {
+      this.isReasonModalOpen = false;
+    },
     resetSuccessMessage() {
       this.successMessage = "";
-      this.selectedOrderStatus = "";
-      this.selectedOrderId = "";
     },
   },
   computed: {
-   filteredAdminOrders() {
-    return this.adminOrders.filter((order) => {
-      const orderCode = order.ORDER_CODE || "";
-      const matchesSearch = orderCode
-        .toLowerCase()
-        .includes(this.searchQuery.toLowerCase());
-
-      const matchesStatus = this.selectedStatus
-        ? order.ORDER_STATUS === this.selectedStatus
-        : true;
-
-      return matchesSearch && matchesStatus;
-    });
-  },
+    filteredAdminOrders() {
+      return this.adminOrders.filter((order) => {
+        const orderCode = order.ORDER_CODE || "";
+        const matchesSearch = orderCode.toLowerCase().includes(this.searchQuery.toLowerCase());
+        const matchesStatus = this.selectedStatus ? order.ORDER_STATUS === this.selectedStatus : true;
+        return matchesSearch && matchesStatus;
+      });
+    },
+    paginatedOrders() {
+      const start = (this.currentPage - 1) * this.itemsPerPage;
+      return this.filteredAdminOrders.slice(start, start + this.itemsPerPage);
+    },
+    totalPages() {
+      return Math.ceil(this.filteredAdminOrders.length / this.itemsPerPage);
+    },
   },
 };
 </script>
 
-
-<style>
-.modal {
-  display: block; /* Hiện modal */
-  position: fixed;
-  z-index: 1; /* Đặt trên cùng */
-  left: 0;
-  top: 0;
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  overflow: auto; /* Bỏ qua thanh cuộn */
-  background-color: rgb(0, 0, 0); /* Màu nền */
-  background-color: rgba(0, 0, 0, 0.4); /* Nền trong suốt */
+<style scoped>
+.modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
 }
-
-.modal-content {
-  background-color: #fefefe;
-  margin: 15% auto; /* Đặt ở giữa */
-  padding: 20px;
-  border: 1px solid #888;
-  width: 80%; /* Có thể điều chỉnh kích thước */
+.toast-container {
+  z-index: 1100;
 }
-
-.close {
-  color: #aaa;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-  color: black;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.text-success {
-  color: green;
-}
-
-.text-warning {
-  color: orange;
-}
-
-.text-danger {
-  color: red;
-}
-.alert {
-  position: fixed; /* Đặt vị trí cố định */
-  top: 20px; /* Khoảng cách từ trên cùng */
-  left: 50%; /* Đặt ở giữa theo chiều ngang */
-  transform: translateX(-50%); /* Căn giữa thông báo */
-  z-index: 999; /* Đặt ở trên cùng */
-  width: 80%; /* Đặt chiều rộng thông báo */
-  max-width: 600px; /* Đặt chiều rộng tối đa */
-  padding: 15px; /* Khoảng cách bên trong */
-  border-radius: 5px; /* Bo tròn góc */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Thêm bóng đổ */
-  transition: all 0.3s ease; /* Hiệu ứng chuyển động mượt mà */
-  display: flex; /* Để dễ dàng canh chỉnh các thành phần bên trong */
-  justify-content: space-between; /* Giữa các thành phần */
-  align-items: center; /* Căn giữa theo chiều dọc */
-}
-
-.alert-success {
-  background-color: #d4edda; /* Màu nền cho thông báo thành công */
-  color: #155724; /* Màu chữ */
-}
-
-.alert button {
-  border: none; /* Bỏ viền */
-  background: none; /* Bỏ nền */
-  color: #155724; /* Màu chữ của nút */
-  cursor: pointer; /* Hiển thị con trỏ khi di chuột */
-}
-
-.alert button:hover {
-  text-decoration: underline; /* Gạch chân khi di chuột */
-}
-
 </style>
