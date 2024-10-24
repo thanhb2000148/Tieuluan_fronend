@@ -54,6 +54,25 @@ class AuthService {
     }
     console.error("Config:", error.config);
   }
+  async lockAccount(accountId) {
+  try {
+    const response = await this.api.put(`/lock/${accountId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi khóa tài khoản:", error);
+    throw error; // Để xử lý lỗi bên ngoài
+  }
+  }
+
+async unlockAccount(accountId) {
+  try {
+    const response = await this.api.put(`/unlock/${accountId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi mở khóa tài khoản:", error);
+    throw error; // Để xử lý lỗi bên ngoài
+  }
+  }
 }
 
 export default new AuthService();

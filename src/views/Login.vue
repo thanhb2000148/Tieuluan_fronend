@@ -109,36 +109,73 @@ export default {
   },
   
   methods: {
+    // async login() {
+    //   this.errorMessage = ""; // Clear any previous error message
+
+    //   // Kiểm tra lỗi trước khi gửi form
+    //   this.checkUserName();
+    //   this.checkPassword();
+
+    //   if (this.userNameError || this.passwordError) {
+    //     return; // Nếu có lỗi, không gửi form
+    //   }
+
+    //   try {
+    //     const data = await AuthService.login({
+    //       user_name: this.user_name,
+    //       password: this.password,
+    //     });
+        
+
+    //     if (data && data.data && data.data.accessToken) {
+    //       Cookies.set("access_token", data.data.accessToken, { expires: 1 });
+    //       Cookies.set("refresh_token", data.data.refreshToken, { expires: 1 });
+    //       this.$router.push("/");
+    //     } else {
+    //       throw new Error("Không có accessToken trong phản hồi");
+    //     }
+    //   } catch (error) {
+    //     console.error("Lỗi khi đăng nhập:", error);
+    //     this.errorMessage = "Tên người dùng hoặc mật khẩu không đúng.";
+    //   }
+    // },
     async login() {
-      this.errorMessage = ""; // Clear any previous error message
+  this.errorMessage = ""; // Xóa thông báo lỗi trước đó
 
-      // Kiểm tra lỗi trước khi gửi form
-      this.checkUserName();
-      this.checkPassword();
+  // Kiểm tra lỗi trước khi gửi form
+  this.checkUserName();
+  this.checkPassword();
 
-      if (this.userNameError || this.passwordError) {
-        return; // Nếu có lỗi, không gửi form
-      }
+  if (this.userNameError || this.passwordError) {
+    return; // Nếu có lỗi, không gửi form
+  }
 
-      try {
-        const data = await AuthService.login({
-          user_name: this.user_name,
-          password: this.password,
-        });
+  try {
+    const data = await AuthService.login({
+      user_name: this.user_name,
+      password: this.password,
+    });
 
-        if (data && data.data && data.data.accessToken) {
-          Cookies.set("access_token", data.data.accessToken, { expires: 1 });
-          Cookies.set("refresh_token", data.data.refreshToken, { expires: 1 });
-          this.$router.push("/");
-        } else {
-          throw new Error("Không có accessToken trong phản hồi");
-        }
-      } catch (error) {
-        console.error("Lỗi khi đăng nhập:", error);
-        this.errorMessage = "Tên người dùng hoặc mật khẩu không đúng.";
-      }
-    },
-    
+    // Kiểm tra và lưu token nếu đăng nhập thành công
+    if (data && data.data && data.data.accessToken) {
+      Cookies.set("access_token", data.data.accessToken, { expires: 1 });
+      Cookies.set("refresh_token", data.data.refreshToken, { expires: 1 });
+      this.$router.push("/");
+    } else {
+      throw new Error("Không có accessToken trong phản hồi");
+    }
+  } catch (error) {
+    console.error("Lỗi khi đăng nhập:", error);
+
+    // Cập nhật thông báo lỗi dựa trên mã trạng thái phản hồi
+    if (error.response && error.response.data) {
+      this.errorMessage = error.response.data.message; // Hiển thị thông báo từ server
+    } else {
+      this.errorMessage = "Tên người dùng hoặc mật khẩu không đúng."; // Thông báo chung
+    }
+  }
+},
+
     redirectToRegister() {
       this.$router.push("/register");
     },
