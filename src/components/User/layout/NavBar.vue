@@ -1,5 +1,5 @@
 <template>
-  <div class="container px-0 ">
+  <div class="container px-0">
     <nav class="navbar navbar-light bg-white navbar-expand-xl fixed-top shadow">
       <router-link to="/" class="navbar-brand">
         <h1 class="text-dark color1 display-6">BAD HABBITS STORE</h1>
@@ -48,25 +48,39 @@
             <span
               class="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1"
               style="top: -5px; left: 15px; height: 20px; min-width: 20px"
-              >{{ cart.length }}</span
-            >
+              >{{ cart.length }}</span>
           </router-link>
-          <!-- <router-link to="/userinformation" class="my-auto">
-            <i class="fas fa-user fa-2x"></i>
-          </router-link> -->
-           <div class="dropdown my-auto">
-            <router-link to="/userinformation" class="d-flex align-items-center dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          
+          <!-- Dropdown menu cải tiến -->
+          <div class="dropdown my-auto">
+            <a 
+              href="#" 
+              class="d-flex align-items-center text-dark text-decoration-none"
+              @click.prevent="toggleDropdown"
+              ref="dropdownToggle"
+            >
               <i class="fas fa-user fa-2x"></i>
-            </router-link>
-            <ul class="dropdown-menu dropdown-menu-end">
+            </a>
+            <ul 
+              class="dropdown-menu dropdown-menu-end shadow"
+              :class="{ 'show': isDropdownOpen }"
+              ref="dropdownMenu"
+            >
               <li>
-                <router-link to="/userinformation" class="dropdown-item">Thông tin người dùng</router-link>
+                <router-link to="/userinformation" class="dropdown-item">
+                  <i class="fas fa-user-circle me-2"></i>Thông tin người dùng
+                </router-link>
               </li>
               <li v-if="isAdmin">
-                <router-link to="/admin" class="dropdown-item">Quản trị viên</router-link>
+                <router-link to="/admin" class="dropdown-item">
+                  <i class="fas fa-cog me-2"></i>Quản trị viên
+                </router-link>
               </li>
+              <li><hr class="dropdown-divider"></li>
               <li>
-                <button class="dropdown-item" @click="logout">Đăng xuất</button>
+                <a href="#" class="dropdown-item text-danger" @click.prevent="logout">
+                  <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
+                </a>
               </li>
             </ul>
           </div>
@@ -81,81 +95,133 @@ import cartService from "@/services/cart.service";
 import VueCookies from "vue-cookies";
 import userService from "@/services/user.service";
 
-
 export default {
   name: "NavBar",
   data() {
     return {
       cart: [],
-       user: [],
-      isAdmin: false, // Thêm biến để lưu trạng thái admin
+      user: [],
+      isAdmin: false,
+      isDropdownOpen: false
     };
   },
   async created() {
-     await this.fetchUserLogin();
-    console.log("lấy user login", this.user);
+    await this.fetchUserLogin();
     await this.getCart();
+    // Thêm event listener để đóng dropdown khi click outside
+    document.addEventListener('click', this.handleClickOutside);
+  },
+  beforeUnmount() { // Đã được sửa từ beforeDestroy thành beforeUnmount
+    // Cleanup event listener khi component bị hủy
+    document.removeEventListener('click', this.handleClickOutside);
   },
   methods: {
-        async fetchUserLogin() {
+    toggleDropdown() {
+      this.isDropdownOpen = !this.isDropdownOpen;
+    },
+    handleClickOutside(event) {
+      // Kiểm tra xem click có nằm ngoài dropdown không
+      if (this.$refs.dropdownToggle && 
+          this.$refs.dropdownMenu && 
+          !this.$refs.dropdownToggle.contains(event.target) && 
+          !this.$refs.dropdownMenu.contains(event.target)) {
+        this.isDropdownOpen = false;
+      }
+    },
+    async fetchUserLogin() {
       try {
         const response = await userService.getUserLogin();
         if (response && response.data) {
           this.user = response.data;
-          console.log("User data:", this.user); // Thêm dòng này để kiểm tra
-          
-          // Kiểm tra quyền admin
-          if (this.user.OBJECT_ROLE && this.user.OBJECT_ROLE.IS_ADMIN === true) {
-            this.isAdmin = true;
-          } else {
-            this.isAdmin = false;
-          }
-        } else {
-          console.log("Không có dữ liệu người dùng đăng nhập.");
+          this.isAdmin = this.user.OBJECT_ROLE?.IS_ADMIN === true;
         }
       } catch (error) {
         console.error(error);
       }
     },
-
     async getCart() {
       try {
         const response = await cartService.getCart();
         if (response && response.data) {
-          this.cart = response.data; // Đặt dữ liệu giỏ hàng vào biến cục bộ
+          this.cart = response.data;
         }
       } catch (error) {
         console.error(error);
       }
     },
-    
-     async logout() {
+    async logout() {
       try {
         VueCookies.remove("access_token");
         VueCookies.remove("refresh_token");
+        this.isDropdownOpen = false; // Đóng dropdown khi logout
         this.$router.push("/login");
       } catch (error) {
         console.error("Error logging out:", error);
-        this.message = "Có lỗi xảy ra khi đăng xuất.";
-        this.alertClass = "alert-danger";
       }
-    },
-  },
+    }
+  }
 };
 </script>
 
-<style>
-.color1{
+<style scoped>
+.color1 {
   color: black !important;
 }
+
 .fixed-top {
-    position: fixed;
-    top: 0 !important;
-    right: 0;
-    left: 0;
-    z-index: 1030;
+  position: fixed;
+  top: 0 !important;
+  right: 0;
+  left: 0;
+  z-index: 1030;
 }
+
 .shadow {
-    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15) !important;
-} 
+  box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15) !important;
+}
+
+/* Thêm styles cho dropdown */
+.dropdown-menu {
+  min-width: 200px;
+  padding: 0.5rem 0;
+  margin: 0;
+  border: none;
+  border-radius: 0.5rem;
+}
+
+.dropdown-item {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  color: #333;
+  transition: all 0.2s;
+}
+
+.dropdown-item:hover {
+  background-color: #f8f9fa;
+  color: #0d6efd;
+}
+
+.dropdown-divider {
+  margin: 0.5rem 0;
+}
+
+.text-danger:hover {
+  color: #dc3545 !important;
+}
+
+/* Animation cho dropdown */
+.dropdown-menu {
+  display: block;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: all 0.2s ease;
+}
+
+.dropdown-menu.show {
+  right: 3px;
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
 </style>

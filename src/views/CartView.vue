@@ -370,6 +370,7 @@ export default {
 }
 
 .cart-title {
+  
   font-size: 2.5rem;
   font-weight: 300;
   color: #343a40;
