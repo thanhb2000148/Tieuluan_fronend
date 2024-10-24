@@ -106,6 +106,12 @@ const routes = [
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/CompletePayment.vue"),
   },
+   {
+    path: "/new",
+    name: "NewList",
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/new.vue"),
+  },
   {
     path: "/checkout/paymentMethods",
     name: "paymentMethod",

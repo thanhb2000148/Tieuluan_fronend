@@ -29,6 +29,11 @@
               <i class="fas fa-envelope"></i> Liên hệ
             </router-link>
           </li>
+          <li class="nav-item">
+            <router-link to="/new" class="nav-link" active-class="active">
+              <i class="fas fa-envelope"></i> Bài Viết
+            </router-link>
+          </li>
         </ul>
         <div class="d-flex m-3 me-0">
           <button
