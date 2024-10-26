@@ -139,7 +139,7 @@
                     </table>
                   </div>
 
-                  <!-- Pagination -->
+                  <!-- Phân trang -->
                   <nav aria-label="Page navigation" class="mt-4">
                     <ul class="pagination justify-content-center mb-0">
                       <li class="page-item" :class="{ disabled: currentPage === 1 }">
@@ -167,7 +167,7 @@
       </main>
     </div>
 
-    <!-- User Details Modal -->
+    <!-- thông tin người dùng -->
     <div v-if="isModalVisible" class="modal fade show" tabindex="-1" style="display: block;">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -177,12 +177,12 @@
           </div>
           <div class="modal-body">
             <div class="text-center mb-4">
-              <img 
-                v-if="selectedUser?.user[0]?.AVT_URL" 
-                :src="selectedUser.user[0].AVT_URL" 
+             <img 
+                :src="selectedUser?.user[0]?.AVT_URL || '/img/avatar.jpg'" 
                 :alt="selectedUser?.USER_NAME"
                 class="avatar-lg mb-3"
               />
+
               <h4>{{ selectedUser?.USER_NAME }}</h4>
               <span 
                 :class="selectedUser?.OBJECT_ROLE.IS_ADMIN ? 
@@ -210,7 +210,7 @@
               <div class="info-item">
                 <i class="fas fa-birthday-cake text-primary me-2"></i>
                 <span class="label">Ngày sinh:</span>
-                <span class="value">{{ formatDateTime(selectedUser?.user[0]?.BIRTHDAY) }}</span>
+                <span class="value">{{ selectedUser?.user[0]?.BIRTHDAY ? formatDateTime(selectedUser.user[0].BIRTHDAY) : "Chưa cập nhật ngày sinh" }}</span>
               </div>
               <div class="info-item">
                 <i class="fas fa-calendar-alt text-primary me-2"></i>

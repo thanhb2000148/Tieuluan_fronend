@@ -1,49 +1,90 @@
 <template>
-  <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-fullscreen">
-      <div class="modal-content rounded-0">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Tìm Kiếm Sản Phẩm</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body d-flex align-items-center flex-column">
-          <div class="input-group w-75 mx-auto d-flex mb-4">
-            <input
-              type="search"
-              class="form-control p-3"
-              placeholder="Enter keywords"
-              aria-describedby="search-icon-1"
-              v-model="keyword"
-              @keyup.enter="searchProducts"
-            />
-            <button id="search-icon-1" class="btn btn-primary p-3" @click="searchProducts">Search</button>
+      <div class="modal-content">
+        <!-- Header Section -->
+        <div class="modal-header border-0 py-3">
+          <div class="container-fluid px-4">
+            <div class="d-flex align-items-center justify-content-between">
+              <h5 class="modal-title fs-3 fw-bold text-primary mb-0" id="searchModalLabel">
+                <i class="bi bi-search me-2"></i>Tìm Kiếm
+              </h5>
+              <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
           </div>
-          
-          <div class="row g-4 ">
-            <div class="col-md-4" v-for="product in searchs" :key="product._id">
-              <div class="card h-100">
-                <router-link :to="{ name: 'UserDetail', params: { id: product._id } }">
-                  <div class="fruite-imga">
-                    <img
-                      v-if="product.LIST_FILE_ATTACHMENT_DEFAULT && product.LIST_FILE_ATTACHMENT_DEFAULT.length > 0"
-                      :src="product.LIST_FILE_ATTACHMENT_DEFAULT[0].FILE_URL"
-                      class="img-fluid rounded-top"
-                      :alt="product.NAME_PRODUCT"
-                    />
-                  </div>
-                  <div class="card-body d-flex flex-column">
-                    <h5 class="card-title">{{ product.NAME_PRODUCT }}</h5>
-                    <p class="product-price fw-bold a">
-                      {{
-                        getPrice(product._id).toLocaleString("vi-VN", {
+        </div>
+
+        <div class="modal-body px-0 pb-4 pt-0">
+          <!-- Search Input Section -->
+          <div class="search-container mb-4">
+            <div class="container-fluid px-4">
+              <div class="search-wrapper">
+                <div class="input-group">
+                  <span class="input-group-text border-0 bg-transparent">
+                    <i class="bi bi-search fs-5 text-primary"></i>
+                  </span>
+                  <input
+                    type="search"
+                    class="form-control form-control-lg border-0 py-3 shadow-none"
+                    placeholder="Nhập tên sản phẩm bạn muốn tìm..."
+                    aria-label="Search products"
+                    v-model="keyword"
+                    @keyup.enter="searchProducts"
+                  />
+                  <button 
+                    class="btn btn-primary px-4 fw-semibold"
+                    @click="searchProducts"
+                  >
+                    Tìm Kiếm
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Results Section -->
+          <div class="container-fluid px-4">
+            <div v-if="searchs.length > 0" class="results-info mb-4">
+              <h6 class="text-muted mb-0">Tìm thấy {{ searchs.length }} kết quả</h6>
+            </div>
+
+            <div class="row g-4">
+              <div class="col-6 col-md-4 col-lg-3" v-for="product in searchs" :key="product._id">
+                <div class="product-card h-100">
+                  <div 
+                    class="product-link cursor-pointer"
+                    @click="navigateToProduct(product._id)"
+                  >
+                    <div class="product-image">
+                      <img
+                        v-if="product.LIST_FILE_ATTACHMENT_DEFAULT?.length"
+                        :src="product.LIST_FILE_ATTACHMENT_DEFAULT[0].FILE_URL"
+                        class="img-fluid"
+                        :alt="product.NAME_PRODUCT"
+                      />
+                      <div v-else class="no-image">
+                        <i class="bi bi-image fs-1"></i>
+                      </div>
+                    </div>
+                    <div class="product-info">
+                      <h6 class="product-title">{{ product.NAME_PRODUCT }}</h6>
+                      <p class="product-price mb-0">
+                        {{ getPrice(product._id).toLocaleString("vi-VN", {
                           style: "currency",
                           currency: "VND",
-                        })
-                      }}
-                    </p>
+                        }) }}
+                      </p>
+                    </div>
                   </div>
-                </router-link>
+                </div>
               </div>
+            </div>
+
+            <!-- Empty State -->
+            <div v-if="keyword && searchs.length === 0" class="empty-state text-center py-5">
+              <i class="bi bi-search fs-1 text-muted mb-3"></i>
+              <h5 class="fw-bold">Không tìm thấy kết quả</h5>
+              <p class="text-muted">Vui lòng thử lại với từ khóa khác</p>
             </div>
           </div>
         </div>
@@ -52,11 +93,9 @@
   </div>
 </template>
 
-
 <script>
 import productService from "@/services/product.service";
 import PriceService from "@/services/price.service";
-
 
 export default {
   name: "HomeSearch",
@@ -64,119 +103,200 @@ export default {
     return {
       keyword: "",
       searchs: [],
-      prices: []
+      prices: {}
     };
   },
   async created() {
     try {
       await this.getPriceProduct();
-      console.log('mảng price',this.prices)
-      console.log('da nhap vao', this.keyword);
     } catch (error) {
       console.error("Error during component initialization:", error);
     }
   },
-    
-  
   methods: {
     async searchProducts() {
       if (this.keyword.length > 1) {
         try {
           const response = await productService.searchProducts(this.keyword);
-           console.log('da nhap vao', this.keyword);
-          if (response && response.data) {
+          if (response?.data) {
             this.searchs = response.data;
             await this.getPriceProduct();
-          } else {
-            console.error("Unexpected response structure:", response);
           }
         } catch (error) {
           console.error("Error fetching products:", error);
-          throw error; // Re-throw error to be caught by the caller
+          throw error;
         }
       } else {
         this.searchs = [];
       }
     },
-      async getPriceProduct() {
+    async getPriceProduct() {
       try {
         const prices = {};
         for (const product of this.searchs) {
           const response = await PriceService.getDefaultPrice(product._id);
-          if (response && response.data && response.data[0]) {
+          if (response?.data?.[0]) {
             prices[product._id] = response.data[0].PRICE_NUMBER;
-          } else {
-            console.error("Unexpected response structure:", response);
           }
         }
         this.prices = prices;
       } catch (error) {
-        console.error("lỗi khi lấy giá:", error);
+        console.error("Lỗi khi lấy giá:", error);
       }
     },
     getPrice(productId) {
-      const price = this.prices[productId];
-      if (price) {
-        return price;
-      } else {
-        return "Đang cập nhật giá";
-      }
+      return this.prices[productId] || "Đang cập nhật giá";
     },
-    // getPrice(product) {
-    //   return product.PRICE_NUMBER || "N/A";
-    // },
-  },
+    navigateToProduct(productId) {
+      const closeButton = document.querySelector('#searchModal .btn-close');
+      if (closeButton) {
+        closeButton.click();
+      }
+      this.$router.push({ 
+        name: 'UserDetail', 
+        params: { id: productId } 
+      });
+    }
+  }
 };
 </script>
 
-<style>
-.search-result-item {
-  border-bottom: 1px solid #ddd;
-  padding: 10px 0;
-}
-/* hình ảnh đổ ra*/
-.fruite-imga {
-  overflow: hidden;
-  width: 100%;
-  height: 250px; /* Điều chỉnh chiều cao tùy ý */
-  border-radius: 10px;
+<style scoped>
+.modal-content {
+  background-color: #ffffff;
 }
 
-.fruite-imga img {
+.search-container {
+  background-color: #f8f9fa;
+}
+
+.search-wrapper {
+  background: #ffffff;
+  border-radius: 1rem;
+  padding: 0.5rem;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.input-group {
+  background: #ffffff;
+}
+
+.form-control {
+  font-size: 1rem;
+  background: transparent;
+}
+
+.form-control:focus {
+  background: transparent;
+}
+
+.form-control::placeholder {
+  color: #adb5bd;
+  font-size: 0.95rem;
+}
+
+.btn-primary {
+  border-radius: 0.75rem;
+  padding: 0.8rem 1.5rem;
+  transition: all 0.2s ease;
+}
+
+.product-card {
+  background: #ffffff;
+  border-radius: 1rem;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border: 1px solid #f0f0f0;
+}
+
+.product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08);
+  border-color: #e8e8e8;
+}
+
+.product-image {
+  position: relative;
+  padding-top: 100%; /* 1:1 Aspect Ratio */
+  background-color: #f8f9fa;
+  overflow: hidden;
+}
+
+.product-image img {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   transition: transform 0.3s ease;
 }
 
-.fruite-imga:hover img {
-  transform: scale(1.1);
+.product-card:hover .product-image img {
+  transform: scale(1.05);
 }
 
-.card-body {
-  padding: 10px;
-  flex-direction: column;
-  align-items: center; /* Đảm bảo các phần tử được căn giữa */
+.no-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #dee2e6;
 }
 
-.card-title {
-  font-size: 1.2rem;
-  margin-bottom: 10px;
+.product-info {
+  padding: 1rem;
+}
+
+.product-title {
+  font-size: 0.95rem;
+  font-weight: 500;
+  line-height: 1.4;
+  color: #343a40;
+  margin-bottom: 0.5rem;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .product-price {
+  color: #dc3545;
+  font-weight: 600;
   font-size: 1rem;
-  margin-top: auto; /* Đẩy giá xuống dưới */
 }
 
-.search-result-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.a {
-    color: #000000;
-
+.empty-state i {
+  display: block;
+  margin-bottom: 1rem;
 }
 
+@media (max-width: 768px) {
+  .search-wrapper {
+    border-radius: 0.75rem;
+  }
+  
+  .btn-primary {
+    border-radius: 0.5rem;
+  }
+  
+  .product-card {
+    border-radius: 0.75rem;
+  }
+  
+  .product-info {
+    padding: 0.75rem;
+  }
+  
+  .product-title {
+    font-size: 0.9rem;
+  }
+  
+  .product-price {
+    font-size: 0.95rem;
+  }
+}
 </style>

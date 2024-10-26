@@ -1,8 +1,8 @@
 <template>
   <nav class="navbar navbar-expand px-3 border-bottom">
-    <button class="btn" id="sidebar-toggle" type="button">
+    <!-- <button class="btn" id="sidebar-toggle" type="button">
       <span class="navbar-toggler-icon"> <i class="bi bi-list-task"></i></span>
-    </button>
+    </button> -->
     <div class="navbar-collapse navbar">
       <ul class="navbar-nav">
         <li class="nav-item dropdown">
@@ -14,9 +14,9 @@
             />
           </a>
           <div class="dropdown-menu dropdown-menu-end">
-            <a href="#" class="dropdown-item">Profile</a>
-            <a href="#" class="dropdown-item">Setting</a>
-            <a href="#" class="dropdown-item">Logout</a>
+            <router-link to="/userinformation" class="dropdown-item">Profile</router-link>
+            <!-- <a href="#" class="dropdown-item">Setting</a> -->
+            <a href="#" class="dropdown-item" @click="logout">Logout</a>
           </div>
         </li>
       </ul>
@@ -25,9 +25,25 @@
 </template>
 
 <script>
+import VueCookies from "vue-cookies";
+
 export default {
   name: "NavBarDashboard",
+  methods: {
+    logout() {
+      try {
+        VueCookies.remove("access_token");
+        VueCookies.remove("refresh_token");
+        this.$router.push("/login");
+      } catch (error) {
+        console.error("Error logging out:", error);
+        this.message = "Có lỗi xảy ra khi đăng xuất.";
+        this.alertClass = "alert-danger";
+      }
+    },
+  }
 };
+
 </script>
 
 <style></style>

@@ -504,26 +504,34 @@
                           Hủy đơn hàng
                         </button>
                       </div>
-                      <!-- Modal Nhập Lý Do Hủy -->
-                        <div v-if="showCancelModal" class="modal fade show" tabindex="-1" role="dialog" aria-labelledby="cancelModalLabel" aria-hidden="false" style="display: block;">
-                          <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                              <div class="modal-header">
-                                <h5 class="modal-title" id="cancelModalLabel">Nhập lý do hủy đơn hàng</h5>
-                                <button type="button" class="close" @click="showCancelModal = false" aria-label="Close">
-                                  <span aria-hidden="true">&times;</span>
-                                </button>
-                              </div>
-                              <div class="modal-body">
-                                <textarea v-model="cancelReason" class="form-control" rows="3" placeholder="Nhập lý do hủy tại đây..."></textarea>
-                              </div>
-                              <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" @click="showCancelModal = false">Hủy</button>
-                                <button type="button" class="btn btn-danger" @click="confirmCancel">Xác nhận hủy</button>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
+                     <!-- Modal Nhập Lý Do Hủy -->
+  <div v-if="showCancelModal" class="modal fade show" tabindex="-1" role="dialog" aria-labelledby="cancelModalLabel" aria-hidden="false" style="display: block;">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="cancelModalLabel">Chọn lý do hủy đơn hàng</h5>
+          <button type="button" class="close" @click="showCancelModal = false" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="cancelReason">Lý do hủy:</label>
+            <select v-model="selectedReason" class="form-control" id="cancelReason">
+              <option disabled value="">Chọn lý do...</option>
+              <option v-for="reason in cancelReasons" :key="reason" :value="reason">
+                {{ reason }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" @click="showCancelModal = false">Hủy</button>
+          <button type="button" class="btn btn-danger" @click="confirmCancel">Xác nhận hủy</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
                   </div>
                   <div class="modal-footer">
@@ -599,6 +607,13 @@ export default {
       cancelReason: "", // Lý do hủy
       showCancelModal: false, // Hiển thị modal
       selectedOrder: null,
+      selectedReason: '', // Lý do đã chọn
+      cancelReasons: [
+        "Không còn nhu cầu",
+        "Tôi muốn mua sản phẩm khác",
+        "Đặt nhầm",
+        "Lý do khác"
+      ],
     };
   },
   async created() {
@@ -699,18 +714,19 @@ export default {
     this.showCancelModal = true; // Mở modal
   },
   async confirmCancel() {
-  if (!this.cancelReason) {
+  // Kiểm tra xem người dùng đã chọn lý do chưa
+  if (!this.selectedReason) {
     Swal.fire({
       icon: 'warning',
-      title: 'Chưa nhập lý do',
-      text: 'Vui lòng cung cấp lý do hủy đơn hàng.',
+      title: 'Chưa chọn lý do',
+      text: 'Vui lòng chọn lý do hủy đơn hàng.',
     });
     return;
   }
 
   try {
-    // Chỉ truyền lý do hủy là một chuỗi
-    await orderService.cancelOrder(this.selectedOrder._id, this.cancelReason);
+    // Gọi dịch vụ hủy đơn hàng với lý do đã chọn
+    await orderService.cancelOrder(this.selectedOrder._id, this.selectedReason);
     await this.fetchOrderUser(); // Cập nhật danh sách đơn hàng sau khi hủy
     this.showCancelModal = false; // Đóng modal
     Swal.fire({
@@ -726,7 +742,6 @@ export default {
     });
   }
 },
-
     selectOrderStatus(status) {
     this.selectedStatus = status;
     this.currentPage = 1; // Reset về trang đầu tiên khi thay đổi trạng thái
