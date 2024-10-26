@@ -10,81 +10,96 @@
           </div>
 
           <!-- Stats Cards -->
-          <div class="stats-grid">
-            <div class="stat-card">
-              <div class="stat-content">
-                <div class="stat-icon">
-                  <i class="fas fa-shopping-cart"></i>
-                </div>
-                <div class="stat-details">
-                  <h5>Đơn hàng</h5>
-                  <h3>245</h3>
-                  <div class="stat-change increase">
-                    <i class="fas fa-arrow-up"></i> +12.4%
-                  </div>
-                </div>
-              </div>
-            </div>
+          <!-- Stats Cards -->
+<div class="stats-grid">
+  <div class="stat-card orders-card">
+    <div class="stat-content">
+      <div class="stat-icon">
+        <i class="fas fa-shopping-cart"></i>
+      </div>
+      <div class="stat-details">
+        <h5>Đơn hàng</h5>
+        <h3>{{ orderCount }}</h3>
+        <div class="stat-change increase">
+          <i class="fas fa-arrow-up"></i> +12.4%
+        </div>
+      </div>
+    </div>
+  </div>
 
-            <div class="stat-card">
-              <div class="stat-content">
-                <div class="stat-icon">
-                  <i class="fas fa-star"></i>
-                </div>
-                <div class="stat-details">
-                  <h5>Đánh giá</h5>
-                  <h3>128</h3>
-                  <div class="stat-change increase">
-                    <i class="fas fa-arrow-up"></i> +8.2%
-                  </div>
-                </div>
-              </div>
-            </div>
+  <div class="stat-card reviews-card">
+    <div class="stat-content">
+      <div class="stat-icon">
+        <i class="fas fa-star"></i>
+      </div>
+      <div class="stat-details">
+        <h5>Đánh giá</h5>
+        <h3>{{ totalReviewsCount }}</h3> <!-- Hiển thị tổng số lượng đánh giá -->
+        <div class="stat-change increase">
+          <i class="fas fa-arrow-up"></i> +8.2%
+        </div>
+      </div>
+    </div>
+  </div>
 
-            <div class="stat-card">
-              <div class="stat-content">
-                <div class="stat-icon">
-                  <i class="fas fa-users"></i>
-                </div>
-                <div class="stat-details">
-                  <h5>Người dùng</h5>
-                  <h3>1,245</h3>
-                  <div class="stat-change increase">
-                    <i class="fas fa-arrow-up"></i> +5.9%
-                  </div>
-                </div>
-              </div>
-            </div>
+  <div class="stat-card users-card">
+    <div class="stat-content">
+      <div class="stat-icon">
+        <i class="fas fa-users"></i>
+      </div>
+      <div class="stat-details">
+        <h5>Người dùng</h5>
+        <h3>{{ userCount }}</h3>
+        <div class="stat-change increase">
+          <i class="fas fa-arrow-up"></i> +5.9%
+        </div>
+      </div>
+    </div>
+  </div>
 
-            <div class="stat-card">
-              <div class="stat-content">
-                <div class="stat-icon">
-                  <i class="fas fa-box"></i>
-                </div>
-                <div class="stat-details">
-                  <h5>Sản phẩm</h5>
-                  <h3>450</h3>
-                  <div class="stat-change increase">
-                    <i class="fas fa-arrow-up"></i> +15.7%
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+  <div class="stat-card products-card">
+    <div class="stat-content">
+      <div class="stat-icon">
+        <i class="fas fa-box"></i>
+      </div>
+      <div class="stat-details">
+        <h5>Sản phẩm</h5>
+        <h3>{{ totalProductsCount }}</h3>
+        <div class="stat-change increase">
+          <i class="fas fa-arrow-up"></i> +15.7%
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+           <!-- Date Range Selector -->
+<div class="date-range">
+  <input type="date" v-model="fromDate" />
+  <input type="date" v-model="toDate" />
+  <button @click="fetchRevenueData">Lấy doanh thu</button>
+</div>
+
 
           <!-- Revenue Chart -->
-          <div class="chart-container">
-            <div class="chart-card">
-              <div class="chart-header">
-                <h5>Biểu đồ doanh thu</h5>
-              </div>
-              <div class="chart-body">
-                <canvas id="revenueChart"></canvas>
-              </div>
-            </div>
-          </div>
+<div class="chart-container">
+  <div class="chart-card">
+    <div class="chart-header">
+      <h5>Biểu đồ doanh thu</h5>
+    </div>
+    <div class="chart-body">
+      <canvas id="revenueChart"></canvas>
+    </div>
+    <!-- Hiển thị tổng doanh thu -->
+    <div class="total-revenue">
+      <h6>Tổng doanh thu của tất cả đơn hàng:</h6>
+      <p id="totalRevenueAmount">0 triệu đồng</p> <!-- Phần này sẽ cập nhật tổng doanh thu -->
+    </div>
+  </div>
+</div>
 
-          <!-- Recent Orders Table -->
+
+
+          <!-- bảng các dơn hàng gần đây -->
           <div class="table-card">
             <div class="table-header">
               <h5>Đơn hàng gần đây</h5>
@@ -103,14 +118,22 @@
                 <tbody>
                   <tr v-for="order in recentOrders" :key="order.id">
                     <td>#{{ order.id }}</td>
-                    <td>{{ order.customer }}</td>
-                    <td>{{ order.product }}</td>
-                    <td>{{ order.total }}</td>
+                    <td>{{ order.user_name }}</td>
                     <td>
-                      <span :class="['status-badge', getStatusClass(order.status)]">
-                        {{ order.status }}
-                      </span>
-                    </td>
+                    <div v-for="product in order.products" :key="product.id">
+                      {{ product.name }} <!-- Hiển thị tên sản phẩm -->
+                    </div>
+          </td>
+          <td>
+            <div v-for="product in order.products" :key="product.id">
+              {{ product.unitPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) }} <!-- Hiển thị giá -->
+            </div>
+          </td>
+          <td>
+            <span :class="['status-badge', getStatusBadgeClass(order.status)]">
+              {{ order.status }}
+            </span>
+          </td>
                   </tr>
                 </tbody>
               </table>
@@ -124,6 +147,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 import Slider from "../components/admin/Slider.vue";
 import Nav from "../components/admin/Nav.vue";
 import Footer from "../components/admin/Footer.vue";
@@ -139,221 +164,168 @@ export default {
   },
   data() {
     return {
-      recentOrders: [
-        { id: '1234', customer: 'Nguyễn Văn A', product: 'iPhone 13', total: '25,990,000đ', status: 'Đã giao' },
-        { id: '1235', customer: 'Trần Thị B', product: 'Samsung S21', total: '20,490,000đ', status: 'Đang giao' },
-        { id: '1236', customer: 'Lê Văn C', product: 'iPad Pro', total: '22,990,000đ', status: 'Chờ xử lý' },
-      ]
+      fromDate: '', // Ngày bắt đầu
+    toDate: '',   // Ngày kết thúc
+      recentOrders: [],
+      orderCount: 0,
+      totalReviewsCount: 0, // Thêm biến để lưu tổng số lượng đánh giá
+      totalProductsCount: 0,
+      revenueData: [], // Dữ liệu doanh thu từ API
+      revenueChart: null, // Đối tượng biểu đồ
+      totalRevenue: 0, // Tổng doanh thu
+      monthlyRevenueData: [], // Dữ liệu doanh thu theo tháng
+
     }
+  },
+   mounted() {
+    this.initRevenueChart();
+    this.fetchOrderCount(); // Gọi API để cập nhật recentOrders
+    this.fetchRecentOrders(); // Gọi API để lấy các đơn hàng mới nhất (nếu cần)
+    this.fetchTotalReviewsCount(); // Gọi API để lấy tổng số đánh giá
+    this.fetchUserCount();
+     this.fetchTotalProductsCount()
+     this.fetchTotalRevenue();//tong doanh thu  
+
+
   },
   methods: {
-    getStatusClass(status) {
-      switch(status) {
-        case 'Đã giao': return 'status-success';
-        case 'Đang giao': return 'status-primary';
-        case 'Chờ xử lý': return 'status-warning';
-        default: return '';
+
+    //biểu đồ
+     initRevenueChart() {
+    const ctx = document.getElementById('revenueChart');
+    // Dữ liệu biểu đồ mẫu
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'],
+        datasets: [{
+          label: 'Doanh thu (triệu đồng)',
+          data: [150, 200, 180, 250, 220, 300, 280, 350, 330, 400, 380, 450],
+          fill: false,
+          borderColor: '#4CAF50',
+          tension: 0.1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false
+      }
+    });
+  },
+
+
+
+
+    async fetchUserCount() {
+  try {
+    const response = await axios.get('http://localhost:8000/v1/user/user-count'); // Thay đổi URL nếu cần
+    if (response.data.success) {
+      this.userCount = response.data.count; // Lưu số lượng người dùng vào state
+    } else {
+      console.error(response.data.message);
+    }
+  } catch (error) {
+    console.error("Lỗi khi lấy số lượng người dùng:", error);
+  }
+},
+  // tổng số đánh giá
+    async fetchTotalReviewsCount() { 
+      try {
+        const response = await axios.get('http://localhost:8000/v1/review/reviews/total'); // URL API để lấy tổng số đánh giá
+        if (response.data.success) {
+          this.totalReviewsCount = response.data.totalReviewsCount; // Lưu tổng số đánh giá từ phản hồi
+        } else {
+          console.error(response.data.message);
+        }
+      } catch (error) {
+        console.error("Lỗi khi lấy tổng số đánh giá:", error);
       }
     },
-    initRevenueChart() {
-      const ctx = document.getElementById('revenueChart');
-      new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'],
-          datasets: [{
-            label: 'Doanh thu (triệu đồng)',
-            data: [150, 200, 180, 250, 220, 300, 280, 350, 330, 400, 380, 450],
-            fill: false,
-            borderColor: '#4CAF50',
-            tension: 0.1
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false
+    // Phương thức để lấy tổng số sản phẩm
+    async fetchTotalProductsCount() { 
+      try {
+        const response = await axios.get('http://localhost:8000/v1/product/products/count'); // URL API để lấy tổng số đánh giá
+        if (response.data.success) {
+          this.totalProductsCount = response.data.total; // Lưu tổng số đánh giá từ phản hồi
+        } else {
+          console.error(response.data.message);
         }
-      });
-    }
+      } catch (error) {
+        console.error("Lỗi khi lấy tổng số đánh giá:", error);
+      }
+    },
+    //Lấy số lượng đơn hàng
+      async fetchOrderCount() {
+        try {
+          const response = await axios.get('http://localhost:8000/v1/order/orders/count');
+          // Lưu số lượng đơn hàng từ phản hồi
+          if (response.data.success) {
+            this.orderCount = response.data.data; // Lấy số lượng đơn hàng từ data
+          } else {
+            console.error(response.data.message); // In ra thông báo lỗi nếu có
+          }
+        } catch (error) {
+          console.error("Lỗi khi lấy danh sách đơn hàng:", error);
+        }
+      },
+      //lấy các đơn hàng gần nhất
+      async fetchRecentOrders() {
+        try {
+          const response = await axios.get('http://localhost:8000/v1/order/orders/recent'); 
+          if (response.data.success) {
+            this.recentOrders = response.data.data.map(order => ({
+              id: order.ORDER_CODE,
+              user_name: order.account.USER_NAME, // Lấy USER_NAME từ account
+              products: order.products.map(product => ({
+                id: product.id, // ID sản phẩm
+                name: product.name, // Tên sản phẩm
+                unitPrice: product.unitPrice // Giá sản phẩm
+              })), // Hiển thị danh sách sản phẩm
+              status: order.ORDER_STATUS,
+            }));
+          } else {
+            console.error(response.data.message); // In ra thông báo lỗi nếu có
+          }
+        } catch (error) {
+          console.error("Lỗi khi lấy danh sách đơn hàng:", error);
+        }
+      },
+     getStatusBadgeClass(status) {
+      const statusClasses = {
+        'Đã giao': 'bg-success',
+        'Đang xử lý': 'bg-warning text-dark',
+        'Đã Duyệt': 'bg-info',
+        'Chờ Duyệt': 'bg-secondary',
+        'Đã hủy': 'bg-danger',
+        'Đang vận chuyển': 'bg-primary',
+        'Chưa hoàn thành thanh toán': 'bg-dark'
+      };
+      return statusClasses[status] || 'bg-secondary';
+    },
+    async fetchTotalRevenue() {
+      try {
+        const response = await axios.get('http://localhost:8000/v1/order/total-revenue');
+        if (response.data.success) {
+          this.totalRevenue = response.data.data;
+          
+          // Cập nhật hiển thị tổng doanh thu
+          document.getElementById('totalRevenueAmount').innerText = 
+            `${this.totalRevenue.toLocaleString('vi-VN')} triệu đồng`;
+          
+          // Cập nhật biểu đồ
+          this.updateRevenueChart(this.totalRevenue);
+        }
+      } catch (error) {
+        console.error("Lỗi khi lấy tổng doanh thu:", error);
+      }
+    },
+ 
   },
-  mounted() {
-    this.initRevenueChart();
-  }
+ 
 }
 </script>
 
 <style scoped>
-.container {
-  padding: 20px;
-  max-width: 1200px;
-  margin: 0 auto;
-}
+@import '../style.css/dasboard.css';
 
-.header {
-  margin-bottom: 24px;
-}
-
-.title {
-  font-size: 24px;
-  color: #2c3e50;
-  margin: 0;
-}
-
-/* Stats Grid */
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 20px;
-  margin-bottom: 24px;
-}
-
-.stat-card {
-  background: white;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  transition: transform 0.2s ease;
-}
-
-.stat-card:hover {
-  transform: translateY(-5px);
-}
-
-.stat-content {
-  display: flex;
-  align-items: center;
-}
-
-.stat-icon {
-  width: 48px;
-  height: 48px;
-  background: #f8f9fa;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 16px;
-}
-
-.stat-icon i {
-  font-size: 20px;
-  color: #4CAF50;
-}
-
-.stat-details h5 {
-  color: #6c757d;
-  margin: 0 0 8px 0;
-  font-size: 14px;
-}
-
-.stat-details h3 {
-  color: #2c3e50;
-  margin: 0 0 8px 0;
-  font-size: 24px;
-}
-
-.stat-change {
-  font-size: 12px;
-}
-
-.increase {
-  color: #4CAF50;
-}
-
-/* Chart Container */
-.chart-container {
-  margin-bottom: 24px;
-}
-
-.chart-card {
-  background: white;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.chart-header {
-  margin-bottom: 16px;
-}
-
-.chart-header h5 {
-  margin: 0;
-  color: #2c3e50;
-}
-
-.chart-body {
-  height: 300px;
-}
-
-/* Table Styles */
-.table-card {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.table-header {
-  padding: 16px 20px;
-  border-bottom: 1px solid #eee;
-}
-
-.table-header h5 {
-  margin: 0;
-  color: #2c3e50;
-}
-
-.table-body {
-  overflow-x: auto;
-}
-
-.orders-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.orders-table th,
-.orders-table td {
-  padding: 12px 20px;
-  text-align: left;
-  border-bottom: 1px solid #eee;
-}
-
-.orders-table th {
-  font-weight: 600;
-  color: #6c757d;
-  background: #f8f9fa;
-}
-
-.status-badge {
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.status-success {
-  background: #e8f5e9;
-  color: #4CAF50;
-}
-
-.status-primary {
-  background: #e3f2fd;
-  color: #2196F3;
-}
-
-.status-warning {
-  background: #fff3e0;
-  color: #ff9800;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .stats-grid {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  }
-
-  .orders-table {
-    min-width: 600px;
-  }
-}
 </style>
