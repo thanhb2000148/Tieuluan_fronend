@@ -110,14 +110,24 @@ export default {
           await this.getUserById(userId); // Lấy thông tin chi tiết người dùng, bao gồm AVT_URL
 
           // Kiểm tra quyền admin
-          if (this.user.OBJECT_ROLE?.IS_ADMIN === true) {
+          if (this.user.OBJECT_ROLE && this.user.OBJECT_ROLE.IS_ADMIN === true) {
             this.isAdmin = true;
+          } else {
+            this.isAdmin = false;
+            this.redirectToHome(); // Chuyển hướng nếu không phải admin
           }
+        } else {
+          console.log("Không có dữ liệu người dùng đăng nhập.");
         }
       } catch (error) {
         console.error(error);
+        this.redirectToHome(); // Chuyển hướng nếu có lỗi
       }
     },
+    redirectToHome() {
+      this.$router.push("/"); // Chuyển hướng về trang chủ
+    },
+    
 
     async getUserById(id) {
       try {
