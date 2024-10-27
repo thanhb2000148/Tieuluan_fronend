@@ -84,6 +84,8 @@
 
 <script>
 import userService from "@/services/user.service";
+import Swal from 'sweetalert2';
+
 
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
@@ -104,10 +106,11 @@ export default {
     async fetchUserLogin() {
       try {
         const response = await userService.getUserLogin();
+         console.log("Response từ getUserLogin:", response); // Debugging
         if (response && response.data) {
           this.user = response.data;
           const userId = this.user.USER_ID;
-          await this.getUserById(userId); // Lấy thông tin chi tiết người dùng, bao gồm AVT_URL
+          await this.getUserById(userId); // Lấy thông tin chi tiết người dùng, bao gồm AVT_URL 
 
           // Kiểm tra quyền admin
           if (this.user.OBJECT_ROLE && this.user.OBJECT_ROLE.IS_ADMIN === true) {
@@ -117,17 +120,40 @@ export default {
             this.redirectToHome(); // Chuyển hướng nếu không phải admin
           }
         } else {
-          console.log("Không có dữ liệu người dùng đăng nhập.");
+          // Nếu không có dữ liệu, coi như token không hợp lệ
+        this.handleTokenError({ response: { data: { message: "Token không hợp lệ" } } });
         }
       } catch (error) {
-        console.error(error);
-        this.redirectToHome(); // Chuyển hướng nếu có lỗi
+         console.error("Lỗi khi gọi API:", error); // Debugging
+        // this.redirectToHome(); 
+        this.handleTokenError(error); // Chuyển hướng nếu có lỗi
+
       }
     },
     redirectToHome() {
       this.$router.push("/"); // Chuyển hướng về trang chủ
     },
-    
+     handleTokenError(error) {
+    // Kiểm tra thông báo lỗi từ phản hồi
+    if (error.response && error.response.data && error.response.data.message === 'Token không hợp lệ') {
+      console.log("Token không hợp lệ đã được phát hiện."); // Debugging
+      Swal.fire({
+        icon: 'error',
+        title: 'Phiên đăng nhập đã hết hạn',
+        text: 'Vui lòng đăng nhập lại.',
+        confirmButtonText: 'OK'
+      }).then(() => {
+        localStorage.removeItem('token'); // Xóa token
+        this.redirectToLogin(); // Chuyển hướng về trang đăng nhập
+      });
+    } else {
+      console.log("Không có dữ liệu người dùng đăng nhập.");
+    }
+  },
+
+  redirectToLogin() {
+    this.$router.push("/login"); // Chuyển hướng về trang đăng nhập
+  },
 
     async getUserById(id) {
       try {
