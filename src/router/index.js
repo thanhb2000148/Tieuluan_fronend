@@ -106,11 +106,17 @@ const routes = [
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/CompletePayment.vue"),
   },
-   {
+  {
     path: "/new",
     name: "NewList",
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/new.vue"),
+  },
+   {
+    path: "/newdetail/:id",
+    name: "NewDetail",
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/newdetail.vue"),
   },
   {
     path: "/checkout/paymentMethods",
@@ -172,6 +178,12 @@ const routes = [
     name: "DashboardProductOder",
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/DashBoardProductOder.vue"),
+  },
+   {
+    path: "/admin/news",
+    name: "DashboardNews",
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/DashBoardNews.vue"),
   },
 ];
 

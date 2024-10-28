@@ -1,0 +1,131 @@
+/* Tạo kiểu cho toàn bộ giao diện */
+body {
+    font-family: 'Arial', sans-serif; /* Thay đổi phông chữ */
+    background-color: #f8f9fa; /* Màu nền nhẹ cho toàn bộ trang */
+    margin: 0;
+}
+
+/* Định dạng cho wrapper */
+.wrapper {
+    display: flex;
+    min-height: 100vh; /* Đảm bảo chiều cao tối thiểu cho wrapper */
+}
+
+/* Định dạng cho main */
+.main {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px; /* Thêm khoảng cách cho main */
+}
+
+/* Định dạng cho nội dung chính */
+.content {
+    flex-grow: 1;
+    padding: 20px;
+}
+
+/* Định dạng cho container */
+.container-fluid {
+    background-color: #ffffff; /* Màu nền trắng */
+    border-radius: 12px; /* Đường viền bo tròn */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Đổ bóng cho container */
+}
+
+/* Định dạng cho modal */
+.modal {
+    z-index: 1050;
+}
+
+/* Định dạng cho bảng */
+.table {
+    width: 100%;
+    border-collapse: collapse; /* Gộp các border lại */
+    margin-bottom: 1rem; /* Khoảng cách dưới bảng */
+}
+
+/* Định dạng cho các ô bảng */
+.table th,
+.table td {
+    padding: 1rem; /* Khoảng cách trong ô */
+    text-align: center; /* Căn giữa nội dung */
+    border: 1px solid #dee2e6; /* Border cho các ô */
+    transition: background-color 0.3s; /* Hiệu ứng chuyển đổi cho màu nền */
+}
+
+/* Hiệu ứng hover cho hàng bảng */
+.table tbody tr:hover {
+    background-color: #f1f1f1; /* Màu nền khi hover */
+}
+
+/* Cột */
+.space-title {
+    width: 30%; /* Chiều rộng cột tiêu đề */
+}
+
+.space-content {
+    width: 30%; /* Chiều rộng cột nội dung */
+}
+
+.space-image {
+    width: 15%; /* Chiều rộng cột hình ảnh */
+}
+
+.space-handle,
+.space-hanle {
+    width: 25%; /* Chiều rộng cho cột xử lý */
+}
+
+/* Chiều cao cho hình ảnh */
+.table img {
+    max-width: 100%; /* Đảm bảo hình ảnh không vượt quá chiều rộng ô */
+    height: auto; /* Giữ tỉ lệ hình ảnh */
+    border-radius: 4px; /* Bo tròn cho hình ảnh */
+}
+
+/* Định dạng cho editor */
+.ql-editor {
+    min-height: 200px; /* Chiều cao tối thiểu cho editor */
+    font-size: 16px; /* Kích thước phông chữ cho editor */
+}
+
+/* Định dạng cho toolbar editor */
+.ql-toolbar {
+    border: 1px solid #ccc; /* Border cho toolbar */
+    border-top-left-radius: 4px; /* Bo tròn góc cho toolbar */
+    border-top-right-radius: 4px; /* Bo tròn góc cho toolbar */
+    background-color: #f8f9fa; /* Màu nền cho toolbar */
+}
+
+/* Đảm bảo modal có đủ không gian cho editor */
+.modal-body {
+    max-height: 70vh; /* Chiều cao tối đa cho modal */
+    overflow-y: auto; /* Cuộn cho nội dung nếu quá dài */
+}
+
+/* Định dạng cho button */
+.btn {
+    border-radius: 20px; /* Bo tròn cho nút */
+}
+
+/* Định dạng cho button khi hover */
+.btn:hover {
+    background-color: #0056b3; /* Màu nền khi hover */
+    color: white; /* Màu chữ khi hover */
+}
+
+/* Định dạng cho tiêu đề */
+h1 {
+    color: #000; /* Thay đổi màu chữ cho tiêu đề thành màu đen */
+    margin-bottom: 20px; /* Khoảng cách dưới tiêu đề */
+}
+
+/* Định dạng cho input */
+.form-control {
+    border-radius: 4px; /* Bo tròn cho input */
+}
+
+/* Định dạng cho khoảng cách giữa các thành phần */
+.mb-2 {
+    margin-bottom: 10px; /* Khoảng cách dưới cho các phần tử */
+}

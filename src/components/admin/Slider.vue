@@ -76,6 +76,12 @@
               <span>Quản lý người dùng</span>
             </router-link>
           </li>
+          <li class="sidebar-item">
+            <router-link to="/admin/news" class="sidebar-link">
+              <i class="fas fa-newspaper"></i>
+              <span>Quản lý Tin Tức</span>
+            </router-link>
+          </li>
         </ul>
       </nav>
     </div>
