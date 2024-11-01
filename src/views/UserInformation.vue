@@ -505,37 +505,36 @@
                         </button>
                       </div>
                      <!-- Modal Nhập Lý Do Hủy -->
-  <div v-if="showCancelModal" class="modal fade show" tabindex="-1" role="dialog" aria-labelledby="cancelModalLabel" aria-hidden="false" style="display: block;">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="cancelModalLabel">Chọn lý do hủy đơn hàng</h5>
-          <button type="button" class="close" @click="showCancelModal = false" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <div class="form-group">
-            <label for="cancelReason">Lý do hủy:</label>
-            <select v-model="selectedReason" class="form-control" id="cancelReason">
-              <option disabled value="">Chọn lý do...</option>
-              <option v-for="reason in cancelReasons" :key="reason" :value="reason">
-                {{ reason }}
-              </option>
-            </select>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" @click="showCancelModal = false">Hủy</button>
-          <button type="button" class="btn btn-danger" @click="confirmCancel">Xác nhận hủy</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-                  </div>
+                      <div v-if="showCancelModal" class="modal fade show" tabindex="-1" role="dialog" aria-labelledby="cancelModalLabel" aria-hidden="false" style="display: block;">
+                        <div class="modal-dialog" role="document">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="cancelModalLabel">Chọn lý do hủy đơn hàng</h5>
+                              <button type="button" class="close" @click="showCancelModal = false" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                              <div class="form-group">
+                                <label for="cancelReason">Lý do hủy:</label>
+                                <select v-model="selectedReason" class="form-control" id="cancelReason">
+                                  <option disabled value="">Chọn lý do...</option>
+                                  <option v-for="reason in cancelReasons" :key="reason" :value="reason">
+                                    {{ reason }}
+                                  </option>
+                                </select>
+                              </div>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" @click="showCancelModal = false">Hủy</button>
+                              <button type="button" class="btn btn-danger" @click="confirmCancel">Xác nhận hủy</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="button" class="btn btn-secondary" @click="closeOrderDetails">Đóng</button>
                   </div>
                 </div>
               </div>
@@ -680,110 +679,110 @@ export default {
       });
     }
     },
- async cancelOrder(order) {
-  if (!order || !order._id) {
-    console.error('Đơn hàng không hợp lệ:', order);
-    Swal.fire({
-      icon: 'error',
-      title: 'Đơn hàng không hợp lệ!',
-      text: 'Vui lòng thử lại sau.',
-    });
-    return;
-  }
-
-  try {
-    await orderService.cancelOrder(order._id); // Gọi API hủy đơn hàng
-    await this.fetchOrderUser(); // Cập nhật danh sách đơn hàng
-    Swal.fire({
-      icon: 'success',
-      title: 'Hủy đơn hàng thành công!',
-      showConfirmButton: true,
-    });
-  } catch (error) {
-    console.error(error);
-    Swal.fire({
-      icon: 'error',
-      title: 'Hủy đơn hàng thất bại!',
-      text: error.message || 'Có lỗi xảy ra trong quá trình hủy đơn hàng.',
-    });
-  }
-},
- openCancelModal(order) {
-    this.selectedOrder = order; // Lưu đơn hàng đang chọn
-    this.cancelReason = ''; // Reset lý do hủy
-    this.showCancelModal = true; // Mở modal
-  },
-  async confirmCancel() {
-  // Kiểm tra xem người dùng đã chọn lý do chưa
-  if (!this.selectedReason) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Chưa chọn lý do',
-      text: 'Vui lòng chọn lý do hủy đơn hàng.',
-    });
-    return;
-  }
-
-  try {
-    // Gọi dịch vụ hủy đơn hàng với lý do đã chọn
-    await orderService.cancelOrder(this.selectedOrder._id, this.selectedReason);
-    await this.fetchOrderUser(); // Cập nhật danh sách đơn hàng sau khi hủy
-    this.showCancelModal = false; // Đóng modal
-    Swal.fire({
-      icon: 'success',
-      title: 'Hủy đơn hàng thành công!',
-    });
-  } catch (error) {
-    console.error(error);
-    Swal.fire({
-      icon: 'error',
-      title: 'Có lỗi xảy ra!',
-      text: error.message || 'Hủy đơn hàng thất bại.',
-    });
-  }
-},
-    selectOrderStatus(status) {
-    this.selectedStatus = status;
-    this.currentPage = 1; // Reset về trang đầu tiên khi thay đổi trạng thái
-    },
-
-    getLastOrderStatusIndex(statusHistory) {
-      // Kiểm tra nếu statusHistory không tồn tại hoặc không có phần tử
-      if (!statusHistory || statusHistory.length === 0) {
-        return -1; // Hoặc giá trị mặc định khác
+    async cancelOrder(order) {
+      if (!order || !order._id) {
+        console.error('Đơn hàng không hợp lệ:', order);
+        Swal.fire({
+          icon: 'error',
+          title: 'Đơn hàng không hợp lệ!',
+          text: 'Vui lòng thử lại sau.',
+        });
+        return;
       }
 
-  // Lấy trạng thái cuối cùng trong STATUS_HISTORY
-  const lastStatus = statusHistory[statusHistory.length - 1].status;
-  
-  return this.allPossibleStatuses.findIndex(status => 
-    status === lastStatus
-  );
-},
+        try {
+          await orderService.cancelOrder(order._id); // Gọi API hủy đơn hàng
+          await this.fetchOrderUser(); // Cập nhật danh sách đơn hàng
+          Swal.fire({
+            icon: 'success',
+            title: 'Hủy đơn hàng thành công!',
+            showConfirmButton: true,
+          });
+        } catch (error) {
+          console.error(error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Hủy đơn hàng thất bại!',
+            text: error.message || 'Có lỗi xảy ra trong quá trình hủy đơn hàng.',
+          });
+        }
+      },
+      openCancelModal(order) {
+          this.selectedOrder = order; // Lưu đơn hàng đang chọn
+          this.cancelReason = ''; // Reset lý do hủy
+          this.showCancelModal = true; // Mở modal
+        },
+        async confirmCancel() {
+        // Kiểm tra xem người dùng đã chọn lý do chưa
+        if (!this.selectedReason) {
+          Swal.fire({
+            icon: 'warning',
+            title: 'Chưa chọn lý do',
+            text: 'Vui lòng chọn lý do hủy đơn hàng.',
+          });
+          return;
+        }
 
-    getStatusDate(status) {
-      const statusObj = this.selectedOrder.STATUS_HISTORY.find(s => s.STATUS_NAME === status);
-      return statusObj ? this.formatDateTime(statusObj.updatedAt) : '';
-    },
-   isStatusActive(status) {
-    return this.selectedOrder.ORDER_STATUS === status;
-    },
-  isStatusCompleted(status) {
-    return this.selectedOrder.STATUS_HISTORY.some(s => s.status === status);
-},
+        try {
+          // Gọi dịch vụ hủy đơn hàng với lý do đã chọn
+          await orderService.cancelOrder(this.selectedOrder._id, this.selectedReason);
+          await this.fetchOrderUser(); // Cập nhật danh sách đơn hàng sau khi hủy
+          this.showCancelModal = false; // Đóng modal
+          Swal.fire({
+            icon: 'success',
+            title: 'Hủy đơn hàng thành công!',
+          });
+        } catch (error) {
+          console.error(error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Có lỗi xảy ra!',
+            text: error.message || 'Hủy đơn hàng thất bại.',
+          });
+        }
+      },
+          selectOrderStatus(status) {
+          this.selectedStatus = status;
+          this.currentPage = 1; // Reset về trang đầu tiên khi thay đổi trạng thái
+          },
+
+          getLastOrderStatusIndex(statusHistory) {
+            // Kiểm tra nếu statusHistory không tồn tại hoặc không có phần tử
+            if (!statusHistory || statusHistory.length === 0) {
+              return -1; // Hoặc giá trị mặc định khác
+            }
+
+        // Lấy trạng thái cuối cùng trong STATUS_HISTORY
+        const lastStatus = statusHistory[statusHistory.length - 1].status;
+        
+        return this.allPossibleStatuses.findIndex(status => 
+          status === lastStatus
+        );
+      },
+
+          getStatusDate(status) {
+            const statusObj = this.selectedOrder.STATUS_HISTORY.find(s => s.STATUS_NAME === status);
+            return statusObj ? this.formatDateTime(statusObj.updatedAt) : '';
+          },
+        isStatusActive(status) {
+          return this.selectedOrder.ORDER_STATUS === status;
+          },
+        isStatusCompleted(status) {
+          return this.selectedOrder.STATUS_HISTORY.some(s => s.status === status);
+      },
 
 
- async fetchProductImages() {
-  try {
-    for (let product of this.selectedOrder.LIST_PRODUCT) {
-      // Không cần gọi API nữa nếu bạn đã có thông tin trong selectedOrder
-      product.IMAGE = this.selectedOrder.PRODUCT.LIST_FILE_ATTACHMENT_DEFAULT[0]?.FILE_URL; // Lấy URL của ảnh mặc định
-      product.NAME_PRODUCT = this.selectedOrder.PRODUCT.NAME_PRODUCT; // Lưu tên sản phẩm
-    }
-  } catch (error) {
-    console.error('Lỗi khi lấy dữ liệu sản phẩm:', error);
-  }
-},
+      async fetchProductImages() {
+        try {
+          for (let product of this.selectedOrder.LIST_PRODUCT) {
+            // Không cần gọi API nữa nếu bạn đã có thông tin trong selectedOrder
+            product.IMAGE = this.selectedOrder.PRODUCT.LIST_FILE_ATTACHMENT_DEFAULT[0]?.FILE_URL; // Lấy URL của ảnh mặc định
+            product.NAME_PRODUCT = this.selectedOrder.PRODUCT.NAME_PRODUCT; // Lưu tên sản phẩm
+          }
+        } catch (error) {
+          console.error('Lỗi khi lấy dữ liệu sản phẩm:', error);
+        }
+      },
     async fetchOrderUser() {
         try {
             const response = await orderService.getOrderUser();
@@ -871,7 +870,7 @@ export default {
         // Gọi hàm lưu người dùng, hàm saveUser sẽ tự xử lý việc upload ảnh nếu có file
         await this.saveUser(); // Lưu người dùng và upload ảnh
       }
-  },
+    },
     async uploadImage() {
       try {
          this.isUploading = true; 
@@ -1093,16 +1092,33 @@ export default {
       };
       return classes[status] || 'badge bg-primary';
     },
-    showOrderDetails(order) {
-      this.selectedOrder = order;
-      const modal = new Modal(document.getElementById('orderDetailsModal'));
-      modal.show();
-    },
+    // showOrderDetails(order) {
+    //   this.selectedOrder = order;
+    //   const modal = new Modal(document.getElementById('orderDetailsModal'));
+    //   modal.show();
+    // },
+     showOrderDetails(order) {
+    this.selectedOrder = order;
+    // Kiểm tra nếu chưa khởi tạo modal
+    if (!this.orderModalInstance) {
+      this.orderModalInstance = new Modal(document.getElementById('orderDetailsModal'), {
+        backdrop: 'static', // để ngăn việc đóng modal khi click bên ngoài
+        keyboard: false     // ngăn việc đóng modal khi nhấn phím ESC
+      });
+    }
+    this.orderModalInstance.show();
   },
-  closeModal() {
+  closeOrderDetails() {
+    if (this.orderModalInstance) {
+      this.orderModalInstance.hide();
+    }
+  },
+    closeModal() {
     this.showModal = false;
-  },
+   },
  
+  },
+  
   
 };
 </script>
