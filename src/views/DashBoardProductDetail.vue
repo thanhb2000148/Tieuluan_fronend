@@ -39,7 +39,7 @@
                   <tr>
                     <th class="text-center">STT</th>
                     <th class="text-center">Tên sản phẩm</th>
-                    <th class="text-center">Mô tả ngắn</th>
+                    <th class="text-center">Mô tả chi tiết</th>
                     <th class="text-center">Trạng thái</th>
                     <th class="text-center">Thời gian tạo</th>
                     <th class="text-center">Danh mục</th>
@@ -47,7 +47,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(product, index) in products" :key="product._id">
+                  <tr v-for="(product, index) in paginatedProducts" :key="product._id">
                     <td class="text-center">{{ index + 1 }}</td>
                     <td>
                       <div class="product-card">
@@ -56,7 +56,7 @@
                         </div>
                         <div class="product-info">
                           <h5 class="mb-1">{{ product.NAME_PRODUCT }}</h5>
-                          <p class="mb-1"><small><strong>Mô tả chi tiết:</strong> {{ product.SHORT_DESC }}</small></p>
+                          <p class="mb-1"><small><strong>Mô tả ngắn:</strong> {{ product.SHORT_DESC }}</small></p>
                           <p class="mb-1"><small>{{ getSummary(product) }}</small></p>
                           <button @click="openImageModal(product)" class="btn btn-outline-secondary btn-sm mt-1">
                             <i class="bi bi-images me-1"></i>Xem thêm hình ảnh
@@ -66,8 +66,8 @@
                     </td>
                     <td>{{ product.SHORT_DESC }}</td>
                     <td>
-                      <span :class="{'badge bg-success': product.IN_STOCK, 'badge bg-danger': !product.IN_STOCK}">
-                        {{ product.IN_STOCK ? 'Còn hàng' : 'Hết hàng' }}
+                      <span :class="{'badge bg-success': product.NUMBER_INVENTORY_PRODUCT, 'badge bg-danger': !product.NUMBER_INVENTORY_PRODUCT}">
+                        {{ product.NUMBER_INVENTORY_PRODUCT ? 'Còn hàng' : 'Hết hàng' }}
                       </span>
                     </td>
                     <td>{{ formatDate(product.CREATED_AT) }}</td>
@@ -85,6 +85,7 @@
               </table>
             </div>
           </div>
+
           <!-- Modal hiển thị thêm hình ảnh -->
           <div v-if="showImageModal" class="modal-backdrop fade show"></div>
           <div v-if="showImageModal" class="modal fade show" style="display: block;">
@@ -110,86 +111,106 @@
             </div>
           </div>
 
-          
-                <!-- Modal sửa sản phẩm -->
-                <div v-if="showEditModal" class="modal-backdrop fade show"></div>
-                <div v-if="showEditModal" class="modal fade show" style="display: block;">
-                    <div class="modal-dialog modal-lg modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header bg-warning text-white">
-                        <h5 class="modal-title">Chỉnh sửa sản phẩm</h5>
-                        <button type="button" class="btn-close btn-close-white" @click="closeEditModal"></button>
-                        </div>
-                        <div class="modal-body">
-                        <form @submit.prevent="updateProduct">
-                            <div class="mb-3">
-                            <label for="productName" class="form-label">Tên sản phẩm</label>
-                            <input type="text" class="form-control" id="productName" v-model="editedProduct.NAME_PRODUCT" />
-                            </div>
-                            <div class="mb-3">
-                            <label for="shortDesc" class="form-label">Mô tả chi tiết</label>
-                            <textarea class="form-control" id="shortDesc" v-model="editedProduct.SHORT_DESC" ></textarea>
-                            </div>
-                            <div class="mb-3">
-                            <label for="detailedDesc" class="form-label">Mô tả ngắn</label>
-                            <textarea class="form-control" id="detailedDesc" v-model="editedProduct.DESC_PRODUCT" rows="4"></textarea>
-                            </div>
-                            <div class="mb-3">
-                            <label for="category" class="form-label">Danh mục</label>
-                            <select class="form-select" id="category" v-model="editedProduct.CATEGORY_ID" >
-                                <option value="" disabled>Chọn danh mục</option>
-                                <option v-for="category in categories" :key="category._id" :value="category._id">{{ category.CATEGORY_NAME }}</option>
-                            </select>
-                            </div>
-                           <!-- Thêm phần upload ảnh đại diện -->
-                            <div class="mb-3">
-                                <label for="thumbnail" class="form-label">Ảnh đại diện sản phẩm</label>
-                                <input type="file" class="form-control" id="thumbnail" @change="handleFileChange($event, 'thumbnail')" />
-                            </div>
-
-                            <div class="mb-3">
-                            <!-- Thông tin các key thuộc tính -->
-                            <h6>Thông tin chi tiết:</h6>
-                                <div v-for="(meta, index) in editedProduct.LIST_PRODUCT_METADATA" :key="index" class="mb-2">
-                                    <label :for="'meta_' + index" class="form-label">{{ meta.KEY }}</label>
-                                    <input
-                                    type="text"
-                                    class="form-control"
-                                    :id="'meta_' + index"
-                                    v-model="meta.VALUE"  
-                                    />
-                                </div>
-                            </div>
-                            <!-- Thêm phần upload ảnh chi tiết -->
-                           <!-- Thêm phần upload ảnh chi tiết -->
-                                <div class="mb-3">
-                                    <label for="detail_images" class="form-label">Ảnh Chi Tiết Sản Phẩm</label>
-                                    <p class="helper-text">Bạn có thể thêm nhiều ảnh chi tiết để làm rõ hơn về sản phẩm.</p>
-                                    <button type="button" class="btn btn-success mb-2" @click="addDetailImageInput">
-                                        <i class="fas fa-plus"></i> Thêm Ảnh Chi Tiết
-                                    </button>
-                                    <div v-for="(image, index) in uploadedDetailImages" :key="index" class="mt-2">
-                                        <input type="file" class="form-control" :id="'detail_images_' + index" @change="handleFileChange($event, 'detail', index)" />
-                                    </div>
-                                </div>
-
-                            <div v-if="editedProduct.LIST_FILE_ATTACHMENT && editedProduct.LIST_FILE_ATTACHMENT.length > 0" class="mt-2">
-                                <h6>Hình ảnh hiện tại:</h6>
-                                <div class="image-gallery">
-                                    <div v-for="image in editedProduct.LIST_FILE_ATTACHMENT" :key="image._id" class="image-item">
-                                    <img :src="image.FILE_URL" class="img-fluid rounded" />
-                                    </div>
-                                </div>
-                            </div>
-                            <button type="submit" class="btn btn-success">Cập nhật</button>
-                        </form>
-                        </div>
-                            <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" @click="closeEditModal">Đóng</button>
-                        </div>
-                    </div>
-                    </div>
+          <!-- Modal sửa sản phẩm -->
+          <div v-if="showEditModal" class="modal-backdrop fade show"></div>
+          <div v-if="showEditModal" class="modal fade show" style="display: block;">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header bg-warning text-white">
+                  <h5 class="modal-title">Chỉnh sửa sản phẩm</h5>
+                  <button type="button" class="btn-close btn-close-white" @click="closeEditModal"></button>
                 </div>
+                <div class="modal-body">
+                  <form @submit.prevent="updateProduct">
+                    <div class="mb-3">
+                      <label for="productName" class="form-label">Tên sản phẩm</label>
+                      <input type="text" class="form-control" id="productName" v-model="editedProduct.NAME_PRODUCT" />
+                    </div>
+                    <div class="mb-3">
+                      <label for="shortDesc" class="form-label">Mô tả chi tiết</label>
+                      <textarea class="form-control" id="shortDesc" v-model="editedProduct.SHORT_DESC"></textarea>
+                    </div>
+                    <div class="mb-3">
+                      <label for="detailedDesc" class="form-label">Mô tả ngắn</label>
+                      <textarea class="form-control" id="detailedDesc" v-model="editedProduct.DESC_PRODUCT" rows="4"></textarea>
+                    </div>
+                    <div class="mb-3">
+                      <label for="category" class="form-label">Danh mục</label>
+                      <select class="form-select" id="category" v-model="editedProduct.CATEGORY_ID">
+                        <option value="" disabled>Chọn danh mục</option>
+                        <option v-for="category in categories" :key="category._id" :value="category._id">{{ category.CATEGORY_NAME }}</option>
+                      </select>
+                    </div>
+                    <!-- Thêm phần upload ảnh đại diện -->
+                    <div class="mb-3">
+                      <label for="thumbnail" class="form-label">Ảnh đại diện sản phẩm</label>
+                      <input type="file" class="form-control" id="thumbnail" @change="handleFileChange($event, 'thumbnail')" />
+                    </div>
+
+                    <div class="mb-3">
+                      <h6>Thông tin chi tiết:</h6>
+                      <div v-for="(meta, index) in editedProduct.LIST_PRODUCT_METADATA" :key="index" class="mb-2">
+                        <label :for="'meta_' + index" class="form-label">{{ meta.KEY }}</label>
+                        <input type="text" class="form-control" :id="'meta_' + index" v-model="meta.VALUE" />
+                      </div>
+                    </div>
+
+                    <!-- Thêm phần upload ảnh chi tiết -->
+                    <div class="mb-3">
+                      <label for="detail_images" class="form-label">Ảnh Chi Tiết Sản Phẩm</label>
+                      <p class="helper-text">Bạn có thể thêm nhiều ảnh chi tiết để làm rõ hơn về sản phẩm.</p>
+                      <button type="button" class="btn btn-success mb-2" @click="addDetailImageInput">
+                        <i class="fas fa-plus"></i> Thêm Ảnh Chi Tiết
+                      </button>
+                      <div v-for="(image, index) in uploadedDetailImages" :key="index" class="mt-2">
+                        <input type="file" class="form-control" :id="'detail_images_' + index" @change="handleFileChange($event, 'detail', index)" />
+                      </div>
+                    </div>
+
+                    <div v-if="editedProduct.LIST_FILE_ATTACHMENT && editedProduct.LIST_FILE_ATTACHMENT.length > 0" class="mt-2">
+                      <h6>Hình ảnh hiện tại:</h6>
+                      <div class="image-gallery">
+                        <div v-for="image in editedProduct.LIST_FILE_ATTACHMENT" :key="image._id" class="image-item">
+                          <img :src="image.FILE_URL" class="img-fluid rounded" />
+                        </div>
+                      </div>
+                    </div>
+                    <button type="submit" class="btn btn-success" :disabled="isLoading">
+                      <span v-if="isLoading">
+                        <i class="fa fa-spinner fa-spin"></i> Đang tải ảnh lên...
+                      </span>
+                      <span v-else>Cập nhật</span>
+                    </button>
+                  </form>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" @click="closeEditModal">Đóng</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Phân trang -->
+          <nav aria-label="Page navigation" class="mt-4">
+            <ul class="pagination justify-content-center mb-0">
+              <li class="page-item" :class="{ disabled: currentPage === 1 }">
+                <a class="page-link" @click.prevent="changePage(currentPage - 1)">
+                  <i class="fas fa-chevron-left"></i>
+                </a>
+              </li>
+              <li class="page-item">
+                <span class="page-link">
+                  Trang {{ currentPage }} / {{ totalPages }}
+                </span>
+              </li>
+              <li class="page-item" :class="{ disabled: currentPage === totalPages }">
+                <a class="page-link" @click.prevent="changePage(currentPage + 1)">
+                  <i class="fas fa-chevron-right"></i>
+                </a>
+              </li>
+            </ul>
+          </nav>
+
         </div>
       </main>
     </div>
@@ -197,16 +218,14 @@
 </template>
 
 
-          
-     
-
 <script>
 import axios from 'axios';
-
 import categoryService from "@/services/category.service";
 import productService from "@/services/product.service";
 import Slider from "../components/admin/Slider.vue";
 import Nav from "../components/admin/Nav.vue";
+import Swal from "sweetalert2";
+
 
 export default {
   components: {
@@ -215,6 +234,8 @@ export default {
   },
   data() {
     return {
+      currentPage: 1, // Trang hiện tại
+    itemsPerPage: 10, // Số sản phẩm hiển thị trên mỗi trang
       categories: [],
       products: [],
       searchText: '',
@@ -223,7 +244,9 @@ export default {
       showEditModal: false,
         editedProduct: {}, // Khởi tạo sản phẩm để chỉnh sửa
         uploadedDetailImages: [], // Danh sách lưu trữ các ảnh chi tiết
-            thumbnailFile: null, // Khai báo thumbnailFile để lưu trữ file thumbnail
+      thumbnailFile: null, // Khai báo thumbnailFile để lưu trữ file thumbnail
+            isLoading: false, // Biến theo dõi trạng thái loading
+    
 
 
     };
@@ -232,7 +255,34 @@ export default {
     this.fetchProducts();
     this.fetchCategories();
   },
+  computed: {
+  filteredProducts() {
+    if (this.searchText.trim() === '') {
+      return this.products; // Nếu không có gì để tìm, trả về tất cả sản phẩm
+    }
+    const lowerCaseSearchText = this.searchText.toLowerCase();
+    return this.products.filter(product => {
+      return (
+        product.NAME_PRODUCT.toLowerCase().includes(lowerCaseSearchText) ||
+        product.SHORT_DESC.toLowerCase().includes(lowerCaseSearchText) ||
+        product.DESC_PRODUCT.toLowerCase().includes(lowerCaseSearchText)
+      );
+    });
+    },
+  totalPages() {
+    return Math.ceil(this.filteredProducts.length / this.itemsPerPage); // Tính số trang
+  },
+  paginatedProducts() {
+    const start = (this.currentPage - 1) * this.itemsPerPage; // Tính chỉ số bắt đầu
+    return this.filteredProducts.slice(start, start + this.itemsPerPage); // Lấy các sản phẩm cho trang hiện tại
+  },
+},
+
   methods: {
+    changePage(page) {
+        if (page < 1 || page > this.totalPages) return; // Kiểm tra trang hợp lệ
+        this.currentPage = page;
+    },
     async fetchProducts() {
       try {
         const response = await productService.getAllProduct();
@@ -320,117 +370,150 @@ export default {
         }
       }
     },
-async updateProduct() {
-  const updateData = {};
-  console.log("Bắt đầu cập nhật sản phẩm:", this.editedProduct._id);
+  async updateProduct() {
+    const updateData = {};
+    console.log("Bắt đầu cập nhật sản phẩm:", this.editedProduct._id);
 
-  // Xử lý thumbnail
-  if (this.thumbnailFile) {
-    console.log("Tải lên thumbnail:", this.thumbnailFile.name);
-    try {
-      const thumbnailUrl = await this.uploadImage(this.thumbnailFile);
-      updateData.LIST_FILE_ATTACHMENT_DEFAULT = [{
-        FILE_URL: thumbnailUrl,
-        FILE_TYPE: "image",
-        FROM_DATE: new Date(),
-        TO_DATE: null,
-        _id: this.editedProduct.LIST_FILE_ATTACHMENT_DEFAULT[0]._id, // Giữ ID cũ
-      }];
-      console.log("Thumbnail đã được tải lên:", thumbnailUrl);
-    } catch (uploadError) {
-      console.error("Lỗi khi tải lên thumbnail:", uploadError);
-    }
-  } else {
-    console.log("Không tải lên thumbnail, giữ nguyên hình ảnh hiện có.");
-    updateData.LIST_FILE_ATTACHMENT_DEFAULT = this.editedProduct.LIST_FILE_ATTACHMENT_DEFAULT;
-  }
+      this.isLoading = true; // Bắt đầu tải ảnh
 
-  // Xử lý ảnh chi tiết
-  let updatedDetailImages = [...this.editedProduct.LIST_FILE_ATTACHMENT]; // Bắt đầu với ảnh hiện có
-  if (this.uploadedDetailImages.length > 0) {
-    console.log("Tải lên ảnh chi tiết mới...");
-    for (const file of this.uploadedDetailImages) {
-      if (file) {
-        try {
-          const detailImageUrl = await this.uploadImage(file);
-          updatedDetailImages.push({
-            FILE_URL: detailImageUrl,
+
+    // Xử lý thumbnail
+    if (this.thumbnailFile) {
+      console.log("Tải lên thumbnail:", this.thumbnailFile.name);
+      try {
+        const thumbnailUrl = await this.uploadImage(this.thumbnailFile);
+        if (thumbnailUrl) {
+          // Cập nhật thumbnail URL trong LIST_FILE_ATTACHMENT_DEFAULT
+          updateData.LIST_FILE_ATTACHMENT_DEFAULT = [{
+            FILE_URL: thumbnailUrl,
+            FILE_TYPE: "image", // Đặt loại là image
             FROM_DATE: new Date(),
             TO_DATE: null,
-            _id: 'detail_image_id_' + Date.now(), // Tạo ID mới cho ảnh chi tiết
-          });
-          console.log("Ảnh chi tiết mới đã được tải lên:", detailImageUrl);
-        } catch (uploadError) {
-          console.error("Lỗi khi tải lên ảnh chi tiết:", uploadError);
+            _id: this.editedProduct.LIST_FILE_ATTACHMENT_DEFAULT[0]._id || 'thumbnail_id_' + Date.now(), // Giữ ID cũ hoặc tạo ID mới nếu không có
+          }];
+          console.log("Thumbnail đã được tải lên:", thumbnailUrl);
+        }
+      } catch (uploadError) {
+        console.error("Lỗi khi tải lên thumbnail:", uploadError);
+      }
+    } else {
+      console.log("Không tải lên thumbnail, giữ nguyên hình ảnh hiện có.");
+      // Nếu không có thumbnail mới, giữ ảnh hiện có trong LIST_FILE_ATTACHMENT_DEFAULT
+      updateData.LIST_FILE_ATTACHMENT_DEFAULT = this.editedProduct.LIST_FILE_ATTACHMENT_DEFAULT;
+    }
+
+    // Xử lý ảnh chi tiết
+    let updatedDetailImages = this.editedProduct.LIST_FILE_ATTACHMENT.filter(file => file.FILE_TYPE === "detail"); // Bắt đầu với ảnh chi tiết hiện có
+    if (this.uploadedDetailImages.length > 0) {
+      console.log("Tải lên ảnh chi tiết mới...");
+      for (const file of this.uploadedDetailImages) {
+        if (file) {
+          try {
+            const detailImageUrl = await this.uploadImage(file);
+            if (detailImageUrl) {
+              updatedDetailImages.push({
+                FILE_URL: detailImageUrl,
+                FILE_TYPE: "detail", // Đặt loại là detail
+                FROM_DATE: new Date(),
+                TO_DATE: null,
+                _id: 'detail_image_id_' + Date.now(), // Tạo ID mới cho ảnh chi tiết
+              });
+              console.log("Ảnh chi tiết mới đã được tải lên:", detailImageUrl);
+            }
+          } catch (uploadError) {
+            console.error("Lỗi khi tải lên ảnh chi tiết:", uploadError);
+          }
         }
       }
     }
+
+    // Gán lại danh sách ảnh detail
+    updateData.LIST_FILE_ATTACHMENT = updatedDetailImages; // Gán ảnh chi tiết vào LIST_FILE_ATTACHMENT
+
+    // Cập nhật các trường thông tin khác
+    updateData.NAME_PRODUCT = this.editedProduct.NAME_PRODUCT;
+    updateData.SHORT_DESC = this.editedProduct.SHORT_DESC;
+    updateData.DESC_PRODUCT = this.editedProduct.DESC_PRODUCT;
+    updateData.CATEGORY_ID = this.editedProduct.CATEGORY_ID;
+    updateData.LIST_PRODUCT_METADATA = this.editedProduct.LIST_PRODUCT_METADATA.filter(meta => meta.VALUE);
+
+    console.log("Dữ liệu cập nhật cuối cùng:", JSON.stringify(updateData, null, 2));
+
+    // Gửi yêu cầu cập nhật đến server
+    try {
+      const response = await productService.update(this.editedProduct._id, updateData);
+      console.log("Kết quả cập nhật:", response);
+      if (response && response.success) {
+        await this.fetchProducts();
+        this.closeEditModal();
+        // Hiển thị thông báo thành công
+      await Swal.fire({
+        icon: "success",
+        title: "Cập nhật sản phẩm thành công!",
+        text: "Sản phẩm đã được cập nhật thành công.",
+      });
+      } else {
+        console.error("Cập nhật sản phẩm thất bại:", response.message);
+        await Swal.fire({
+        icon: "error",
+        title: "Cập nhật sản phẩm thất bại!",
+        text: response.message || "Có lỗi xảy ra khi cập nhật sản phẩm.",
+      });
+      }
+    } catch (error) {
+      console.error("Lỗi khi cập nhật sản phẩm:", error.message || error);
+    await Swal.fire({
+      icon: "error",
+      title: "Có lỗi xảy ra!",
+      text: "Vui lòng kiểm tra console để biết thêm thông tin.",
+    });
+    }finally {
+    this.isLoading = false; // Kết thúc quá trình tải ảnh
   }
-  updateData.LIST_FILE_ATTACHMENT = updatedDetailImages;
+  },
 
-  // Cập nhật các trường thông tin khác
-  updateData.NAME_PRODUCT = this.editedProduct.NAME_PRODUCT;
-  updateData.SHORT_DESC = this.editedProduct.SHORT_DESC;
-  updateData.DESC_PRODUCT = this.editedProduct.DESC_PRODUCT;
-  updateData.CATEGORY_ID = this.editedProduct.CATEGORY_ID;
-  updateData.LIST_PRODUCT_METADATA = this.editedProduct.LIST_PRODUCT_METADATA.filter(meta => meta.VALUE);
 
-  console.log("LIST_FILE_ATTACHMENT:", JSON.stringify(updateData.LIST_FILE_ATTACHMENT, null, 2));
-  console.log("Dữ liệu cập nhật cuối cùng:", JSON.stringify(updateData, null, 2));
 
-  // Gửi yêu cầu cập nhật đến server
-  try {
-    const response = await productService.update(this.editedProduct._id, updateData);
-    console.log("Kết quả cập nhật:", response);
-    if (response && response.success) {
-      await this.fetchProducts();
-      this.closeEditModal();
-      alert("Cập nhật sản phẩm thành công!");
-    } else {
-      console.error("Cập nhật sản phẩm thất bại:", response.message);
+  async handleFileChange(event, type) {
+  const file = event.target.files[0];
+  if (file) {
+    if (type === 'thumbnail') {
+      this.isLoading = true; // Bắt đầu tải ảnh
+      const url = await this.uploadImage(file);
+      if (url) {
+        this.editedProduct.LIST_FILE_ATTACHMENT_DEFAULT[0].FILE_URL = url;
+      }
+      this.isLoading = false; // Kết thúc quá trình tải ảnh
+    } else if (type === 'detail') {
+      this.isLoading = true; // Bắt đầu tải ảnh
+      const url = await this.uploadImage(file);
+      if (url) {
+        this.editedProduct.LIST_FILE_ATTACHMENT.push({ FILE_URL: url, FILE_TYPE: "detail" });
+      }
+      this.isLoading = false; // Kết thúc quá trình tải ảnh
     }
-  } catch (error) {
-    console.error("Lỗi khi cập nhật sản phẩm:", error.message || error);
-    alert("Có lỗi xảy ra trong quá trình cập nhật sản phẩm. Vui lòng kiểm tra console để biết thêm thông tin.");
   }
 },
-   async handleFileChange(event, type) {
-    const file = event.target.files[0];
-    if (file) {
-      if (type === 'thumbnail') {
-        const url = await this.uploadImage(file);
-        if (url) {
-          this.editedProduct.LIST_FILE_ATTACHMENT_DEFAULT[0].FILE_URL = url; // Cập nhật URL hình ảnh đại diện
+
+      addDetailImageInput() {
+        this.uploadedDetailImages.push(null); // Thêm một input trống cho ảnh chi tiết
+      },
+
+      async uploadImage(file) {
+        try {
+          const formData = new FormData();
+          formData.append('image', file); // Thêm file vào FormData
+
+          // Gọi API upload ảnh
+          const response = await axios.post('http://localhost:8000/v1/upload/', formData);
+          return response.data.data.url; // Trả về URL ảnh từ API
+        } catch (error) {
+          console.error('Lỗi khi tải ảnh lên:', error);
+          return null; // Trả về null nếu có lỗi
         }
-      } else if (type === 'detail') {
-        const url = await this.uploadImage(file);
-        if (url) {
-          this.editedProduct.LIST_FILE_ATTACHMENT.push({ FILE_URL: url }); // Thêm URL hình ảnh chi tiết
-        }
-      }
-    }
-  },
-
-
-    addDetailImageInput() {
-      this.uploadedDetailImages.push(null); // Thêm một input trống cho ảnh chi tiết
+      },
     },
-
-    async uploadImage(file) {
-      try {
-        const formData = new FormData();
-        formData.append('image', file); // Thêm file vào FormData
-
-        // Gọi API upload ảnh
-        const response = await axios.post('http://localhost:8000/v1/upload/', formData);
-        return response.data.data.url; // Trả về URL ảnh từ API
-      } catch (error) {
-        console.error('Lỗi khi tải ảnh lên:', error);
-        return null; // Trả về null nếu có lỗi
-      }
-    },
-  },
-};
+  };
 </script>
 
 

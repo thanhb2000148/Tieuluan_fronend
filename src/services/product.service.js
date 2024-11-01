@@ -58,7 +58,16 @@ class ProductService {
     console.error(`Error updating product with ID ${id}:`, error);
     throw error;
   }
-}
+  }
+  async getActiveProducts() {
+    try {
+      const response = await this.api.get("/delete_true"); // Gọi đến API để lấy sản phẩm không bị xóa
+      return response.data; // Đảm bảo server trả về danh sách sản phẩm không bị xóa
+    } catch (error) {
+      console.error("Error fetching active products:", error);
+      throw error; // Ném lỗi để xử lý ở nơi gọi
+    }
+  }
 
 
    
