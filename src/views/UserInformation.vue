@@ -661,9 +661,10 @@ export default {
     try {
       const orderId = order._id; // Lấy ID đơn hàng từ đối tượng order
       const updatedOrder = await orderService.updateOrderStatusSuccess(orderId);
-      
       // Cập nhật trạng thái trong selectedOrder
       this.selectedOrder.ORDER_STATUS = updatedOrder.ORDER_STATUS;
+      this.selectedOrder.LIST_STATUS = updatedOrder.LIST_STATUS; // Cập nhật LIST_STATUS mới
+
 
       Swal.fire({
         icon: 'success',
@@ -1097,7 +1098,7 @@ export default {
     //   const modal = new Modal(document.getElementById('orderDetailsModal'));
     //   modal.show();
     // },
-     showOrderDetails(order) {
+    showOrderDetails(order) {
     this.selectedOrder = order;
     // Kiểm tra nếu chưa khởi tạo modal
     if (!this.orderModalInstance) {
