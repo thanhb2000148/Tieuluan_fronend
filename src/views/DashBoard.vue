@@ -10,96 +10,106 @@
           </div>
 
           <!-- Stats Cards -->
-          <!-- Stats Cards -->
-<div class="stats-grid">
-  <div class="stat-card orders-card">
-    <div class="stat-content">
-      <div class="stat-icon">
-        <i class="fas fa-shopping-cart"></i>
-      </div>
-      <div class="stat-details">
-        <h5>Đơn hàng</h5>
-        <h3>{{ orderCount }}</h3>
-        <div class="stat-change increase">
-          <i class="fas fa-arrow-up"></i> +12.4%
-        </div>
-      </div>
-    </div>
-  </div>
+          <div class="stats-grid">
+            <div class="stat-card orders-card">
+              <div class="stat-content">
+                <div class="stat-icon">
+                  <i class="fas fa-shopping-cart"></i>
+                </div>
+                <div class="stat-details">
+                  <h5>Đơn hàng</h5>
+                  <h3>{{ orderCount }}</h3>
+                  <div class="stat-change increase">
+                    <i class="fas fa-arrow-up"></i> +12.4%
+                  </div>
+                </div>
+              </div>
+            </div>
 
-  <div class="stat-card reviews-card">
-    <div class="stat-content">
-      <div class="stat-icon">
-        <i class="fas fa-star"></i>
-      </div>
-      <div class="stat-details">
-        <h5>Đánh giá</h5>
-        <h3>{{ totalReviewsCount }}</h3> <!-- Hiển thị tổng số lượng đánh giá -->
-        <div class="stat-change increase">
-          <i class="fas fa-arrow-up"></i> +8.2%
-        </div>
-      </div>
-    </div>
-  </div>
+            <div class="stat-card reviews-card">
+              <div class="stat-content">
+                <div class="stat-icon">
+                  <i class="fas fa-star"></i>
+                </div>
+                <div class="stat-details">
+                  <h5>Đánh giá</h5>
+                  <h3>{{ totalReviewsCount }}</h3> <!-- Hiển thị tổng số lượng đánh giá -->
+                  <div class="stat-change increase">
+                    <i class="fas fa-arrow-up"></i> +8.2%
+                  </div>
+                </div>
+              </div>
+            </div>
 
-  <div class="stat-card users-card">
-    <div class="stat-content">
-      <div class="stat-icon">
-        <i class="fas fa-users"></i>
-      </div>
-      <div class="stat-details">
-        <h5>Người dùng</h5>
-        <h3>{{ userCount }}</h3>
-        <div class="stat-change increase">
-          <i class="fas fa-arrow-up"></i> +5.9%
-        </div>
-      </div>
-    </div>
-  </div>
+            <div class="stat-card users-card">
+              <div class="stat-content">
+                <div class="stat-icon">
+                  <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-details">
+                  <h5>Người dùng</h5>
+                  <h3>{{ userCount }}</h3>
+                  <div class="stat-change increase">
+                    <i class="fas fa-arrow-up"></i> +5.9%
+                  </div>
+                </div>
+              </div>
+            </div>
 
-  <div class="stat-card products-card">
-    <div class="stat-content">
-      <div class="stat-icon">
-        <i class="fas fa-box"></i>
-      </div>
-      <div class="stat-details">
-        <h5>Sản phẩm</h5>
-        <h3>{{ totalProductsCount }}</h3>
-        <div class="stat-change increase">
-          <i class="fas fa-arrow-up"></i> +15.7%
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-           <!-- Date Range Selector -->
-<div class="date-range">
-  <input type="date" v-model="fromDate" />
-  <input type="date" v-model="toDate" />
-  <button @click="fetchRevenueData">Lấy doanh thu</button>
-</div>
+            <div class="stat-card products-card">
+              <div class="stat-content">
+                <div class="stat-icon">
+                  <i class="fas fa-box"></i>
+                </div>
+                <div class="stat-details">
+                  <h5>Sản phẩm</h5>
+                  <h3>{{ totalProductsCount }}</h3>
+                  <div class="stat-change increase">
+                    <i class="fas fa-arrow-up"></i> +15.7%
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
+          <!-- Charts Section -->
+          <div class="charts-section">
+            <!-- Revenue Chart -->
+            <div class="revenue-chart-container">
+              <div class="chart-header">
+                <h5>Biểu đồ doanh thu</h5>
+              </div>
+              <div class="chart-body">
+                <canvas id="revenueChart"></canvas>
+              </div>
+              <div class="total-revenue">
+                <h6>Tổng doanh thu của tất cả đơn hàng:</h6>
+                <p id="totalRevenueAmount">0 triệu đồng</p>
+              </div>
+            </div>
 
-          <!-- Revenue Chart -->
-<div class="chart-container">
-  <div class="chart-card">
-    <div class="chart-header">
-      <h5>Biểu đồ doanh thu</h5>
-    </div>
-    <div class="chart-body">
-      <canvas id="revenueChart"></canvas>
-    </div>
-    <!-- Hiển thị tổng doanh thu -->
-    <div class="total-revenue">
-      <h6>Tổng doanh thu của tất cả đơn hàng:</h6>
-      <p id="totalRevenueAmount">0 triệu đồng</p> <!-- Phần này sẽ cập nhật tổng doanh thu -->
-    </div>
-  </div>
-</div>
+            <!-- Pie Chart -->
+            <div class="pie-chart-container">
+              <div class="pie-chart-header">
+                <h5>Biểu đồ số lượng sản phẩm theo danh mục</h5>
+              </div>
+              <div class="pie-chart-body">
+                <canvas id="categoryPieChart"></canvas>
+              </div>
+            </div>
 
+            <!-- Bar Chart -->
+            <div class="bar-chart-container">
+              <div class="bar-chart-header">
+                <h5>Biểu đồ sản phẩm được đánh giá nhiều nhất</h5>
+              </div>
+              <div class="bar-chart-body">
+                <canvas id="topReviewedProductsChart"></canvas>
+              </div>
+            </div>
+          </div>
 
-
-          <!-- bảng các dơn hàng gần đây -->
+          <!-- Bảng các đơn hàng gần đây -->
           <div class="table-card">
             <div class="table-header">
               <h5>Đơn hàng gần đây</h5>
@@ -120,20 +130,20 @@
                     <td>#{{ order.id }}</td>
                     <td>{{ order.user_name }}</td>
                     <td>
-                    <div v-for="product in order.products" :key="product.id">
-                      {{ product.name }} <!-- Hiển thị tên sản phẩm -->
-                    </div>
-          </td>
-          <td>
-            <div v-for="product in order.products" :key="product.id">
-              {{ product.unitPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) }} <!-- Hiển thị giá -->
-            </div>
-          </td>
-          <td>
-            <span :class="['status-badge', getStatusBadgeClass(order.status)]">
-              {{ order.status }}
-            </span>
-          </td>
+                      <div v-for="product in order.products" :key="product.id">
+                        {{ product.name }} <!-- Hiển thị tên sản phẩm -->
+                      </div>
+                    </td>
+                    <td>
+                      <div v-for="product in order.products" :key="product.id">
+                        {{ product.unitPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) }} <!-- Hiển thị giá -->
+                      </div>
+                    </td>
+                    <td>
+                      <span :class="['status-badge', getStatusBadgeClass(order.status)]">
+                        {{ order.status }}
+                      </span>
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -145,6 +155,7 @@
     </div>
   </div>
 </template>
+
 
 <script>
 import axios from 'axios';
@@ -174,6 +185,8 @@ export default {
       revenueChart: null, // Đối tượng biểu đồ
       totalRevenue: 0, // Tổng doanh thu
       monthlyRevenueData: [], // Dữ liệu doanh thu theo tháng
+      categoryPieChart: null, // Thêm biến để giữ đối tượng biểu đồ tròn
+
 
     }
   },
@@ -184,34 +197,59 @@ export default {
     this.fetchTotalReviewsCount(); // Gọi API để lấy tổng số đánh giá
     this.fetchUserCount();
      this.fetchTotalProductsCount()
-     this.fetchTotalRevenue();//tong doanh thu  
+     this.fetchTotalRevenue();//tong doanh thu 
+     this.fetchCategoryProductCount(); // Gọi API để lấy số lượng sản phẩm theo danh mục
+       this.fetchTopReviewedProducts();
+ 
 
 
   },
   methods: {
 
-    //biểu đồ
-     initRevenueChart() {
+    initRevenueChart() {
     const ctx = document.getElementById('revenueChart');
-    // Dữ liệu biểu đồ mẫu
-    new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'],
-        datasets: [{
-          label: 'Doanh thu (triệu đồng)',
-          data: [150, 200, 180, 250, 220, 300, 280, 350, 330, 400, 380, 450],
-          fill: false,
-          borderColor: '#4CAF50',
-          tension: 0.1
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false
-      }
-    });
-  },
+
+    // Gọi API để lấy dữ liệu doanh thu
+    fetch('http://localhost:8000/v1/order/monthly') // Thay đổi đường dẫn API theo đúng
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Lấy doanh thu theo tháng
+            const labels = data.data.map(month => `T${month._id}`);
+            const revenues = data.data.map(month => month.totalRevenue);
+
+            // Tạo biểu đồ
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Doanh thu (triệu đồng)',
+                        data: revenues,
+                        fill: false,
+                        borderColor: '#4CAF50',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+
+            // Cập nhật tổng doanh thu
+            const totalRevenue = revenues.reduce((a, b) => a + b, 0);
+            document.getElementById('totalRevenueAmount').textContent = `${totalRevenue} triệu đồng`;
+        })
+        .catch(error => {
+            console.error('Error fetching revenue data:', error);
+        });
+},
+
 
 
 
@@ -319,7 +357,108 @@ export default {
         console.error("Lỗi khi lấy tổng doanh thu:", error);
       }
     },
- 
+
+    async fetchCategoryProductCount() {
+      try {
+        const response = await axios.get('http://localhost:8000/v1/product/category-count'); // URL API của bạn
+        if (response.data.success) {
+          const categories = response.data.data;
+          this.drawCategoryPieChart(categories); // Gọi hàm để vẽ biểu đồ
+        } else {
+          console.error(response.data.message);
+        }
+      } catch (error) {
+        console.error("Lỗi khi lấy số lượng sản phẩm theo danh mục:", error);
+      }
+    },
+
+
+    drawCategoryPieChart(categories) {
+      const labels = categories.map(category => category.CATEGORY_NAME); // Lấy tên danh mục thay vì ID
+      const data = categories.map(category => category.productCount); // Số lượng sản phẩm
+
+      const ctx = document.getElementById('categoryPieChart').getContext('2d');
+      // Xóa biểu đồ cũ nếu đã tồn tại
+      if (this.categoryPieChart) {
+        this.categoryPieChart.destroy();
+      }
+      
+      this.categoryPieChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: labels, // Sử dụng tên danh mục làm nhãn
+          datasets: [{
+            data: data,
+            backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'], // Màu sắc cho các phần
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'top',
+            },
+            title: {
+              display: true,
+              text: 'Số lượng sản phẩm theo danh mục',
+            },
+          }
+        }
+      });
+    },
+    async fetchTopReviewedProducts() {
+      try {
+        const response = await axios.get('http://localhost:8000/v1/review/top-reviewed'); // URL API
+        if (response.data.success) {
+          const topProducts = response.data.products;
+          this.drawTopReviewedProductsChart(topProducts); // Vẽ biểu đồ cột
+        } else {
+          console.error(response.data.message);
+        }
+      } catch (error) {
+        console.error("Lỗi khi lấy danh sách sản phẩm được đánh giá nhiều nhất:", error);
+      }
+    },
+    drawTopReviewedProductsChart(products) {
+  const labels = products.map(product => product.productName); // Tên sản phẩm
+  const data = products.map(product => product.totalReviews); // Số lượng đánh giá
+
+  const ctx = document.getElementById('topReviewedProductsChart').getContext('2d');
+  if (this.topReviewedProductsChart) {
+    this.topReviewedProductsChart.destroy(); // Xóa biểu đồ cũ nếu đã tồn tại
+  }
+  
+  this.topReviewedProductsChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Số lượng đánh giá',
+        data: data,
+        backgroundColor: '#4CAF50', // Màu cho cột
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      },
+      plugins: {
+        legend: {
+          display: true,
+        },
+        title: {
+          display: true,
+          text: 'Sản phẩm được đánh giá nhiều nhất',
+        },
+      }
+    }
+  });
+},
+
+
   },
  
 }

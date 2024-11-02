@@ -188,3 +188,53 @@
     min-width: 600px;
   }
 }
+/* Biểu đồ tròn */
+.pie-chart-container {
+  margin: 20px auto;
+  max-width: 450px;
+  background-color: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+  padding: 25px;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.pie-chart-container:hover {
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+  transform: translateY(-5px);
+}
+
+.pie-chart-header {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 22px;
+  font-weight: bold;
+  color: #333;
+}
+
+.pie-chart-body {
+  position: relative;
+  height: 320px;
+}
+
+.pie-chart canvas {
+  max-height: 100%;
+  width: 100% !important;
+  border-radius: 12px;
+}
+
+.pie-chart .total-revenue {
+  text-align: center;
+  font-size: 18px;
+  margin-top: 15px;
+  color: #555;
+  font-weight: 500;
+  font-style: italic;
+}
+
+.pie-chart-footer {
+  text-align: center;
+  font-size: 14px;
+  color: #777;
+  margin-top: 20px;
+}
