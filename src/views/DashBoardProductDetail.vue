@@ -85,7 +85,6 @@
               </table>
             </div>
           </div>
-
           <!-- Modal hiển thị thêm hình ảnh -->
           <div v-if="showImageModal" class="modal-backdrop fade show"></div>
           <div v-if="showImageModal" class="modal fade show" style="display: block;">
@@ -99,8 +98,9 @@
                 </div>
                 <div class="modal-body">
                   <div class="image-gallery">
-                    <div v-for="image in selectedProduct.LIST_FILE_ATTACHMENT" :key="image._id" class="image-item">
+                    <div v-for="image in selectedProduct.LIST_FILE_ATTACHMENT" :key="image._id" class="image-item position-relative">
                       <img :src="image.FILE_URL" :alt="selectedProduct.NAME_PRODUCT" class="img-fluid rounded shadow-sm" />
+                      <button class="btn-close position-absolute top-0 end-0" @click="confirmDelete(image._id)"></button>
                     </div>
                   </div>
                 </div>
@@ -110,6 +110,7 @@
               </div>
             </div>
           </div>
+
 
           <!-- Modal sửa sản phẩm -->
           <div v-if="showEditModal" class="modal-backdrop fade show"></div>
@@ -333,7 +334,7 @@ export default {
       return `${colorCount} màu, ${sizeCount} kích thước`;
     },
       openImageModal(product) {
-          console.log("Sản phẩm đã chọn:", product); // Kiểm tra thông tin sản phẩm
+      console.log("Sản phẩm đã chọn:", product); // Kiểm tra thông tin sản phẩm
 
       this.selectedProduct = product;
       this.showImageModal = true;
@@ -355,6 +356,48 @@ export default {
         this.thumbnailFile = null; // Reset thumbnailFile
 
     },
+   confirmDelete(imageId) {
+  // Hiển thị hộp thoại xác nhận bằng SweetAlert
+  Swal.fire({
+    title: 'Bạn có chắc chắn muốn xóa hình ảnh này?',
+    text: "Hành động này không thể hoàn tác!",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+    confirmButtonText: 'Có, xóa!',
+    cancelButtonText: 'Không, hủy!'
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      await this.deleteImage(imageId);
+    }
+  });
+},
+
+  
+  async deleteImage(imageId) {
+  try {
+    await productService.deleteImage(this.selectedProduct._id, imageId); // Gọi API xóa
+    // Xóa hình ảnh đã xóa khỏi mảng
+    this.selectedProduct.LIST_FILE_ATTACHMENT = this.selectedProduct.LIST_FILE_ATTACHMENT.filter(image => image._id !== imageId);
+    
+    // Hiển thị thông báo thành công bằng SweetAlert
+    await Swal.fire({
+      icon: "success",
+      title: "Xóa hình ảnh thành công!",
+      text: "Hình ảnh đã được xóa.",
+    });
+  } catch (error) {
+    console.error("Lỗi khi xóa hình ảnh:", error);
+    // Hiển thị thông báo lỗi bằng SweetAlert
+    await Swal.fire({
+      icon: "error",
+      title: "Có lỗi xảy ra!",
+      text: "Xóa hình ảnh không thành công.",
+    });
+  }
+},
+
     async deleteProduct(id) {
       const confirmDelete = confirm('Bạn có chắc chắn muốn xóa sản phẩm này không?');
       if (confirmDelete) {

@@ -91,6 +91,7 @@
 </template>
 
 <script>
+import Swal from "sweetalert2";
 import cartService from "@/services/cart.service";
 import VueCookies from "vue-cookies";
 import userService from "@/services/user.service";
@@ -128,12 +129,34 @@ export default {
         this.isDropdownOpen = false;
       }
     },
+    // async fetchUserLogin() {
+    //   try {
+    //     const response = await userService.getUserLogin();
+    //     if (response && response.data) {
+    //       this.user = response.data;
+    //       this.isAdmin = this.user.OBJECT_ROLE?.IS_ADMIN === true;
+    //     }
+    //   } catch (error) {
+    //     console.error(error);
+    //   }
+    // },
     async fetchUserLogin() {
       try {
         const response = await userService.getUserLogin();
         if (response && response.data) {
           this.user = response.data;
           this.isAdmin = this.user.OBJECT_ROLE?.IS_ADMIN === true;
+
+          // Kiểm tra trạng thái IS_LOCK
+          if (this.user.IS_LOCK) {
+            await Swal.fire({
+              icon: "error",
+              title: "Tài khoản bị khóa",
+              text: "Tài khoản của bạn đã bị khóa. Vui lòng liên hệ bộ phận hỗ trợ.",
+              confirmButtonText: "OK",
+            });
+            this.logout(); // Gọi hàm logout để điều hướng về trang đăng nhập
+          }
         }
       } catch (error) {
         console.error(error);
@@ -180,6 +203,19 @@ export default {
   box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15) !important;
 }
 
+/* Thay đổi styles cho navbar */
+.navbar {
+  padding: 1rem 1.5rem; /* Tăng padding cho thanh navbar */
+}
+
+.navbar-brand {
+  font-size: 1.5rem; /* Điều chỉnh kích thước chữ cho tên thương hiệu */
+}
+
+.nav-link {
+  padding: 0.75rem 1rem; /* Thay đổi padding cho các liên kết */
+}
+
 /* Thêm styles cho dropdown */
 .dropdown-menu {
   min-width: 200px;
@@ -223,5 +259,10 @@ export default {
   opacity: 1;
   visibility: visible;
   transform: translateY(0);
+}
+
+/* Thêm margin-top cho body để không bị đè lên bởi navbar */
+body {
+  margin-top: 56px; /* Điều chỉnh theo chiều cao của navbar */
 }
 </style>

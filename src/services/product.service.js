@@ -68,6 +68,16 @@ class ProductService {
       throw error; // Ném lỗi để xử lý ở nơi gọi
     }
   }
+  async deleteImage(productId, imageId) {
+  try {
+    const response = await this.api.delete(`/${productId}/images/${imageId}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error deleting image with ID ${imageId} from product ${productId}:`, error);
+    throw error;
+  }
+}
+
 
 
    
