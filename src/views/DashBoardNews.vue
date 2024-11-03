@@ -1,4 +1,4 @@
-    <template>
+<template>
     <div class="wrapper">
         <Slider />
         <div class="main">
@@ -145,34 +145,34 @@
   </tbody>
     </table>
 
-    <!-- Phân trang -->
-    <nav aria-label="Page navigation" class="mt-4">
-    <ul class="pagination justify-content-center mb-0">
-        <li class="page-item" :class="{ disabled: currentPage === 1 }">
-        <a class="page-link" @click.prevent="changePage(currentPage - 1)">
-            <i class="fas fa-chevron-left"></i>
-        </a>
-        </li>
-        <li class="page-item">
-        <span class="page-link">
-            Trang {{ currentPage }} / {{ totalPages }}
-        </span>
-        </li>
-        <li class="page-item" :class="{ disabled: currentPage === totalPages }">
-        <a class="page-link" @click.prevent="changePage(currentPage + 1)">
-            <i class="fas fa-chevron-right"></i>
-        </a>
-        </li>
-    </ul>
-    </nav>
+        <!-- Phân trang -->
+        <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center mb-0">
+            <li class="page-item" :class="{ disabled: currentPage === 1 }">
+            <a class="page-link" @click.prevent="changePage(currentPage - 1)">
+                <i class="fas fa-chevron-left"></i>
+            </a>
+            </li>
+            <li class="page-item">
+            <span class="page-link">
+                Trang {{ currentPage }} / {{ totalPages }}
+            </span>
+            </li>
+            <li class="page-item" :class="{ disabled: currentPage === totalPages }">
+            <a class="page-link" @click.prevent="changePage(currentPage + 1)">
+                <i class="fas fa-chevron-right"></i>
+            </a>
+            </li>
+        </ul>
+        </nav>
 
 
 
-            </div>
-        </main>
         </div>
+     </main>
     </div>
-    </template>
+ </div>
+</template>
 
     <script>
     import Slider from "../components/admin/Slider.vue";

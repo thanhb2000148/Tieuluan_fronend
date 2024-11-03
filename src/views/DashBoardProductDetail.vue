@@ -4,33 +4,40 @@
     <div class="main">
       <Nav />
       <main class="content px-4 py-3">
-        <div class="container-fluid">
-          <h1 class="mb-4 text-center text-primary">Danh sách sản phẩm</h1>
-          <div class="d-flex justify-content-between align-items-center mb-4">
-            <button @click="addProduct" class="btn btn-primary">
-              <i class="bi bi-plus-circle me-2"></i>Thêm Sản Phẩm
+  <div class="container-fluid">
+    <h1 class="mb-4 text-center ">Danh sách sản phẩm</h1>
+    <div class="d-flex align-items-center mb-4">
+      <button @click="addProduct" class="btn btn-custom btn-primary me-2">
+        <i class="bi bi-plus-circle me-2"></i>Thêm Sản Phẩm
+      </button>
+      <button @click="toggleDeletedProducts" class="btn btn-custom btn-secondary me-2">
+        <i class="bi bi-trash me-2"></i>{{ showDeleted ? 'Hiển thị sản phẩm chưa xóa' : 'Hiển thị sản phẩm đã xóa' }}
+      </button>
+      <div class="filter-search ms-auto">
+        <form class="form-inline" @submit.prevent>
+          <div class="input-group">
+            <input
+              class="form-control"
+              type="search"
+              placeholder="Tìm kiếm..."
+              aria-label="Search"
+              v-model="searchText"
+            />
+            <button class="btn btn-outline-primary" type="submit">
+              <i class="bi bi-search"></i>
             </button>
-            <div class="filter-search">
-              <form class="form-inline" @submit.prevent>
-                <div class="input-group">
-                  <input
-                    class="form-control"
-                    type="search"
-                    placeholder="Tìm kiếm..."
-                    aria-label="Search"
-                    v-model="searchText"
-                  />
-                  <button class="btn btn-outline-primary" type="submit">
-                    <i class="bi bi-search"></i>
-                  </button>
-                </div>
-              </form>
-            </div>
           </div>
+        </form>
+      </div>
+    </div>
 
-          <div v-if="products.length === 0" class="alert alert-info text-center" role="alert">
-            <i class="bi bi-info-circle me-2"></i>Không có sản phẩm nào.
-          </div>
+           <div v-if="isLoading" class="alert alert-info text-center" role="alert">
+    <i class="bi bi-info-circle me-2"></i>Đang tải sản phẩm...
+  </div>
+
+  <div v-if="noProducts" class="alert alert-info text-center" role="alert">
+    <i class="bi bi-info-circle me-2"></i>Không có sản phẩm nào.
+  </div>
 
           <div v-else class="product-table">
             <div class="table-responsive">
@@ -72,14 +79,30 @@
                     </td>
                     <td>{{ formatDate(product.CREATED_AT) }}</td>
                     <td>{{ product.categoryName || 'Đang tải...' }}</td>
-                    <td class="text-center">
-                      <button @click="openEditModal(product)" class="btn btn-warning btn-sm mx-1">
-                        <i class="bi bi-pencil-square"></i>
-                      </button>
-                      <button @click="deleteProduct(product._id)" class="btn btn-danger btn-sm mx-1">
-                        <i class="bi bi-trash"></i>
-                      </button>
-                    </td>
+<td class="text-center">
+  <template v-if="showDeleted">
+    <button @click="restoreProduct(product._id)" class="btn btn-success btn-sm mx-1">
+      <i class="bi bi-arrow-counterclockwise"></i> Khôi phục
+    </button>
+  </template>
+  <template v-else>
+    <button @click="openEditModal(product)" class="btn btn-warning btn-sm mx-1">
+      <i class="bi bi-pencil-square"></i>
+    </button>
+    <button @click="deleteProduct(product._id)" class="btn btn-danger btn-sm mx-1">
+      <i class="bi bi-trash"></i>
+    </button>
+  </template>
+</td>
+
+
+
+
+
+
+
+
+
                   </tr>
                 </tbody>
               </table>
@@ -236,17 +259,20 @@ export default {
   data() {
     return {
       currentPage: 1, // Trang hiện tại
-    itemsPerPage: 10, // Số sản phẩm hiển thị trên mỗi trang
+      itemsPerPage: 10, // Số sản phẩm hiển thị trên mỗi trang
       categories: [],
       products: [],
       searchText: '',
       showImageModal: false,
       selectedProduct: null,
       showEditModal: false,
-        editedProduct: {}, // Khởi tạo sản phẩm để chỉnh sửa
-        uploadedDetailImages: [], // Danh sách lưu trữ các ảnh chi tiết
+      editedProduct: {}, // Khởi tạo sản phẩm để chỉnh sửa
+      uploadedDetailImages: [], // Danh sách lưu trữ các ảnh chi tiết
       thumbnailFile: null, // Khai báo thumbnailFile để lưu trữ file thumbnail
-            isLoading: false, // Biến theo dõi trạng thái loading
+      isLoading: false, // Biến theo dõi trạng thái loading
+      showDeleted: false, // Biến để theo dõi trạng thái hiển thị sản phẩm đã xóa
+          noProducts: false, // Thêm biến để kiểm tra không có sản phẩm nào
+
     
 
 
@@ -256,6 +282,11 @@ export default {
     this.fetchProducts();
     this.fetchCategories();
   },
+  watch: {
+  showDeleted() {
+    this.fetchProducts();
+  },
+},
   computed: {
   filteredProducts() {
     if (this.searchText.trim() === '') {
@@ -285,22 +316,76 @@ export default {
         this.currentPage = page;
     },
     async fetchProducts() {
-      try {
-        const response = await productService.getAllProduct();
-        if (response.success) {
-          this.products = await Promise.all(
-            response.data.map(async (product) => {
-              const categoryName = await this.getCategoryName(product.CATEGORY_ID);
-              return { ...product, categoryName }; // Gộp thông tin categoryName vào sản phẩm
-            })
-          );
-        } else {
-          console.error("Không thể lấy sản phẩm:", response.message);
-        }
-      } catch (error) {
-        console.error("Lỗi khi lấy sản phẩm:", error);
+  this.isLoading = true; // Bắt đầu loading
+  this.noProducts = false; // Đặt lại trạng thái không có sản phẩm
+
+  try {
+    const response = this.showDeleted 
+      ? await productService.getDeletedProducts() 
+      : await productService.getAllProduct();
+
+    if (response.success) {
+      const products = response.data;
+      this.products = await Promise.all(
+        products.map(async (product) => {
+          const categoryName = await this.getCategoryName(product.CATEGORY_ID);
+          return { ...product, categoryName };
+        })
+      );
+
+      // Kiểm tra nếu không có sản phẩm nào
+      if (this.products.length === 0) {
+        this.noProducts = true; // Nếu không có sản phẩm
       }
-    },
+    } else {
+      console.error("Không thể lấy sản phẩm:", response.message);
+    }
+  } catch (error) {
+    console.error("Lỗi khi lấy sản phẩm:", error);
+  } finally {
+    this.isLoading = false; // Kết thúc loading
+  }
+},
+
+
+toggleDeletedProducts() {
+  this.showDeleted = !this.showDeleted; // Chuyển đổi trạng thái
+    console.log("Show deleted:", this.showDeleted); // Kiểm tra giá trị của showDeleted
+
+  this.fetchProducts(); // Gọi lại hàm để cập nhật danh sách sản phẩm
+},
+
+async restoreProduct(productId) {
+  const confirmRestore = await Swal.fire({
+    title: 'Xác nhận khôi phục',
+    text: "Bạn có chắc chắn muốn khôi phục sản phẩm này không?",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Khôi phục',
+    cancelButtonText: 'Hủy'
+  });
+
+  if (confirmRestore.isConfirmed) {
+    try {
+      const response = await productService.updateDeletedStatus(productId, false); // Gửi giá trị Boolean false thay vì đối tượng
+      if (response.success) {
+        Swal.fire("Thành công!", "Sản phẩm đã được khôi phục.", "success");
+        this.fetchProducts(); // Gọi lại hàm để cập nhật danh sách sản phẩm
+      } else {
+        Swal.fire("Thất bại!", "Có lỗi xảy ra khi khôi phục sản phẩm.", "error");
+      }
+    } catch (error) {
+      console.error("Lỗi khi khôi phục sản phẩm:", error);
+      Swal.fire("Thất bại!", "Có lỗi xảy ra khi khôi phục sản phẩm.", "error");
+    }
+  }
+},
+
+
+
+
     async fetchCategories() {
       try {
         const response = await categoryService.getAll();
@@ -399,20 +484,33 @@ export default {
 },
 
     async deleteProduct(id) {
-      const confirmDelete = confirm('Bạn có chắc chắn muốn xóa sản phẩm này không?');
-      if (confirmDelete) {
-        try {
-          const response = await productService.deleteProduct(id);
-          if (response.success) {
-            this.products = this.products.filter(product => product._id !== id);
-          } else {
-            console.error("Không thể xóa sản phẩm:", response.message);
-          }
-        } catch (error) {
-          console.error("Lỗi khi xóa sản phẩm:", error);
-        }
+  const { value: confirmDelete } = await Swal.fire({
+    title: 'Xác nhận',
+    text: 'Bạn có chắc chắn muốn xóa sản phẩm này không?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+    confirmButtonText: 'Có, xóa!',
+    cancelButtonText: 'Hủy'
+  });
+
+  if (confirmDelete) {
+    try {
+      const response = await productService.deleteProduct(id);
+      if (response.success) {
+        // Cập nhật danh sách sản phẩm sau khi xóa
+        this.products = this.products.filter(product => product._id !== id);
+        Swal.fire('Đã xóa!', 'Sản phẩm đã được xóa thành công.', 'success');
+      } else {
+        Swal.fire('Lỗi!', response.message, 'error');
       }
-    },
+    } catch (error) {
+      console.error("Lỗi khi xóa sản phẩm:", error);
+      Swal.fire('Lỗi!', 'Đã xảy ra lỗi khi xóa sản phẩm.', 'error');
+    }
+  }
+},
   async updateProduct() {
     const updateData = {};
     console.log("Bắt đầu cập nhật sản phẩm:", this.editedProduct._id);
@@ -684,6 +782,34 @@ export default {
   width: 100%; /* Chiều rộng 100% cho các màn hình nhỏ */
   max-height: 80vh; /* Giới hạn chiều cao tối đa của modal */
   overflow-y: auto; /* Cuộn theo chiều dọc nếu nội dung vượt quá chiều cao tối đa */
+}
+
+/* Style cho các nút hiển thị sản phẩm */
+.btn-custom {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  margin-left: 0.5rem; /* Khoảng cách giữa các nút */
+  border-radius: 0.25rem;
+  font-weight: bold;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Nút thêm sản phẩm */
+.btn-custom.btn-primary {
+  background-color: #007bff;
+  color: white;
+}
+
+/* Nút hiển thị sản phẩm đã xóa */
+.btn-custom.btn-secondary {
+  background-color: #dc3545;
+  color: white;
+}
+
+/* Hiệu ứng hover cho cả hai nút */
+.btn-custom:hover {
+  opacity: 0.8; /* Giảm độ trong suốt khi hover */
 }
 
 
