@@ -3,22 +3,22 @@
   padding: 2rem;
   max-width: 1400px;
   margin: 0 auto;
-  background-color: #f8fafc;
+  background-color: #f8f9ff;
 }
 
 .header {
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
 .title {
-  font-size: 1.875rem;
-  font-weight: 600;
-  color: #1e293b;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1a237e;
   position: relative;
-  padding-bottom: 0.5rem;
+  padding-bottom: 0.75rem;
 }
 
 .title::after {
@@ -26,193 +26,164 @@
   position: absolute;
   bottom: 0;
   left: 0;
-  width: 60px;
-  height: 3px;
-  background: linear-gradient(to right, #3498db, #2ecc71);
-  border-radius: 2px;
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(135deg, #6366f1, #818cf8);
+  border-radius: 4px;
 }
 
-/* Stats Grid - Modified for horizontal layout */
+/* Stats Grid - Enhanced Design */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  /* Force 4 columns */
-  gap: 1.5rem;
-  margin-bottom: 2rem;
+  gap: 1.75rem;
+  margin-bottom: 2.5rem;
 }
 
 .stat-card {
-  border-radius: 16px;
-  padding: 1.5rem;
+  border-radius: 20px;
+  padding: 1.75rem;
   background: linear-gradient(135deg, var(--bg-start) 0%, var(--bg-end) 100%);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease;
-  min-width: 0;
-  /* Prevents overflow in grid */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
 }
 
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.stat-card:hover::before {
+  opacity: 1;
+}
+
+/* Updated gradient colors for cards */
 .orders-card {
-  --bg-start: #3498db;
-  --bg-end: #2980b9;
+  --bg-start: #4f46e5;
+  --bg-end: #6366f1;
 }
 
 .reviews-card {
-  --bg-start: #e74c3c;
-  --bg-end: #c0392b;
+  --bg-start: #ef4444;
+  --bg-end: #f87171;
 }
 
 .users-card {
-  --bg-start: #2ecc71;
-  --bg-end: #27ae60;
+  --bg-start: #10b981;
+  --bg-end: #34d399;
 }
 
 .products-card {
-  --bg-start: #f39c12;
-  --bg-end: #d35400;
+  --bg-start: #f59e0b;
+  --bg-end: #fbbf24;
 }
 
 .stat-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+  transform: translateY(-8px);
+  box-shadow: 0 20px 35px rgba(0, 0, 0, 0.15);
 }
 
 .stat-content {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 2rem;
 }
 
 .stat-icon {
-  width: 60px;
-  height: 60px;
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
+  width: 70px;
+  height: 70px;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(12px);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  flex-shrink: 0;
-  /* Prevents icon from shrinking */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
 }
 
 .stat-icon i {
-  font-size: 24px;
+  font-size: 28px;
   color: #fff;
-}
-
-.stat-details {
-  min-width: 0;
-  /* Allows text to wrap properly */
 }
 
 .stat-details h5 {
-  margin: 0 0 0.5rem 0;
-  font-size: 1rem;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.9);
+  margin: 0 0 0.75rem 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.95);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  white-space: nowrap;
+  letter-spacing: 0.75px;
 }
 
 .stat-details h3 {
-  margin: 0 0 0.5rem 0;
-  font-size: 2rem;
+  margin: 0 0 0.75rem 0;
+  font-size: 2.25rem;
   font-weight: 700;
   color: #fff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.stat-change {
-  font-size: 0.875rem;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-}
-
-.stat-change i {
-  font-size: 1rem;
-}
-
-/* Charts Section */
+/* Enhanced Charts Section */
 .charts-section {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 2rem;
-  margin-bottom: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  gap: 2.5rem;
+  margin-bottom: 2.5rem;
 }
 
-/* Rest of the styles remain the same */
 .revenue-chart-container,
 .pie-chart-container,
 .bar-chart-container {
   background: white;
-  border-radius: 16px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
   transition: all 0.3s ease;
 }
 
 .chart-header,
 .pie-chart-header,
 .bar-chart-header {
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 2rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 2px solid #f1f5f9;
 }
 
 .chart-header h5,
 .pie-chart-header h5,
 .bar-chart-header h5 {
-  font-size: 1.25rem;
+  font-size: 1.35rem;
   color: #1e293b;
-  font-weight: 600;
+  font-weight: 700;
   margin: 0;
 }
 
-.chart-body,
-.pie-chart-body,
-.bar-chart-body {
-  height: 350px;
-  position: relative;
-}
-
-.total-revenue {
-  margin-top: 1.5rem;
-  padding-top: 1rem;
-  border-top: 1px solid #e2e8f0;
-}
-
-.total-revenue h6 {
-  color: #64748b;
-  font-size: 0.875rem;
-  margin-bottom: 0.5rem;
-}
-
-.total-revenue p {
-  color: #1e293b;
-  font-size: 1.5rem;
-  font-weight: 600;
-}
-
-/* Table Styles */
+/* Enhanced Table Styles */
 .table-card {
   background: white;
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
   overflow: hidden;
 }
 
 .table-header {
-  padding: 1.5rem;
-  border-bottom: 1px solid #e2e8f0;
+  padding: 2rem;
+  border-bottom: 2px solid #f1f5f9;
 }
 
 .table-header h5 {
-  font-size: 1.25rem;
+  font-size: 1.35rem;
   color: #1e293b;
-  font-weight: 600;
+  font-weight: 700;
   margin: 0;
 }
 
@@ -224,107 +195,203 @@
 
 .orders-table th {
   background: #f8fafc;
-  padding: 1rem 1.5rem;
+  padding: 1.25rem 2rem;
   font-weight: 600;
-  color: #64748b;
+  color: #475569;
   text-transform: uppercase;
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   letter-spacing: 0.05em;
 }
 
 .orders-table td {
-  padding: 1rem 1.5rem;
+  padding: 1.25rem 2rem;
   color: #334155;
-  border-bottom: 1px solid #e2e8f0;
-  font-size: 0.875rem;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 0.95rem;
 }
 
+/* Enhanced Status Badges */
 .status-badge {
-  padding: 0.375rem 0.75rem;
+  padding: 0.5rem 1rem;
   border-radius: 9999px;
-  font-size: 0.75rem;
-  font-weight: 500;
+  font-size: 0.85rem;
+  font-weight: 600;
   display: inline-flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: 0.375rem;
+  transition: all 0.3s ease;
 }
 
-.status-success {
+.bg-success {
   background: #dcfce7;
   color: #166534;
 }
 
-.status-primary {
-  background: #dbeafe;
-  color: #1e40af;
-}
-
-.status-warning {
+.bg-warning {
   background: #fef3c7;
   color: #92400e;
 }
 
-/* Responsive Design - Modified breakpoints */
+.bg-info {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.bg-secondary {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.bg-danger {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.bg-primary {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+
+.bg-dark {
+  background: #e2e8f0;
+  color: #1e293b;
+}
+
+/* Responsive Enhancements */
 @media (max-width: 1200px) {
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
-    /* 2 columns on medium screens */
+  }
+
+  .container {
+    padding: 1.5rem;
   }
 }
 
 @media (max-width: 768px) {
-  .container {
-    padding: 1rem;
-  }
-
   .stats-grid {
     grid-template-columns: 1fr;
-    /* Single column on mobile */
   }
 
-  .charts-section {
-    grid-template-columns: 1fr;
-  }
-
-  .stat-card {
-    padding: 1rem;
+  .stat-content {
+    gap: 1.5rem;
   }
 
   .stat-icon {
-    width: 48px;
-    height: 48px;
+    width: 60px;
+    height: 60px;
   }
 
   .stat-details h3 {
-    font-size: 1.5rem;
-  }
-
-  .orders-table {
-    min-width: 700px;
+    font-size: 1.75rem;
   }
 
   .table-body {
     overflow-x: auto;
-    padding: 0.5rem;
+    padding: 0.75rem;
+  }
+}
+/* Charts Section - Updated Layout */
+.charts-section {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  margin-bottom: 2.5rem;
+}
+
+/* Revenue Chart Container - Full Width */
+.revenue-chart-container {
+  background: white;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+/* Secondary Charts Row */
+.secondary-charts {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2.5rem;
+}
+
+.pie-chart-container,
+.bar-chart-container {
+  background: white;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+}
+
+.chart-header,
+.pie-chart-header,
+.bar-chart-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 2px solid #f1f5f9;
+}
+
+.chart-header h5,
+.pie-chart-header h5,
+.bar-chart-header h5 {
+  font-size: 1.35rem;
+  color: #1e293b;
+  font-weight: 700;
+  margin: 0;
+}
+
+.chart-body,
+.pie-chart-body,
+.bar-chart-body {
+  height: 450px;
+  position: relative;
+}
+
+/* Responsive adjustments for charts */
+@media (max-width: 1200px) {
+  .secondary-charts {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
   }
 }
 
-/* Scrollbar Styling */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+@media (max-width: 768px) {
+  .secondary-charts {
+    grid-template-columns: 1fr;
+  }
+
+  .revenue-chart-container,
+  .pie-chart-container,
+  .bar-chart-container {
+    padding: 1.5rem;
+  }
+
+  .chart-body,
+  .pie-chart-body,
+  .bar-chart-body {
+    height: 300px;
+  }
+}
+.total-revenue {
+  text-align: center;
+  border-radius: 8px;
+  /* Bo tròn các góc */
+  padding: 15px;
+  /* Thêm khoảng cách bên trong */
 }
 
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 4px;
+.total-revenue h6 {
+  margin: 0;
+  /* Không có khoảng cách ở trên cùng */
+  font-weight: bold;
+  /* Chữ đậm cho tiêu đề tổng doanh thu */
 }
 
-::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+#totalRevenueAmount {
+  font-size: 20px;
+  /* Kích thước chữ lớn hơn cho số tiền */
+  color: #d32f2f;
+  /* Màu chữ đỏ cho số tiền */
 }
