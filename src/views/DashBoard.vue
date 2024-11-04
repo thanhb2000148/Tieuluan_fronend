@@ -72,22 +72,23 @@
             </div>
           </div>
 
-          <!-- Charts Section -->
           <div class="charts-section">
-            <!-- Revenue Chart -->
-            <div class="revenue-chart-container">
-              <div class="chart-header">
-                <h5>Biểu đồ doanh thu</h5>
-              </div>
-              <div class="chart-body">
-                <canvas id="revenueChart"></canvas>
-              </div>
-              <div class="total-revenue">
-                <h6>Tổng doanh thu của tất cả đơn hàng:</h6>
-                <p id="totalRevenueAmount">0 triệu đồng</p>
-              </div>
+          <!-- Revenue Chart - Full Width -->
+          <div class="revenue-chart-container">
+            <div class="chart-header">
+              <h5>Biểu đồ doanh thu</h5>
             </div>
+            <div class="chart-body">
+              <canvas id="revenueChart"></canvas>
+            </div>
+            <div class="total-revenue">
+              <h6>Tổng doanh thu của tất cả đơn hàng:</h6>
+              <p id="totalRevenueAmount">0 triệu đồng</p>
+            </div>
+          </div>
 
+          <!-- Secondary Charts Row -->
+          <div class="secondary-charts">
             <!-- Pie Chart -->
             <div class="pie-chart-container">
               <div class="pie-chart-header">
@@ -108,6 +109,7 @@
               </div>
             </div>
           </div>
+        </div>
 
           <!-- Bảng các đơn hàng gần đây -->
           <div class="table-card">
