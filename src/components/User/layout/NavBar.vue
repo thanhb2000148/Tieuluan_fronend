@@ -26,12 +26,12 @@
           </li>
           <li class="nav-item">
             <router-link to="/contact" class="nav-link" active-class="active">
-              <i class="fas fa-envelope"></i> Liên hệ
+              <i class="fas fa-phone-alt"></i> Liên hệ
             </router-link>
           </li>
           <li class="nav-item">
             <router-link to="/new" class="nav-link" active-class="active">
-              <i class="fas fa-envelope"></i> Bài Viết
+              <i class="fas  fa-file-alt "></i> Bài Viết
             </router-link>
           </li>
         </ul>
@@ -43,6 +43,11 @@
           >
             <i class="fas fa-search text-primary"></i>
           </button>
+           <!-- Nút yêu thích với icon trái tim nằm sau nút tìm kiếm -->
+<router-link to="/favorite" class="btn btn-favorite border border-secondary btn-md-square rounded-circle bg-white me-4">
+  <i class="fas fa-heart"></i>
+</router-link>
+
           <router-link to="/cart" class="position-relative me-4 my-auto">
             <i class="fa fa-shopping-bag fa-2x"></i>
             <span
@@ -265,4 +270,43 @@ export default {
 body {
   margin-top: 56px; /* Điều chỉnh theo chiều cao của navbar */
 }
+
+.btn-favorite {
+  background-color: #ffffff; /* Màu nền trắng */
+  border: 1px solid #dc3545; /* Viền đỏ */
+  color: #dc3545; /* Màu chữ đỏ */
+  transition: background-color 0.3s, color 0.3s; /* Hiệu ứng chuyển đổi mượt mà */
+  padding: 10px; /* Thêm padding cho nút */
+  font-size: 1.2em; /* Kích thước font chữ */
+}
+
+.btn-favorite:hover {
+  
+  color: #dc3545; /* Giữ màu chữ đỏ khi di chuột */
+  cursor: pointer; /* Hiển thị con trỏ như nút bấm */
+}
+
+.btn-favorite:hover i {
+  color: #dc3545; /* Giữ màu đỏ cho icon trái tim khi di chuột */
+}
+
+.nav-link {
+  color: #333; /* Màu chữ mặc định */
+  transition: color 0.3s; /* Hiệu ứng chuyển đổi màu */
+}
+
+.nav-link:hover {
+  color: #dc3545; /* Màu chữ khi di chuột */
+  cursor: pointer; /* Hiển thị con trỏ khi di chuột */
+}
+
+.nav-link i {
+  font-size: 1.2em; /* Kích thước biểu tượng */
+  transition: transform 0.3s; /* Hiệu ứng chuyển đổi cho biểu tượng */
+}
+
+.nav-link:hover i {
+  transform: scale(1.1); /* Phóng to biểu tượng khi di chuột */
+}
+
 </style>

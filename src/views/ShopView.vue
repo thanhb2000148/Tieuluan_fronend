@@ -139,7 +139,16 @@
                           <i class="fa fa-shopping-bag me-2 text-primary"></i>
                           Thêm Vào Giỏ Hàng
                         </p>
-                         <div class="eye-icon" @click="openModal(item)">
+                       <!-- Nút Thêm vào Yêu Thích -->
+                        <p
+                          @click="addToFavorite(item._id)"
+                          class="btn btn-favorite border border-danger rounded-pill px-3"
+                        >
+                          <i class="fa fa-heart me-2"></i>
+                          Thêm Vào Yêu Thích
+                        </p>
+
+                        <div class="eye-icon" @click="openModal(item)">
                           <i class="fa fa-eye text-black"></i>
                         </div>
                          <p class="quick-view-text">Xem Nhanh</p>
@@ -269,6 +278,7 @@ import cartService from "@/services/cart.service";
 import Swal from "sweetalert2";
 import Search from "@/components/User/Home/Search.vue";
 import categoryService from "@/services/category.service";
+import FavoriteService from "@/services/favorite";
 
 
 export default {
@@ -316,7 +326,26 @@ export default {
     }
   },
   methods: {
-   
+      async addToFavorite(productId) {
+      try {
+        await FavoriteService.addFavorite(productId);
+        Swal.fire({
+          icon: "success",
+          title: "Thành công",
+          text: "Sản phẩm đã được thêm vào yêu thích!",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      } catch (error) {
+        Swal.fire({
+          icon: "error",
+          title: "Lỗi",
+          text: "Không thể thêm sản phẩm vào yêu thích. Vui lòng thử lại sau.",
+        });
+        console.error("Error adding product to favorites:", error);
+      }
+    },
+
     // selectColor(color) {
     //   this.selectedColor = color;
     //   const selectedAttachment = this.selectedProduct.LIST_FILE_ATTACHMENT.find(
@@ -627,5 +656,26 @@ export default {
 .rating-stars .fa-star.filled {
     color: gold; /* Màu cho ngôi sao đã được đánh giá */
 }
+
+
+.btn-favorite {
+  background-color: white; /* Nền màu trắng */
+  border: 1px solid #dc3545; /* Viền đỏ */
+  color: #dc3545; /* Màu chữ đỏ */
+  transition: background-color 0.3s, color 0.3s; /* Hiệu ứng chuyển đổi mượt mà */
+  display: inline-flex; /* Để căn giữa biểu tượng và chữ */
+  align-items: center; /* Căn giữa theo chiều dọc */
+}
+
+.btn-favorite:hover {
+  background-color: #dc3545; /* Nền màu đỏ khi di chuột */
+  color: white; /* Màu chữ trắng khi di chuột */
+  cursor: pointer; /* Hiển thị con trỏ như nút bấm */
+}
+
+.btn-favorite:hover i {
+  color: white; /* Màu biểu tượng trắng khi di chuột */
+}
+
 
 </style>
