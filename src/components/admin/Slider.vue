@@ -82,6 +82,12 @@
               <span>Quản lý Tin Tức</span>
             </router-link>
           </li>
+          <li class="sidebar-item">
+            <router-link to="/admin/review" class="sidebar-link">
+              <i class="fas fa-newspaper"></i>
+              <span>Quản lý Đánh Giá</span>
+            </router-link>
+          </li>
         </ul>
       </nav>
     </div>

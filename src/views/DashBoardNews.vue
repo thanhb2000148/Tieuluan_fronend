@@ -488,10 +488,6 @@
             });
         }
     },
-
-
-
-
     editArticle(article) {
         this.editArticleId = article._id;
         this.editArticledata = { 
