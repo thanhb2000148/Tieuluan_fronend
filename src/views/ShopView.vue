@@ -20,11 +20,11 @@
             <div class="carousel-caption d-none d-md-block">
             </div>
           </div>
-          <div class="carousel-item">
+          <!-- <div class="carousel-item">
             <img src="https://res.cloudinary.com/dgfwiff6k/image/upload/v1719590222/test_folder/gchx3lm4a9lh6dtbgnss.webp" class="d-block w-100 custom-img-size" alt="Slide 3">
             <div class="carousel-caption d-none d-md-block">  
             </div>
-          </div>
+          </div> -->
         </div>
         <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-bs-slide="prev">
           <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -70,7 +70,7 @@
                               <a href="#" class="a" 
                                 @click="filterProductsByCategory(category._id)"
                                 :class="{ active: selectedCategory === category._id }">
-                                <i class="fas fa-apple-alt me-2"></i>{{ category.CATEGORY_NAME }}
+                                <i class="fas  fa-shopping-cart me-2"></i>{{ category.CATEGORY_NAME }}
                               </a>
                               <span>({{ getProductCountByCategory(category._id) }})</span>
                             </div>

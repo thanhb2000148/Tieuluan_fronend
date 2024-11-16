@@ -12,7 +12,7 @@
         <p class="lead text-muted">
           Hiện tại không có sản phẩm nào trong giỏ hàng của Anh/Chị.
         </p>
-        <router-link to="/products" class="btn btn-primary btn-lg">Tiếp tục mua sắm</router-link>
+        <router-link to="/shop" class="btn btn-primary btn-lg">Tiếp tục mua sắm</router-link>
       </div>
       
       <div v-else class="row">

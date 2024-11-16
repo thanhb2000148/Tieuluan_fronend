@@ -39,7 +39,7 @@
                   <td class="px-4 py-3">{{ review.rating }} / 5</td>
                   <td class="px-4 py-3">{{ new Date(review.created_at).toLocaleDateString() }}</td>
                   <td class="px-4 py-3 text-center">
-                    <button class="btn btn-danger" @click="deleteReview(review._id)">Xóa</button>
+                    <button class="btn btn-danger" @click="deleteReview(review._id)">Xem</button>
                   </td>
                 </tr>
               </tbody>
@@ -141,38 +141,38 @@ export default {
       this.fetchReviews();
     },
 
-    // Xóa đánh giá
-    async deleteReview(reviewId) {
-      const confirmation = await Swal.fire({
-        title: 'Bạn có chắc chắn?',
-        text: "Bạn sẽ không thể hoàn tác hành động này!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Đúng, xóa nó!',
-      });
+    // // Xóa đánh giá
+    // async deleteReview(reviewId) {
+    //   const confirmation = await Swal.fire({
+    //     title: 'Bạn có chắc chắn?',
+    //     text: "Bạn sẽ không thể hoàn tác hành động này!",
+    //     icon: 'warning',
+    //     showCancelButton: true,
+    //     confirmButtonColor: '#3085d6',
+    //     cancelButtonColor: '#d33',
+    //     confirmButtonText: 'Đúng, xóa nó!',
+    //   });
 
-      if (confirmation.isConfirmed) {
-        try {
-          const response = await axios.delete(`http://localhost:8000/v1/review/admin/${reviewId}`);
-          console.log('Đánh giá đã được xóa:', response.data);
-          this.fetchReviews(); // Tải lại danh sách đánh giá sau khi xóa
-          Swal.fire({
-            icon: 'success',
-            title: 'Thành công!',
-            text: 'Đánh giá đã được xóa.',
-          });
-        } catch (error) {
-          console.error('Lỗi khi xóa đánh giá:', error);
-          Swal.fire({
-            icon: 'error',
-            title: 'Lỗi',
-            text: 'Không thể xóa đánh giá này.',
-          });
-        }
-      }
-    },
+    //   if (confirmation.isConfirmed) {
+    //     try {
+    //       const response = await axios.delete(`http://localhost:8000/v1/review/admin/${reviewId}`);
+    //       console.log('Đánh giá đã được xóa:', response.data);
+    //       this.fetchReviews(); // Tải lại danh sách đánh giá sau khi xóa
+    //       Swal.fire({
+    //         icon: 'success',
+    //         title: 'Thành công!',
+    //         text: 'Đánh giá đã được xóa.',
+    //       });
+    //     } catch (error) {
+    //       console.error('Lỗi khi xóa đánh giá:', error);
+    //       Swal.fire({
+    //         icon: 'error',
+    //         title: 'Lỗi',
+    //         text: 'Không thể xóa đánh giá này.',
+    //       });
+    //     }
+    //   }
+    // },
   },
   mounted() {
     this.fetchReviews(); // Gọi API khi component được mount

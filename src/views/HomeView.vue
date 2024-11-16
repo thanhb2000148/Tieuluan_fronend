@@ -172,6 +172,9 @@ export default {
     } else {
       console.log("Không có dữ liệu người dùng đăng nhập.");
     }
+    },
+   redirectToLogin() {
+    this.$router.push("/login"); // Chuyển hướng về trang đăng nhập
   },
     async getCategory() {
       try {

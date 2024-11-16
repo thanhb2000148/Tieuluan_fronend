@@ -29,7 +29,7 @@
       </div>
       <div v-if="favorites.length === 0" class="text-center my-8">
         <p class="text-gray-600 text-lg">Bạn chưa có sản phẩm yêu thích nào.</p>
-        <button class="btn btn-primary mt-4">Khám phá sản phẩm</button>
+<button class="btn btn-primary mt-4" @click="goToShop">Xem thêm sản phẩm</button>
       </div>
     </div>
     <AppFooter />
@@ -60,6 +60,9 @@ export default {
   methods: {
     goToDetail(productId) {
       this.$router.push({ name: 'UserDetail', params: { id: productId } });
+    },
+     goToShop() {
+    this.$router.push({ name: 'ShopView' });
     },
     async fetchPrice(productId) {
       if (!productId) return;

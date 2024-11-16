@@ -599,7 +599,7 @@ export default {
       previewUrl: null, // Biến để lưu đường dẫn ảnh xem trước
       isUploading: false,
       selectedStatus: 'Tất cả',
-      orderStatuses: ['Tất cả', 'Chờ Duyệt', 'Đang xử lý', 'Đang vận chuyển', 'Đã giao', 'Đã hủy', 'Chưa hoàn thành thanh toán'],
+      orderStatuses: ['Tất cả', 'Chờ Duyệt', 'Đang xử lý', 'Đang vận chuyển', 'Đã giao', 'Đã hủy'],
       allPossibleStatuses: ['Chờ Duyệt', 'Đang xử lý', 'Đang vận chuyển', 'Đã giao','Đã hủy', 'Đơn Hàng Đã Hoàn Thành'],
       currentPage: 1,
       itemsPerPage: 3, // các đơn hàng thoe trang
