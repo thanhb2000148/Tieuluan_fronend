@@ -104,7 +104,7 @@
         <thead>
             <tr class="text-center">
             <th scope="col" class="space-title">Tiêu đề bài viết</th>
-                    <!-- <th scope="col" class="space-image">Hình ảnh</th>  -->
+            <!-- <th scope="col" class="space-image">Hình ảnh</th>  -->
             <th scope="col" class="space-content">Nội dung</th>
             <th scope="col" class="space-handle">Ngày Đăng</th>
             <th scope="col" class="space-hanle">Xử lý</th>
