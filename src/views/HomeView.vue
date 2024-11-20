@@ -94,7 +94,7 @@ import ProductCard from "@/components/User/Home/ProductCard.vue";
 import categoryService from "@/services/category.service";
 import productService from "@/services/product.service";
 import Search from "@/components/User/Home/Search.vue";
-import Swal from "sweetalert2";
+// import Swal from "sweetalert2";
 
 
 export default {
@@ -140,42 +140,56 @@ export default {
       this.currentTab = tab;
     },
     async fetchUserLogin() {
-      try {
-        const response = await userService.getUserLogin();
-        if (response && response.data) {
-          this.user = response.data;
-          console.log("User data:", this.user); // Thêm dòng này để kiểm tra
-        } else {
-          console.log("Không có dữ liệu người dùng đăng nhập.");
-                  this.handleTokenError({ response: { data: { message: "Token không hợp lệ" } } });
-
-        }
-      } catch (error) {
-        console.error(error);
-                this.handleTokenError(error); // Chuyển hướng nếu có lỗi
-
-      }
-    },
-     handleTokenError(error) {
-    // Kiểm tra thông báo lỗi từ phản hồi
-    if (error.response && error.response.data && error.response.data.message === 'Token không hợp lệ') {
-      console.log("Token không hợp lệ đã được phát hiện."); // Debugging
-      Swal.fire({
-        icon: 'error',
-        title: 'Phiên đăng nhập đã hết hạn',
-        text: 'Vui lòng đăng nhập lại.',
-        confirmButtonText: 'OK'
-      }).then(() => {
-        localStorage.removeItem('token'); // Xóa token
-        this.redirectToLogin(); // Chuyển hướng về trang đăng nhập
-      });
+  try {
+    const response = await userService.getUserLogin();
+    if (response && response.data) {
+      this.user = response.data;
+      console.log("User data:", this.user); // Thêm dòng này để kiểm tra
     } else {
       console.log("Không có dữ liệu người dùng đăng nhập.");
     }
-    },
-   redirectToLogin() {
-    this.$router.push("/login"); // Chuyển hướng về trang đăng nhập
-  },
+  } catch (error) {
+    console.error(error);
+  }
+},
+
+  //   async fetchUserLogin() {
+  //     try {
+  //       const response = await userService.getUserLogin();
+  //       if (response && response.data) {
+  //         this.user = response.data;
+  //         console.log("User data:", this.user); // Thêm dòng này để kiểm tra
+  //       } else {
+  //         console.log("Không có dữ liệu người dùng đăng nhập.");
+  //                 this.handleTokenError({ response: { data: { message: "Token không hợp lệ" } } });
+
+  //       }
+  //     } catch (error) {
+  //       console.error(error);
+  //               this.handleTokenError(error); // Chuyển hướng nếu có lỗi
+
+  //     }
+  //   },
+  //    handleTokenError(error) {
+  //   // Kiểm tra thông báo lỗi từ phản hồi
+  //   if (error.response && error.response.data && error.response.data.message === 'Token không hợp lệ') {
+  //     console.log("Token không hợp lệ đã được phát hiện."); // Debugging
+  //     Swal.fire({
+  //       icon: 'error',
+  //       title: 'Phiên đăng nhập đã hết hạn',
+  //       text: 'Vui lòng đăng nhập lại.',
+  //       confirmButtonText: 'OK'
+  //     }).then(() => {
+  //       localStorage.removeItem('token'); // Xóa token
+  //       this.redirectToLogin(); // Chuyển hướng về trang đăng nhập
+  //     });
+  //   } else {
+  //     console.log("Không có dữ liệu người dùng đăng nhập.");
+  //   }
+  //   },
+  //  redirectToLogin() {
+  //   this.$router.push("/login"); // Chuyển hướng về trang đăng nhập
+  // },
     async getCategory() {
       try {
         const response = await categoryService.getAll();

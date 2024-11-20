@@ -600,7 +600,7 @@ export default {
       isUploading: false,
       selectedStatus: 'Tất cả',
       orderStatuses: ['Tất cả', 'Chờ Duyệt', 'Đang xử lý', 'Đang vận chuyển', 'Đã giao', 'Đã hủy'],
-      allPossibleStatuses: ['Chờ Duyệt', 'Đang xử lý', 'Đang vận chuyển', 'Đã giao','Đã hủy', 'Đơn Hàng Đã Hoàn Thành'],
+      allPossibleStatuses: ['Chờ Duyệt', 'Đang xử lý', 'Đang vận chuyển', 'Đã giao','Đã hủy',],
       currentPage: 1,
       itemsPerPage: 3, // các đơn hàng thoe trang
       cancelReason: "", // Lý do hủy
