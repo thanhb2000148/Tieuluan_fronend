@@ -15,6 +15,31 @@
                 <small class="text-muted">Thông tin người dùng</small>
               </div>
             </div>
+            <!-- Hiển thị số điện thoại -->
+            <div class="mb-4">
+              <label for="phone" class="form-label">Số điện thoại</label>
+              <div class="d-flex align-items-center">
+                <input 
+                  type="text" 
+                  id="phone" 
+                  v-model="phoneNumber" 
+                  class="form-control me-2" 
+                  :readonly="!isEditingPhone" 
+                />
+                <!-- <button 
+                  v-if="!isEditingPhone" 
+                  @click="startEditingPhone" 
+                  class="btn btn-outline-primary">Thay đổi</button>
+                <button 
+                  v-if="isEditingPhone" 
+                  @click="savePhone" 
+                  class="btn btn-primary">Lưu</button>
+                <button 
+                  v-if="isEditingPhone" 
+                  @click="cancelEditingPhone" 
+                  class="btn btn-secondary">Hủy</button> -->
+              </div>
+            </div>
             <div class="mb-4">
               <label for="select-address" class="form-label">Địa chỉ đã lưu</label>
               <select
@@ -191,6 +216,8 @@ export default {
       userById: [],
       address: [],
       avatarUrl: '',
+      phoneNumber: '',  // Số điện thoại
+      isEditingPhone: false,  // Trạng thái chỉnh sửa số điện thoại
       selectedAddress: {
         DESC: "",
         COMMUNE: "",
@@ -328,11 +355,40 @@ export default {
         console.error(error);
       }
     },
+      // Bắt đầu chỉnh sửa số điện thoại
+    // startEditingPhone() {
+    //   this.isEditingPhone = true;
+    // },
+    // // Lưu số điện thoại mới
+    // async savePhone() {
+    //   try {
+    //     const response = await userService.updatePhoneNumber(this.phoneNumber);
+    //     if (response && response.data) {
+    //       this.isEditingPhone = false;
+    //       Swal.fire({
+    //         icon: "success",
+    //         title: "Cập nhật thành công",
+    //         text: "Số điện thoại đã được cập nhật.",
+    //       });
+    //     }
+    //   } catch (error) {
+    //     console.error(error);
+    //     Swal.fire({
+    //       icon: "error",
+    //       title: "Có lỗi xảy ra",
+    //       text: "Không thể cập nhật số điện thoại.",
+    //     });
+    //   }
+    // },
+
+
     async getUser() {
       try {
         const response = await userService.getUserLogin();
         if (response && response.data) {
           this.user = response.data;
+          this.phoneNumber = this.user.PHONE_USER || '';  // Gán số điện thoại hiện tại
+
         }
       } catch (error) {
         console.error(error);
@@ -345,6 +401,8 @@ export default {
           this.userById = response.data;
           console.log("AVT_URL:", this.user.AVT_URL);
           this.avatarUrl = this.userById.AVT_URL ? this.userById.AVT_URL : '/img/avatar.jpg';
+         // Gán số điện thoại từ dữ liệu trả về
+      this.phoneNumber = this.userById.PHONE_NUMBER || ''; // Gán số điện thoại nếu có
         } else {
           console.log("Không có dữ liệu người dùng đăng nhập.");
         }

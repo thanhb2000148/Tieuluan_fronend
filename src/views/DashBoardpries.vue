@@ -6,8 +6,7 @@
       <main class="content px-3 py-2">
         <div class="container-fluid">
           <h1 class="mb-4 text-center">Sản phẩm trong cửa hàng</h1>
-                    <div class="d-flex justify-content-between mb-3">
-
+          <div class="d-flex justify-content-between mb-3">
           <button class="btn btn-primary" @click="showAddPriceModal">Thêm Giá</button>
            <div class="filter-search">
               <select v-model="filterOption" class="form-select" @change="filterProducts">
@@ -78,7 +77,7 @@
                 <input type="number" v-model="addNewAttributePrice" id="addNewAttributePrice" />
               </div>
               <button class="btn-update" @click="addNewPriceForProduct">Thêm giá</button>
-              <button class="btn-close" @click="showAddPriceForm = false">Đóng</button>
+              <!-- <button class="btn-close" @click="showAddPriceForm = false">Đóng</button> -->
             </div>
           </div>
 
@@ -107,10 +106,9 @@
                 <input type="number" v-model="newAttributePrice" id="newAttributePrice" />
               </div>
               <button class="btn-update" @click="updatePrice">Cập nhật giá</button>
-              <button class="btn-close" @click="showPriceForm = false">Đóng</button>
+              <!-- <button class="btn-close" @click="showPriceForm = false">Đóng</button> -->
             </div>
           </div>
-
           <table class="table table-bordered">
             <thead>
               <tr>
@@ -123,7 +121,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(product, index) in products" :key="index">
+              <tr v-for="(product, index) in filteredProducts" :key="index">
                 <td class="text-center">{{ index + 1 }}</td>
                 <td class="text-center">{{ product.NAME_PRODUCT }}</td>
                 <td class="text-center">
@@ -235,25 +233,36 @@ export default {
      this.fetchAllPrices(); 
   },
   computed: {
-    filteredProducts() {
-      // Sao chép toàn bộ sản phẩm từ `numberProduct` (tất cả sản phẩm)
-      let filtered = [...this.numberProduct];
+   filteredProducts() {
+    // Sao chép toàn bộ sản phẩm từ `numberProduct` (tất cả sản phẩm)
+    let filtered = [...this.numberProduct];
 
-      // Tìm kiếm theo tên sản phẩm
-      if (this.searchText) {
-        filtered = filtered.filter(product =>
-          product.NAME_PRODUCT.toLowerCase().includes(this.searchText.toLowerCase())
-        );
+    // Tìm kiếm theo tên sản phẩm
+    if (this.searchText) {
+      filtered = filtered.filter(product =>
+        product.NAME_PRODUCT.toLowerCase().includes(this.searchText.toLowerCase())
+      );
+    }
+
+    // Lọc theo sản phẩm mới nhất
+    if (this.filterOption === 'new') {
+      filtered = filtered.reverse(); // Đảo ngược danh sách sản phẩm
+    }
+
+    // Gắn giá từ danh sách `products` vào `filteredProducts`
+    return filtered.map(filteredProduct => {
+      // Tìm sản phẩm tương ứng trong `products`
+      const originalProduct = this.products.find(
+        product => product._id === filteredProduct._id
+      );
+      if (originalProduct) {
+        // Sao chép các thuộc tính giá từ `products` sang `filteredProducts`
+        filteredProduct.DEFAULT_PRICE = originalProduct.DEFAULT_PRICE;
+        filteredProduct.QUANTITY_BY_KEY_VALUE = originalProduct.QUANTITY_BY_KEY_VALUE;
       }
-
-       // Lọc theo sản phẩm mới nhất (lấy các sản phẩm cuối bảng)
-      if (this.filterOption === 'new') {
-        filtered = filtered.reverse();  // Đảo ngược danh sách sản phẩm
-      }
-
-      // Áp dụng phân trang cho dữ liệu đã lọc
-      return filtered.slice((this.page - 1) * this.limit, this.page * this.limit);
-    },
+      return filteredProduct;
+    }).slice((this.page - 1) * this.limit, this.page * this.limit);
+  }
 },
   methods: {
     showError(message) {
