@@ -157,7 +157,7 @@
                 </td>
                 <td class="text-center">
                   <button class="btn btn-sm btn-primary" @click="editPrice(product._id)">Sửa</button>
-                  <button class="btn btn-sm btn-danger">Xóa</button>
+                  <!-- <button class="btn btn-sm btn-danger">Xóa</button> -->
                 </td>
               </tr>
             </tbody>

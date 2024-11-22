@@ -891,50 +891,55 @@ export default {
     },
 
     async saveUser() {
-      try {
-        let imageUrl = null;
-        // Nếu có tệp đã chọn, gọi uploadImage
-        if (this.selectedFile) {
-          imageUrl = await this.uploadImage();
-           this.isUploading = false;
-          if (!imageUrl) {
-            this.message = "Lỗi khi tải ảnh lên.";
-            this.alertClass = "alert-danger";
-            return; // Dừng lại nếu không tải ảnh thành công
-          }
-        }
-
-        const updatedUser = {
-          LAST_NAME: this.userById.LAST_NAME,
-          PHONE_NUMBER: this.userById.PHONE_NUMBER,
-          AVT_URL: imageUrl || this.userById.AVT_URL, // Gửi URL ảnh vào API updateUser nếu có
-          BIRTHDAY: this.userById.BIRTHDAY, // Thêm trường ngày sinh
-          GENGER_USER: this.userById.GENGER_USER, // Thêm trường giới tính
-          EMAIL_USER: this.userById.EMAIL_USER
-
-        };
-
-       const response = await userService.updateUser(this.user.USER_ID, updatedUser);
-
-        if (response) {
-        // Cập nhật lại thông tin người dùng và URL ảnh trong `this.userById`
-        this.userById.AVT_URL = imageUrl || this.userById.AVT_URL;
-        this.isEditing = false; // Đóng chế độ chỉnh sửa sau khi lưu
-        this.message = "Cập nhật thông tin thành công.";
-        this.alertClass = "alert-success";
+  try {
+    let imageUrl = null;
+    // Nếu có tệp đã chọn, gọi uploadImage
+    if (this.selectedFile) {
+      imageUrl = await this.uploadImage();
+      this.isUploading = false;
+      if (!imageUrl) {
+        Swal.fire({
+          title: 'Lỗi',
+          text: 'Lỗi khi tải ảnh lên.',
+          icon: 'error',
+          confirmButtonText: 'Đóng'
+        });
+        return; // Dừng lại nếu không tải ảnh thành công
       }
-        // // Gọi API cập nhật thông tin người dùng
-        // await userService.updateUser(this.user.USER_ID, updatedUser);
-        // this.isEditing = false; // Đóng chế độ chỉnh sửa sau khi lưu
-        // this.message = "Cập nhật thông tin thành công.";
-        // this.alertClass = "alert-success";
+    }
 
-      } catch (error) {
-        console.error("Lỗi khi cập nhật thông tin người dùng:", error);
-        this.message = "Có lỗi xảy ra khi cập nhật thông tin.";
-        this.alertClass = "alert-danger";
-      }
-    },
+    const updatedUser = {
+      LAST_NAME: this.userById.LAST_NAME,
+      PHONE_NUMBER: this.userById.PHONE_NUMBER,
+      AVT_URL: imageUrl || this.userById.AVT_URL, // Gửi URL ảnh vào API updateUser nếu có
+      BIRTHDAY: this.userById.BIRTHDAY, // Thêm trường ngày sinh
+      GENGER_USER: this.userById.GENGER_USER, // Thêm trường giới tính
+      EMAIL_USER: this.userById.EMAIL_USER
+    };
+
+    const response = await userService.updateUser(this.user.USER_ID, updatedUser);
+
+    if (response) {
+      // Cập nhật lại thông tin người dùng và URL ảnh trong `this.userById`
+      this.userById.AVT_URL = imageUrl || this.userById.AVT_URL;
+      this.isEditing = false; // Đóng chế độ chỉnh sửa sau khi lưu
+      Swal.fire({
+        title: 'Thành công',
+        text: 'Cập nhật thông tin thành công.',
+        icon: 'success',
+        confirmButtonText: 'Đóng'
+      });
+    }
+  } catch (error) {
+    console.error("Lỗi khi cập nhật thông tin người dùng:", error);
+    Swal.fire({
+      title: 'Có lỗi xảy ra',
+      text: 'Có lỗi xảy ra khi cập nhật thông tin.',
+      icon: 'error',
+      confirmButtonText: 'Đóng'
+    });
+  }
+},
   
     async createAddress() {
       try {
