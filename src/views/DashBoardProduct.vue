@@ -8,7 +8,7 @@
           <h1 class="mb-4 text-center">Sản phẩm trong cửa hàng</h1>
           <div class="d-flex justify-content-between mb-3">
             <button @click="showAddProductModal = true" class="btn btn-primary">
-              Thêm Sản Phẩm
+              Thêm Số Lượng
             </button>
             <div class="filter-search">
               <select v-model="filterOption" class="form-select" @change="filterProducts">

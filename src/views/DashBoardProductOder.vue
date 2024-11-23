@@ -113,7 +113,7 @@
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">Cập nhật trạng thái đơn hàng</h5>
+            <h5 class="modal-title text-1">Cập nhật trạng thái đơn hàng</h5>
             <button type="button" class="btn-close" @click="closeEditModal"></button>
           </div>
           <div class="modal-body">
@@ -482,5 +482,7 @@
   transform: scale(1); /* Giảm kích thước khi nhấn */
   color: #ccc; /* Màu chữ xám khi nhấn */
 }
-
+.text-1{
+  color: white;
+}
 </style>

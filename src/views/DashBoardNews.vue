@@ -5,7 +5,7 @@
         <Nav />
         <main class="content px-3 py-2">
             <div class="container-fluid">
-            <h1 class="mb-4 text-center">Quản lý bài viết</h1>
+            <h1 class="mb-4 text-center">Quản lý tin tức</h1>
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <button class="btn btn-primary" @click="showAddArticleForm">Thêm bài viết</button>
                 <form class="form-inline" @submit.prevent>

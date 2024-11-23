@@ -100,7 +100,7 @@
             </div>
           </div>
           <div class="d-flex justify-content-between align-items-center mb-4">
-            <router-link to="/products" class="btn btn-outline-primary btn-lg">
+            <router-link to="/shop" class="btn btn-outline-primary btn-lg">
               <i class="fa fa-arrow-left me-2"></i>Tiếp tục mua sắm
             </router-link>
           </div>
